@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>document.documentElement.className+=" con-js";</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BakeMe Pastelería · Pasteles personalizados</title>
@@ -163,6 +164,115 @@
   footer{background:var(--logo-fondo);text-align:center;padding:2.5rem 0;font-size:.9rem;border-top:1px solid rgba(201,106,102,.15)}
   .logo-pie{width:190px;height:88px;margin:0 auto .6rem;background:var(--logo-fondo) url("logo.jpeg") center/300px no-repeat}
 
+
+  /* ---------- Movimiento y detalle ---------- */
+  :root{--curva:cubic-bezier(.22,1,.36,1)}
+
+  /* Entrada de la portada */
+  @keyframes entra{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+  @keyframes aparece{from{opacity:0}to{opacity:1}}
+  .con-js .hero .etiqueta{animation:entra .85s .05s both var(--curva)}
+  .con-js .hero h1{animation:entra .85s .16s both var(--curva)}
+  .con-js .hero p{animation:entra .85s .28s both var(--curva)}
+  .con-js .hero .acciones{animation:entra .85s .40s both var(--curva)}
+  .con-js .hero-arte{animation:aparece 1.1s .30s both}
+
+  /* Confites flotando detras de la portada */
+  .hero{position:relative}
+  .hero>.contenedor{position:relative;z-index:1}
+  .confites{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .confites span{position:absolute;left:var(--x);top:var(--y);width:var(--d);height:var(--h,var(--d));border-radius:var(--r,999px);background:var(--c);opacity:.45;animation:flota var(--t) ease-in-out var(--dl) infinite alternate}
+  @keyframes flota{from{transform:translate3d(0,0,0) rotate(0deg)}to{transform:translate3d(var(--dx),var(--dy),0) rotate(var(--rot))}}
+
+  /* Encabezado que se compacta + barra de lectura */
+  header{transition:background .3s,box-shadow .3s}
+  header.desplazado{background:rgba(252,230,214,.98);box-shadow:0 12px 32px -26px rgba(142,74,72,.9)}
+  nav{transition:height .3s var(--curva)}
+  header.desplazado nav{height:64px}
+  .logo-nav{transition:transform .3s var(--curva);transform-origin:left center}
+  header.desplazado .logo-nav{transform:scale(.88)}
+  nav ul a.activo{color:var(--rosa)}
+  nav ul a.activo::after{width:100%}
+  .progreso{position:absolute;left:0;bottom:-1px;z-index:2;height:2px;width:0;border-radius:0 2px 2px 0;background:linear-gradient(90deg,var(--salmon),var(--rosa));transition:width .12s linear}
+
+  /* Revelado al hacer scroll */
+  .con-js .rev{opacity:0;transform:translateY(28px);transition:opacity .75s var(--curva),transform .75s var(--curva)}
+  .con-js .rev.visible{opacity:1;transform:none}
+
+  /* La comilla de la cita entra girando */
+  .con-js .cita::before{opacity:0;transform:translateY(14px) rotate(-10deg);transition:opacity .7s var(--curva) .25s,transform .7s var(--curva) .25s}
+  .con-js .cita.visible::before{opacity:1;transform:none}
+
+  /* Los numeros de los pasos suben al aparecer */
+  .con-js .paso::before{opacity:0;transform:translateY(14px);transition:opacity .7s var(--curva) .2s,transform .7s var(--curva) .2s,color .3s}
+  .con-js .paso.visible::before{opacity:1;transform:none}
+  .paso:hover::before{color:var(--durazno)}
+
+  /* La linea del seguimiento se dibuja sola */
+  .con-js .estados::before{transform:scaleX(0);transform-origin:left center;transition:transform 1.2s var(--curva) .15s}
+  .con-js .estados.dibujada::before{transform:scaleX(1)}
+  .estado i{transition:transform .3s var(--curva),background .3s,color .3s,box-shadow .3s}
+  .estado:hover i{transform:scale(1.12);background:var(--rosa);color:var(--blanco);box-shadow:0 10px 20px -12px rgba(201,106,102,.9)}
+
+  /* Brillo que cruza los botones */
+  .btn{position:relative;overflow:hidden}
+  .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.4) 50%,transparent 62%);transform:translateX(-130%);transition:transform .75s var(--curva)}
+  .btn:hover::after{transform:translateX(130%)}
+  .btn.pendiente::after{display:none}
+
+  /* Tarjetas de personalizacion */
+  .icono{transition:transform .35s var(--curva),background .3s,color .3s}
+  .opcion{position:relative;overflow:hidden}
+  .opcion::before{content:"";position:absolute;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,var(--salmon),var(--rosa));transform:scaleX(0);transform-origin:left;transition:transform .45s var(--curva)}
+  .opcion:hover::before{transform:scaleX(1)}
+  .opcion:hover .icono{transform:scale(1.08) rotate(-7deg);background:var(--rosa);color:var(--blanco)}
+  .chips span{transition:background .25s,color .25s,transform .25s}
+  .opcion:hover .chips span{background:var(--durazno)}
+  .chips span:hover{background:var(--rosa);color:var(--blanco);transform:translateY(-2px)}
+
+  /* Galeria */
+  .marco{position:relative}
+  .marco::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(142,74,72,0) 55%,rgba(142,74,72,.32));opacity:0;transition:opacity .45s}
+  .pieza:hover .marco::after{opacity:1}
+  .pieza .texto{position:relative}
+  .pieza .texto::before{content:"";position:absolute;top:0;left:1.6rem;width:0;height:2px;background:var(--rosa);transition:width .45s var(--curva)}
+  .pieza:hover .texto::before{width:34px}
+
+  /* Ocasiones */
+  .ocasiones div{transition:transform .3s var(--curva),border-color .3s}
+  .ocasiones div:hover{transform:translateX(5px);border-color:var(--rosa)}
+
+  /* Resplandor lento en la banda oscura */
+  .pasos-sec{position:relative;overflow:hidden}
+  .pasos-sec::before{content:"";position:absolute;inset:-35% -12%;pointer-events:none;background:radial-gradient(circle at 22% 28%,rgba(223,166,157,.20),transparent 46%),radial-gradient(circle at 78% 72%,rgba(234,199,184,.16),transparent 46%);animation:deriva 24s ease-in-out infinite alternate}
+  .pasos-sec>.contenedor{position:relative;z-index:1}
+  /* Borde festoneado: el beton de la seccion de arriba escurre sobre la banda */
+  .pasos-sec::after{content:"";position:absolute;top:0;left:0;right:0;height:18px;z-index:2;pointer-events:none;background:radial-gradient(circle at 9px 0,var(--crema) 9px,rgba(0,0,0,0) 9.5px) repeat-x;background-size:18px 18px}
+
+  /* Las rayitas de cada etiqueta se estiran al aparecer */
+  .con-js .rev .etiqueta::before,.con-js .rev .etiqueta::after{width:0;transition:width .6s var(--curva) .3s}
+  .con-js .rev.visible .etiqueta::before,.con-js .rev.visible .etiqueta::after{width:28px}
+  @keyframes deriva{to{transform:translate3d(4%,-3%,0) scale(1.08)}}
+
+  /* Entrega y pago */
+  .info>div{transition:transform .3s var(--curva),box-shadow .3s}
+  .info>div:hover{transform:translateY(-4px);box-shadow:0 24px 40px -30px rgba(142,74,72,.6)}
+  .info li{transition:transform .25s var(--curva)}
+  .info li:hover{transform:translateX(4px)}
+
+  /* Datos de contacto */
+  .datos li .icono{transition:transform .3s var(--curva),background .3s,color .3s}
+  .datos li:hover .icono{transform:rotate(-8deg) scale(1.06);background:var(--rosa);color:var(--blanco)}
+  .datos li a{border-bottom:1px solid transparent;transition:color .25s,border-color .25s}
+  .datos li a:hover{color:var(--rosa);border-bottom-color:var(--rosa)}
+
+  /* Pie */
+  .logo-pie{transition:transform .4s var(--curva)}
+  footer:hover .logo-pie{transform:scale(1.04)}
+
+  /* Foco visible para teclado */
+  a:focus-visible,label:focus-visible{outline:2px solid var(--rosa);outline-offset:4px;border-radius:8px}
+
   @media (max-width:900px){
     .hamburguesa{display:block}
     nav ul{display:none;position:absolute;top:76px;left:-4%;width:108%;flex-direction:column;gap:0;background:var(--logo-fondo);padding:.5rem 4% 1.2rem;border-bottom:1px solid rgba(201,106,102,.2);box-shadow:0 18px 30px -22px rgba(142,74,72,.6)}
@@ -183,11 +293,20 @@
     .estados::before{top:0;bottom:0;left:22px;right:auto;width:3px;height:auto;background:linear-gradient(180deg,var(--salmon),var(--rosa))}
     .estado{display:flex;gap:1rem;align-items:center;text-align:left}
     .estado i{margin:0;flex-shrink:0}
+    .con-js .estados::before{transform:scaleY(0);transform-origin:center top}
+    .con-js .estados.dibujada::before{transform:scaleY(1)}
   }
   @media (max-width:560px){
     section{padding:4rem 0}
     .opciones,.pasos,.galeria,.ocasiones{grid-template-columns:1fr}
     nav .btn{padding:.7rem 1.1rem;font-size:.85rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    .con-js .rev,.con-js .cita::before,.con-js .paso::before{opacity:1;transform:none}
+    .con-js .estados::before{transform:scaleX(1)}
+    .confites{display:none}
   }
 </style>
 </head>
@@ -209,12 +328,31 @@
       <li><a href="#contacto">Contacto</a></li>
     </ul>
     <a href="#contacto" class="btn">Cotiza tu pastel</a>
+    <div class="progreso" id="progreso" aria-hidden="true"></div>
   </nav>
 </header>
 
 <main>
   <!-- Portada -->
   <div class="hero">
+    <div class="confites" aria-hidden="true">
+      <span style="--x:43%;--y:23%;--d:14px;--h:5px;--r:3px;--c:var(--salmon);--t:17s;--dl:3.9s;--dx:-26px;--dy:-14px;--rot:197deg"></span>
+      <span style="--x:14%;--y:50%;--d:6px;--c:var(--rosa);--t:20s;--dl:0.3s;--dx:2px;--dy:-34px;--rot:69deg"></span>
+      <span style="--x:57%;--y:57%;--d:12px;--c:var(--durazno);--t:12s;--dl:1.4s;--dx:5px;--dy:-27px;--rot:75deg"></span>
+      <span style="--x:74%;--y:19%;--d:14px;--h:5px;--r:3px;--c:var(--crema);--t:14s;--dl:3.8s;--dx:7px;--dy:-39px;--rot:207deg"></span>
+      <span style="--x:76%;--y:54%;--d:8px;--c:var(--blanco);--t:11s;--dl:5.9s;--dx:-28px;--dy:-23px;--rot:94deg"></span>
+      <span style="--x:55%;--y:22%;--d:6px;--c:var(--salmon);--t:19s;--dl:0.7s;--dx:-11px;--dy:-23px;--rot:106deg"></span>
+      <span style="--x:76%;--y:77%;--d:14px;--h:5px;--r:3px;--c:var(--rosa);--t:21s;--dl:1.1s;--dx:-24px;--dy:-23px;--rot:76deg"></span>
+      <span style="--x:74%;--y:11%;--d:12px;--c:var(--durazno);--t:20s;--dl:1.2s;--dx:13px;--dy:-23px;--rot:169deg"></span>
+      <span style="--x:42%;--y:63%;--d:12px;--c:var(--crema);--t:20s;--dl:5.5s;--dx:-7px;--dy:-31px;--rot:123deg"></span>
+      <span style="--x:25%;--y:35%;--d:14px;--h:5px;--r:3px;--c:var(--blanco);--t:12s;--dl:3.4s;--dx:3px;--dy:-25px;--rot:147deg"></span>
+      <span style="--x:95%;--y:61%;--d:9px;--c:var(--salmon);--t:15s;--dl:3.7s;--dx:-26px;--dy:-37px;--rot:191deg"></span>
+      <span style="--x:23%;--y:47%;--d:12px;--c:var(--rosa);--t:13s;--dl:5.6s;--dx:-4px;--dy:-39px;--rot:79deg"></span>
+      <span style="--x:73%;--y:77%;--d:14px;--h:5px;--r:3px;--c:var(--durazno);--t:16s;--dl:2.0s;--dx:-8px;--dy:-21px;--rot:187deg"></span>
+      <span style="--x:76%;--y:62%;--d:11px;--c:var(--crema);--t:12s;--dl:5.0s;--dx:30px;--dy:-32px;--rot:181deg"></span>
+      <span style="--x:87%;--y:12%;--d:11px;--c:var(--blanco);--t:11s;--dl:4.4s;--dx:-11px;--dy:-20px;--rot:207deg"></span>
+      <span style="--x:59%;--y:40%;--d:14px;--h:5px;--r:3px;--c:var(--salmon);--t:22s;--dl:2.3s;--dx:12px;--dy:-29px;--rot:65deg"></span>
+    </div>
     <div class="contenedor">
       <div>
         <span class="etiqueta">Pasteles personalizados</span>
@@ -247,13 +385,13 @@
   <!-- Nosotros -->
   <section class="nosotros" id="nosotros">
     <div class="contenedor">
-      <div>
+      <div class="rev">
         <span class="etiqueta">Sobre nosotros</span>
         <h2>Nos dedicamos a una sola cosa: tu pastel</h2>
         <p>BakeMe es una pastelería especializada únicamente en pasteles personalizados. Escuchamos lo que quieres para tu celebración y lo convertimos en un pastel único, pensado solo para ese momento.</p>
         <p>Tú eliges cada detalle y nosotros nos encargamos de que llegue tal como lo pediste, anotando todo desde el primer mensaje: sabor, relleno, tamaño, forma, el mensaje escrito y tu imagen de referencia.</p>
       </div>
-      <div class="cita">
+      <div class="cita rev">
         <p>Cada celebración es diferente, por eso ningún pastel nuestro es igual a otro.</p>
         <span>— BakeMe Pastelería</span>
       </div>
@@ -263,14 +401,14 @@
   <!-- Galería de diseños -->
   <section id="galeria">
     <div class="contenedor">
-      <div class="titulo-lado">
+      <div class="titulo-lado rev">
         <div>
           <span class="etiqueta">Nuestros diseños</span>
           <h2>Así se ve un pastel hecho a la medida</h2>
         </div>
       </div>
       <div class="galeria">
-        <article class="pieza">
+        <article class="pieza rev">
           <div class="marco">
             <img src="https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=800&h=600&fit=crop&crop=entropy&q=70" alt="Pastel de tres pisos con flores de crema en tonos rosados" width="800" height="600" loading="lazy">
           </div>
@@ -279,7 +417,7 @@
             <p>Para bodas y XV años, con acabado liso y decoración de flores.</p>
           </div>
         </article>
-        <article class="pieza">
+        <article class="pieza rev">
           <div class="marco">
             <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=600&fit=crop&crop=entropy&q=70" alt="Pastel de chocolate con cobertura derramada y rosetones" width="800" height="600" loading="lazy">
           </div>
@@ -288,7 +426,7 @@
             <p>Bizcocho de chocolate con cobertura y el decorado que elijas.</p>
           </div>
         </article>
-        <article class="pieza">
+        <article class="pieza rev">
           <div class="marco">
             <img src="https://images.unsplash.com/photo-1557925923-cd4648e211a0?w=800&h=600&fit=crop&crop=entropy&q=70" alt="Pastel de crema con galleta triturada por encima" width="800" height="600" loading="lazy">
           </div>
@@ -304,43 +442,43 @@
   <!-- Personalización -->
   <section class="personaliza" id="personaliza">
     <div class="contenedor">
-      <div class="titulo-sec">
+      <div class="titulo-sec rev">
         <span class="etiqueta">Personalízalo</span>
         <h2>Tú decides cada detalle</h2>
         <p>Así armamos juntos tu pastel. Si tienes una idea distinta, cuéntanosla y buscamos cómo hacerla realidad.</p>
       </div>
       <div class="opciones">
-        <article class="opcion">
+        <article class="opcion rev">
           <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M5 20v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7"/><path d="M5 15c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0M12 11V7M12 4.5v.01"/></svg></div>
           <h3>Sabor</h3>
           <p>El bizcocho base de tu pastel.</p>
           <div class="chips"><span>Vainilla</span><span>Chocolate</span><span>Red velvet</span><span>Tres leches</span></div>
         </article>
-        <article class="opcion">
+        <article class="opcion rev">
           <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h18M3 12h18M3 16h18"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></div>
           <h3>Relleno</h3>
           <p>La capa que le da el toque especial.</p>
           <div class="chips"><span>Fresa</span><span>Dulce de leche</span><span>Crema pastelera</span><span>Chocolate</span></div>
         </article>
-        <article class="opcion">
+        <article class="opcion rev">
           <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7 7 21l-4-4L17 3z"/><path d="m8 12 2 2M11 9l2 2M14 6l2 2"/></svg></div>
           <h3>Tamaño</h3>
           <p>Según el número de invitados.</p>
           <div class="chips"><span>Pequeño</span><span>Mediano</span><span>Grande</span></div>
         </article>
-        <article class="opcion">
+        <article class="opcion rev">
           <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4"/><rect x="13" y="3" width="8" height="8" rx="1"/><path d="M12 21s-6-3.5-6-7a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 3.5-6 7-6 7z"/></svg></div>
           <h3>Forma</h3>
           <p>La silueta de tu pastel.</p>
           <div class="chips"><span>Redondo</span><span>Cuadrado</span><span>Corazón</span><span>Varios pisos</span></div>
         </article>
-        <article class="opcion">
+        <article class="opcion rev">
           <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
           <h3>Mensaje</h3>
           <p>Un nombre, una fecha o una frase escrita sobre tu pastel.</p>
           <div class="chips"><span>“Feliz cumpleaños, Ana”</span></div>
         </article>
-        <article class="opcion">
+        <article class="opcion rev">
           <div class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div>
           <h3>Imagen de referencia</h3>
           <p>Envíanos una o varias fotos del diseño que te gusta y lo tomamos como guía para decorarlo.</p>
@@ -352,19 +490,19 @@
   <!-- Ocasiones -->
   <section class="ocasiones-sec">
     <div class="contenedor">
-      <div>
+      <div class="rev">
         <span class="etiqueta">Ocasiones</span>
         <h2>Para cada celebración</h2>
       </div>
       <div class="ocasiones">
-        <div><b>Cumpleaños</b><small>Del tema favorito de quien cumple.</small></div>
-        <div><b>Bodas</b><small>Varios pisos y decoración fina.</small></div>
-        <div><b>XV años</b><small>Diseños elegantes a gran escala.</small></div>
-        <div><b>Baby shower</b><small>Colores suaves y figuras.</small></div>
-        <div><b>Bautizos</b><small>Detalles sencillos y delicados.</small></div>
-        <div><b>Graduaciones</b><small>Con los colores de la institución.</small></div>
-        <div><b>Aniversarios</b><small>Formas de corazón y mensajes.</small></div>
-        <div><b>Empresas</b><small>Con el logo o la marca del negocio.</small></div>
+        <div class="rev"><b>Cumpleaños</b><small>Del tema favorito de quien cumple.</small></div>
+        <div class="rev"><b>Bodas</b><small>Varios pisos y decoración fina.</small></div>
+        <div class="rev"><b>XV años</b><small>Diseños elegantes a gran escala.</small></div>
+        <div class="rev"><b>Baby shower</b><small>Colores suaves y figuras.</small></div>
+        <div class="rev"><b>Bautizos</b><small>Detalles sencillos y delicados.</small></div>
+        <div class="rev"><b>Graduaciones</b><small>Con los colores de la institución.</small></div>
+        <div class="rev"><b>Aniversarios</b><small>Formas de corazón y mensajes.</small></div>
+        <div class="rev"><b>Empresas</b><small>Con el logo o la marca del negocio.</small></div>
       </div>
     </div>
   </section>
@@ -372,15 +510,15 @@
   <!-- Cómo pedir -->
   <section class="pasos-sec" id="pedidos">
     <div class="contenedor">
-      <div class="titulo-sec">
+      <div class="titulo-sec rev">
         <span class="etiqueta">Cómo pedir</span>
         <h2>Tu pastel en 4 pasos</h2>
       </div>
       <div class="pasos">
-        <div class="paso"><h3>Escríbenos</h3><p>Contáctanos por WhatsApp y cuéntanos la fecha y el tipo de celebración.</p></div>
-        <div class="paso"><h3>Diseñamos juntos</h3><p>Elige sabor, relleno, tamaño, forma y mensaje, y envíanos tu imagen de referencia.</p></div>
-        <div class="paso"><h3>Confirmamos</h3><p>Te damos el precio total y apartas tu pedido con un anticipo.</p></div>
-        <div class="paso"><h3>¡A celebrar!</h3><p>Recoge tu pastel en tienda o recíbelo a domicilio el día acordado.</p></div>
+        <div class="paso rev"><h3>Escríbenos</h3><p>Contáctanos por WhatsApp y cuéntanos la fecha y el tipo de celebración.</p></div>
+        <div class="paso rev"><h3>Diseñamos juntos</h3><p>Elige sabor, relleno, tamaño, forma y mensaje, y envíanos tu imagen de referencia.</p></div>
+        <div class="paso rev"><h3>Confirmamos</h3><p>Te damos el precio total y apartas tu pedido con un anticipo.</p></div>
+        <div class="paso rev"><h3>¡A celebrar!</h3><p>Recoge tu pastel en tienda o recíbelo a domicilio el día acordado.</p></div>
       </div>
     </div>
   </section>
@@ -388,20 +526,20 @@
   <!-- Seguimiento, entrega y pago -->
   <section>
     <div class="contenedor">
-      <div class="titulo-sec">
+      <div class="titulo-sec rev">
         <span class="etiqueta">Seguimiento</span>
         <h2>Siempre sabrás cómo va tu pedido</h2>
         <p>Te mantenemos informado en cada etapa, desde que recibimos tu pedido hasta que llega a tus manos.</p>
       </div>
       <div class="estados">
-        <div class="estado"><i>1</i><div><b>Recibido</b><small>Registramos tu pedido</small></div></div>
-        <div class="estado"><i>2</i><div><b>En preparación</b><small>Horneamos y decoramos</small></div></div>
-        <div class="estado"><i>3</i><div><b>Listo</b><small>Tu pastel está terminado</small></div></div>
-        <div class="estado"><i>4</i><div><b>Entregado</b><small>¡A disfrutar!</small></div></div>
+        <div class="estado rev"><i>1</i><div><b>Recibido</b><small>Registramos tu pedido</small></div></div>
+        <div class="estado rev"><i>2</i><div><b>En preparación</b><small>Horneamos y decoramos</small></div></div>
+        <div class="estado rev"><i>3</i><div><b>Listo</b><small>Tu pastel está terminado</small></div></div>
+        <div class="estado rev"><i>4</i><div><b>Entregado</b><small>¡A disfrutar!</small></div></div>
       </div>
 
       <div class="info">
-        <div>
+        <div class="rev">
           <h3>Entrega</h3>
           <ul>
             <li>Retiro en tienda</li>
@@ -409,7 +547,7 @@
             <li>Haz tu pedido con anticipación para asegurar tu fecha</li>
           </ul>
         </div>
-        <div>
+        <div class="rev">
           <h3>Formas de pago</h3>
           <ul>
             <li>Efectivo</li>
@@ -424,7 +562,7 @@
   <!-- Contacto -->
   <section class="contacto" id="contacto">
     <div class="contenedor">
-      <div class="tarjeta-contacto">
+      <div class="tarjeta-contacto rev">
         <div>
           <span class="etiqueta">Contacto</span>
           <h2>¿Ya tienes una idea en mente?</h2>
@@ -501,6 +639,95 @@ document.querySelectorAll("nav ul a").forEach(function (a) {
     document.getElementById("menu").checked = false;
   });
 });
+</script>
+
+<script>
+/* =======================================================================
+   Movimiento: revelado al hacer scroll, encabezado compacto, barra de
+   lectura y marca de la seccion activa en el menu.
+   ======================================================================= */
+(function () {
+  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hayOjo = "IntersectionObserver" in window;
+  var revelables = document.querySelectorAll(".rev");
+  var estados = document.querySelector(".estados");
+
+  // Escalona los elementos que comparten una misma rejilla.
+  [".galeria", ".opciones", ".ocasiones", ".pasos", ".estados", ".info", ".nosotros .contenedor"]
+    .forEach(function (selector) {
+      document.querySelectorAll(selector).forEach(function (grupo) {
+        grupo.querySelectorAll(":scope > .rev").forEach(function (hijo, i) {
+          hijo.style.transitionDelay = Math.min(i, 5) * 90 + "ms";
+        });
+      });
+    });
+
+  if (menos || !hayOjo) {
+    revelables.forEach(function (el) { el.classList.add("visible"); });
+    if (estados) estados.classList.add("dibujada");
+  } else {
+    var ojo = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add("visible");
+        ojo.unobserve(e.target);
+      });
+    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.15 });
+    revelables.forEach(function (el) { ojo.observe(el); });
+
+    if (estados) {
+      var ojoLinea = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          e.target.classList.add("dibujada");
+          ojoLinea.unobserve(e.target);
+        });
+      }, { threshold: 0.3 });
+      ojoLinea.observe(estados);
+    }
+  }
+
+  // Encabezado compacto y barra de lectura.
+  var cabecera = document.querySelector("header");
+  var barra = document.getElementById("progreso");
+  var enCola = false;
+  function alDesplazar() {
+    enCola = false;
+    var y = window.pageYOffset || document.documentElement.scrollTop;
+    cabecera.classList.toggle("desplazado", y > 24);
+    var recorrido = document.documentElement.scrollHeight - window.innerHeight;
+    barra.style.width = (recorrido > 0 ? Math.min(y / recorrido, 1) * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", function () {
+    if (enCola) return;
+    enCola = true;
+    window.requestAnimationFrame(alDesplazar);
+  }, { passive: true });
+  alDesplazar();
+
+  // Marca en el menu la seccion que se esta viendo.
+  if (hayOjo) {
+    var enlaces = {};
+    document.querySelectorAll('nav ul a[href^="#"]').forEach(function (a) {
+      enlaces[a.getAttribute("href").slice(1)] = a;
+    });
+    var secciones = Object.keys(enlaces)
+      .map(function (id) { return document.getElementById(id); })
+      .filter(Boolean);
+    if (secciones.length) {
+      var dentro = {};
+      var ojoMenu = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) { dentro[e.target.id] = e.isIntersecting; });
+        var actual = null;
+        secciones.forEach(function (sec) { if (!actual && dentro[sec.id]) actual = sec.id; });
+        Object.keys(enlaces).forEach(function (id) {
+          enlaces[id].classList.toggle("activo", actual === id);
+        });
+      }, { rootMargin: "-45% 0px -45% 0px" });
+      secciones.forEach(function (sec) { ojoMenu.observe(sec); });
+    }
+  }
+})();
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
