@@ -1,2 +1,4 @@
+# Netlify arma el sitio con los mismos archivos que publica GitHub Pages.
 [build]
-  publish = "publicar"
+  command = "mkdir -p _site && cp -r index.html escena.js logo.jpeg pasteles _site/"
+  publish = "_site"
