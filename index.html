@@ -81,24 +81,60 @@
 
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;min-height:48px;background:var(--vino);color:var(--blanco);padding:.85rem 1.6rem;border-radius:999px;font-weight:700;transition:transform .16s var(--curva),background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .25s ease;box-shadow:0 12px 24px -14px rgba(142,74,72,.9)}
   .btn:active{transform:scale(.97)}
-  .btn.claro{background:transparent;color:var(--vino);border:2px solid var(--rosa);box-shadow:none}
   .btn svg{width:20px;height:20px;flex-shrink:0}
   .btn.pendiente{background:var(--durazno);color:var(--vino);box-shadow:none;cursor:not-allowed}
 
-  /* ---------- Portada ---------- */
-  .hero{background:linear-gradient(180deg,var(--logo-fondo),var(--beige));overflow:hidden}
-  .hero .contenedor{display:grid;grid-template-columns:1.05fr .95fr;gap:3.5rem;align-items:center;padding:4.5rem 0 5.5rem}
+  /* ---------- Portada: vitrina de pastelería ---------- */
+  .hero{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(60% 55% at 78% 44%,rgba(234,199,184,.6),rgba(234,199,184,0) 70%),radial-gradient(45% 40% at 6% 10%,rgba(223,166,157,.26),rgba(223,166,157,0) 70%),linear-gradient(180deg,var(--logo-fondo),var(--beige))}
+  /* Grano de papel: le quita lo plano al fondo */
+  .hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.08;mix-blend-mode:multiply;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .56 0 0 0 0 .29 0 0 0 0 .28 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")}
+  /* Borde festoneado, el mismo betún que separa las bandas de abajo */
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:18px;z-index:2;pointer-events:none;background:radial-gradient(circle at 9px 18px,var(--blanco) 9px,rgba(0,0,0,0) 9.5px) repeat-x;background-size:18px 18px}
+  .hero>.contenedor{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;grid-template-rows:1fr auto auto auto auto auto 1fr;column-gap:3.5rem;align-items:center;padding:4rem 0 5.5rem}
+  .hero .insignia{grid-column:1;grid-row:2}
+  .hero h1{grid-column:1;grid-row:3}
+  .hero p{grid-column:1;grid-row:4}
+  .hero .acciones{grid-column:1;grid-row:5}
+  .hero .garantias{grid-column:1;grid-row:6}
+  .hero-escenario{grid-column:2;grid-row:1/-1}
+
   .etiqueta{display:inline-block;color:var(--vino);font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:1rem}
   .etiqueta::before{content:"";display:inline-block;width:28px;height:2px;background:var(--salmon);vertical-align:middle;margin-right:.7rem}
-  .hero h1{font-size:clamp(2.5rem,5.5vw,4.2rem);margin-bottom:1.3rem}
+  .insignia{display:inline-flex;align-items:center;gap:.6rem;justify-self:start;margin-bottom:1.5rem;padding:.4rem 1rem .4rem .4rem;border-radius:999px;background:rgba(255,249,243,.66);border:1px solid rgba(201,106,102,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 24px -18px rgba(142,74,72,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--vino);font-weight:700;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+  .insignia svg{width:26px;height:26px;padding:5px;border-radius:50%;background:var(--vino);color:var(--durazno);flex-shrink:0}
+  .hero h1{font-size:clamp(2.6rem,5.6vw,4.4rem);line-height:1.04;letter-spacing:-.012em;margin-bottom:1.4rem;text-wrap:balance}
   .hero h1 em{color:var(--rosa)}
-  .hero p{font-size:1.15rem;max-width:40ch;margin-bottom:2rem}
+  /* Trazo a mano bajo "gusto": se dibuja solo al cargar */
+  .trazo{position:relative;display:inline-block;white-space:nowrap}
+  .trazo svg{position:absolute;left:-3%;bottom:-.2em;width:106%;height:.42em;overflow:visible;pointer-events:none}
+  .trazo path{fill:none;stroke:var(--salmon);stroke-width:4;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:0}
+  .con-js .trazo path{stroke-dashoffset:1;animation:traza 1.1s var(--curva) 1s forwards}
+  @keyframes traza{to{stroke-dashoffset:0}}
+  .hero p{font-size:1.12rem;line-height:1.75;max-width:38ch;margin-bottom:2rem;text-wrap:pretty}
   .acciones{display:flex;gap:1rem;flex-wrap:wrap}
-  .hero-arte{position:relative;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--blanco),var(--crema) 55%,var(--durazno));display:grid;place-items:center;box-shadow:0 30px 60px -30px rgba(142,74,72,.45)}
+  .hero .acciones{align-items:center;gap:.8rem 1.6rem}
+  .btn .flecha{width:18px;height:18px;transition:transform .2s var(--curva)}
+  .enlace-suave{display:inline-flex;align-items:center;gap:.35rem;min-height:48px;padding:0 .15rem;font-weight:700;color:var(--vino);background:linear-gradient(currentColor,currentColor) 0 calc(100% - 11px)/0 1.5px no-repeat;transition:background-size .32s var(--curva),opacity .15s ease}
+  .enlace-suave svg{width:17px;height:17px;transition:transform .2s var(--curva)}
+  .enlace-suave:active{opacity:.65}
+  .garantias{list-style:none;display:flex;flex-wrap:wrap;gap:.7rem 1.6rem;margin-top:2.3rem;padding-top:1.5rem;border-top:1px solid rgba(201,106,102,.2);font-size:.86rem;font-weight:700;color:var(--vino)}
+  .garantias li{display:flex;align-items:center;gap:.55rem}
+  .garantias svg{width:18px;height:18px;flex-shrink:0;color:var(--rosa)}
+
+  /* El pastel se luce en un arco de vitrina con doble filete */
+  .hero-escenario{position:relative;width:100%;max-width:500px;justify-self:center}
+  .hero-escenario::before{content:"";position:absolute;inset:-13px;border-radius:50% 50% 42px 42px/45% 45% 42px 42px;border:1px solid rgba(201,106,102,.34);pointer-events:none}
+  .hero-arte{position:relative;aspect-ratio:9/10;border-radius:50% 50% 30px 30px/45% 45% 30px 30px;background:radial-gradient(62% 14% at 50% 91%,rgba(223,166,157,.42),rgba(223,166,157,0) 72%),radial-gradient(90% 70% at 50% 28%,var(--blanco),var(--crema) 55%,var(--durazno));display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,249,243,.9),inset 0 -70px 90px -50px rgba(223,166,157,.5),0 44px 80px -40px rgba(142,74,72,.6)}
   .hero-arte>svg{width:74%;transition:opacity .55s cubic-bezier(.23,1,.32,1),transform .55s cubic-bezier(.23,1,.32,1)}
   .hero-arte.con-3d>svg{opacity:0;transform:scale(.94);pointer-events:none}
-  /* Sombra de contacto: asienta el pastel sobre el círculo */
-  .hero-arte.con-3d::after{content:"";position:absolute;z-index:0;left:50%;top:69%;width:42%;height:7%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(142,74,72,.28),rgba(142,74,72,0) 70%);pointer-events:none}
+  /* Sombra de contacto: asienta la base del pastel en el arco */
+  .hero-arte.con-3d::after{content:"";position:absolute;z-index:0;left:50%;top:84%;width:40%;height:6%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(142,74,72,.3),rgba(142,74,72,0) 70%);pointer-events:none}
+  /* Sello de la casa: gira despacio en la esquina del arco */
+  .sello{position:absolute;z-index:3;top:3%;right:-5%;width:clamp(86px,21%,110px);aspect-ratio:1;border-radius:50%;background:var(--blanco);box-shadow:0 16px 30px -18px rgba(142,74,72,.85),inset 0 0 0 1px rgba(201,106,102,.26);pointer-events:none}
+  .sello svg{display:block;width:100%;height:100%}
+  .sello text{font:700 7.6px "Lato",system-ui,sans-serif;fill:var(--vino)}
+  .sello .giro{transform-box:view-box;transform-origin:50% 50%;animation:gira 40s linear infinite}
+  @keyframes gira{to{transform:rotate(360deg)}}
   /* El lienzo desborda el círculo para que la lluvia de azúcar vuele libre */
   .lienzo-3d{position:absolute;inset:-18%;width:136%;height:136%;z-index:1;display:block;cursor:grab;touch-action:none;outline:none}
   .lienzo-3d:focus-visible{outline:2px solid var(--rosa);outline-offset:6px;border-radius:50%}
@@ -111,7 +147,7 @@
   section{padding:5.5rem 0}
   .titulo-sec{text-align:center;max-width:620px;margin:0 auto 3.5rem}
   .titulo-sec .etiqueta::after{content:"";display:inline-block;width:28px;height:2px;background:var(--salmon);vertical-align:middle;margin-left:.7rem}
-  .titulo-sec h2{font-size:clamp(2rem,4vw,2.8rem);margin-bottom:.8rem}
+  .titulo-sec h2{font-size:clamp(2rem,4vw,2.8rem);margin-bottom:.8rem;text-wrap:balance}
 
   /* Nosotros */
   .nosotros .contenedor{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
@@ -219,15 +255,19 @@
     .cf-cuerpo p{font-size:.82rem;margin:.95rem 0 1rem}
   }
 
-  /* Personalización */
+  /* Personalización: tarjetas vino con un remolino de betún animado detrás de un velo.
+     El degradado de fondo es el respaldo cuando no hay WebGL ni JavaScript. */
   .personaliza{background:var(--beige)}
   .opciones{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-  .opcion{background:var(--blanco);border-radius:var(--radio);padding:2rem;border:1px solid rgba(201,106,102,.12);transition:transform .25s,box-shadow .25s}
+  .opcion{display:flex;flex-direction:column;min-height:18.5rem;border-radius:28px;padding:2rem;color:rgba(255,249,243,.94);border:1px solid rgba(255,249,243,.14);background:radial-gradient(90% 70% at 88% 6%,rgba(223,166,157,.55),rgba(223,166,157,0) 62%),radial-gradient(80% 70% at 6% 100%,rgba(201,106,102,.5),rgba(201,106,102,0) 66%),var(--vino);box-shadow:0 26px 50px -30px rgba(94,43,42,.85);transition:transform .25s,box-shadow .25s,border-color .3s}
   .icono{width:58px;height:58px;border-radius:50%;background:var(--durazno);display:grid;place-items:center;margin-bottom:1.2rem;color:var(--vino)}
   .icono svg{width:28px;height:28px}
-  .opcion h3{font-size:1.35rem;margin-bottom:.4rem}
-  .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
-  .chips span{background:var(--crema);color:var(--vino);font-size:.82rem;padding:.25rem .75rem;border-radius:999px}
+  .opcion .icono{width:auto;height:auto;border-radius:0;background:none;place-items:start;margin-bottom:1.5rem;color:var(--durazno);filter:drop-shadow(0 8px 14px rgba(40,14,13,.5))}
+  .opcion .icono svg{width:46px;height:46px;stroke-width:1.5}
+  .opcion h3{font-size:1.5rem;margin-bottom:.45rem;color:var(--blanco);text-shadow:0 2px 14px rgba(40,14,13,.35)}
+  .opcion p{text-shadow:0 1px 10px rgba(40,14,13,.3)}
+  .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:auto;padding-top:1.2rem}
+  .chips span{background:rgba(255,249,243,.12);color:var(--blanco);font-size:.82rem;padding:.25rem .75rem;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,249,243,.2)}
 
   /* Ocasiones: banda compacta */
   .ocasiones-sec{background:var(--crema);padding:3.2rem 0}
@@ -247,17 +287,71 @@
   .paso::before{counter-increment:paso;content:"0" counter(paso);position:absolute;top:0;left:0;font-family:"Playfair Display",serif;font-size:3.2rem;color:var(--salmon)}
   .paso h3{color:var(--blanco);font-size:1.3rem;margin-bottom:.4rem}
 
-  /* Estado del pedido */
-  .estados{display:flex;justify-content:space-between;position:relative;max-width:820px;margin:0 auto}
-  .estados::before{content:"";position:absolute;top:22px;left:10%;right:10%;height:3px;background:linear-gradient(90deg,var(--salmon),var(--rosa))}
-  .estado{position:relative;text-align:center;flex:1}
-  .estado i{display:grid;place-items:center;width:47px;height:47px;margin:0 auto .8rem;border-radius:50%;background:var(--blanco);border:3px solid var(--rosa);color:var(--vino);font-style:normal;font-weight:700}
-  .estado b{display:block;color:var(--vino)}
-  .estado small{font-size:.85rem}
+  /* Seguimiento: el recorrido del pastel. Un dial orbital (idea de "Radial Orbital
+     Timeline", 21st.dev) y una lista de etapas con estado y avance (idea de
+     "Processing Timeline" y "Order Tracking"). Recorre las etapas sola al verse. */
+  .seguimiento{position:relative;background:radial-gradient(50% 40% at 16% 32%,rgba(234,199,184,.34),rgba(234,199,184,0) 70%),radial-gradient(40% 42% at 88% 64%,rgba(223,166,157,.2),rgba(223,166,157,0) 70%),var(--blanco)}
+  /* El vino de "Cómo pedir" gotea sobre la sección */
+  .seguimiento::before{content:"";position:absolute;top:0;left:0;right:0;height:18px;pointer-events:none;background:radial-gradient(circle at 9px 0,var(--vino) 9px,rgba(0,0,0,0) 9.5px) repeat-x;background-size:18px 18px}
+  .rastreo{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3rem 4.5rem;max-width:980px;margin:0 auto}
+  .rastreo-dial{--tam:min(360px,80vw);position:relative;width:var(--tam);aspect-ratio:1}
+  .dial-anillo{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .dial-orbita{fill:none;stroke:rgba(201,106,102,.34);stroke-width:1.2;stroke-dasharray:2 7;transform-box:view-box;transform-origin:50% 50%;animation:gira 80s linear infinite}
+  .dial-pista{fill:none;stroke:rgba(234,199,184,.6);stroke-width:9}
+  .dial-avance{fill:none;stroke:url(#dial-tono);stroke-width:9;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:0;transform-box:view-box;transform-origin:50% 50%;transform:rotate(-90deg);transition:stroke-dashoffset 1.1s var(--curva)}
+  .dial-nodo{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;display:grid;place-items:center;border-radius:50%;background:var(--blanco);border:2px solid var(--durazno);color:var(--salmon);transform:rotate(var(--a)) translateX(calc(var(--tam) * .3933)) rotate(calc(var(--a) * -1));transition:background-color .45s ease,border-color .45s ease,color .45s ease,box-shadow .45s ease}
+  .dial-nodo svg,.rastreo svg{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+  .dial-nodo svg{width:24px;height:24px;stroke-width:1.8}
+  .dial-nodo[data-estado="hecho"]{background:var(--vino);border-color:var(--vino);color:var(--durazno);box-shadow:0 10px 20px -12px rgba(142,74,72,.9)}
+  .dial-nodo[data-estado="curso"]{border-color:var(--rosa);color:var(--rosa);box-shadow:0 0 0 6px rgba(201,106,102,.14)}
+  .dial-nodo[data-estado="curso"]::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid rgba(201,106,102,.55);animation:latido 1.7s var(--curva) infinite}
+  @keyframes latido{from{transform:scale(.82);opacity:1}to{transform:scale(1.32);opacity:0}}
+  .dial-centro{position:absolute;inset:22%;border-radius:50%;display:grid;place-items:center;align-content:center;gap:.2rem;padding:0 8%;text-align:center;background:radial-gradient(circle at 50% 30%,var(--blanco),var(--crema) 70%,var(--durazno));box-shadow:inset 0 0 0 1px rgba(201,106,102,.16),inset 0 -18px 30px -18px rgba(223,166,157,.6),0 26px 44px -28px rgba(142,74,72,.65)}
+  .dial-escenas{position:relative;width:40%;aspect-ratio:1;margin-bottom:.35rem}
+  .dial-escena{position:absolute;inset:0;opacity:0;transform:scale(.88);filter:blur(3px);transition:opacity .45s ease,transform .6s var(--curva),filter .45s ease}
+  .dial-escena.activa{opacity:1;transform:none;filter:none}
+  .dial-escena svg{width:100%;height:100%;stroke:var(--vino);stroke-width:1.2}
+  .dial-escena .acento{stroke:var(--rosa)}
+  .dial-nombre{font-family:"Playfair Display",Georgia,serif;font-size:1.28rem;font-weight:600;line-height:1.1;color:var(--vino)}
+  .dial-paso{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--rosa)}
+  /* Chispas de azúcar al llegar a "Entregado" */
+  .dial-chispas{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+  .dial-chispas i{position:absolute;width:8px;height:8px;margin:-4px;border-radius:2px;background:var(--c);opacity:0}
+  .rastreo.celebra .dial-chispas i{animation:chispa 1.2s var(--curva) forwards}
+  @keyframes chispa{0%{opacity:1;transform:rotate(var(--r)) translateX(20px) scale(.5)}100%{opacity:0;transform:rotate(var(--r)) translateX(var(--d)) rotate(160deg) scale(1)}}
+  .rastreo-repetir{position:absolute;right:1%;bottom:1%;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(201,106,102,.3);background:var(--blanco);color:var(--vino);cursor:pointer;box-shadow:0 12px 22px -14px rgba(142,74,72,.85);opacity:0;transform:scale(.9);pointer-events:none;transition:opacity .3s ease,transform .3s var(--curva)}
+  .rastreo-repetir.lista{opacity:1;transform:none;pointer-events:auto}
+  .rastreo-repetir svg{width:19px;height:19px;stroke-width:2}
+  .rastreo-repetir:active{transform:scale(.94)}
+  .rastreo-lista{position:relative;list-style:none;display:grid;gap:.75rem}
+  /* hilo que une las marcas: asoma entre tarjeta y tarjeta */
+  .rastreo-lista::before{content:"";position:absolute;left:calc(1.2rem + 16px);top:2.2rem;bottom:2.2rem;width:2px;background:linear-gradient(180deg,var(--salmon),var(--durazno))}
+  .rastreo-etapa{position:relative;width:100%;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.5rem 1rem;padding:1rem 1.2rem;border-radius:18px;border:1px solid rgba(201,106,102,.16);background:rgba(255,249,243,.85);font:inherit;color:inherit;text-align:left;cursor:pointer;transition:background-color .35s ease,border-color .35s ease,box-shadow .35s ease,opacity .35s ease,transform .16s var(--curva)}
+  .rastreo-etapa:active{transform:scale(.985)}
+  .etapa-marca{position:relative;z-index:1;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:2px solid var(--durazno);background:var(--blanco);color:transparent;transition:background-color .35s ease,border-color .35s ease,color .35s ease}
+  .etapa-marca svg{width:16px;height:16px;stroke-width:3}
+  .etapa-texto b{display:block;font-family:"Playfair Display",Georgia,serif;font-size:1.1rem;font-weight:600;color:var(--vino)}
+  .etapa-texto small{display:block;font-size:.86rem;line-height:1.45}
+  .etapa-estado{padding:.32rem .7rem;border-radius:999px;background:rgba(234,199,184,.45);color:var(--vino);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;transition:background-color .35s ease,color .35s ease}
+  .etapa-barra{grid-column:2/-1;display:none;height:4px;border-radius:4px;background:rgba(234,199,184,.55);overflow:hidden}
+  .etapa-barra i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--salmon),var(--rosa));transform:scaleX(.08);transform-origin:left center}
+  .rastreo-etapa[data-estado="hecho"] .etapa-marca{background:var(--vino);border-color:var(--vino);color:var(--blanco)}
+  .rastreo-etapa[data-estado="hecho"] .etapa-estado{background:var(--vino);color:var(--blanco)}
+  .rastreo-etapa[data-estado="curso"]{background:var(--blanco);border-color:rgba(201,106,102,.5);box-shadow:0 20px 36px -26px rgba(142,74,72,.75)}
+  .rastreo-etapa[data-estado="curso"] .etapa-marca{border-color:var(--rosa);background:radial-gradient(circle,var(--rosa) 0 30%,var(--blanco) 34%)}
+  .rastreo-etapa[data-estado="curso"] .etapa-estado{background:var(--rosa);color:var(--blanco)}
+  .rastreo-etapa[data-estado="curso"] .etapa-barra{display:block}
+  .rastreo.en-marcha .rastreo-etapa[data-estado="curso"] .etapa-barra i{animation:llena var(--pausa,2s) linear forwards}
+  @keyframes llena{to{transform:scaleX(1)}}
+  .rastreo-etapa[data-estado="pendiente"]{opacity:.7}
+  .dial-escena.activa .batidor{transform-box:fill-box;transform-origin:80% 0;animation:bate .9s ease-in-out infinite alternate}
+  @keyframes bate{from{transform:rotate(-9deg)}to{transform:rotate(11deg)}}
 
   /* Entrega y pago */
-  .info{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:4rem}
-  .info>div{background:var(--crema);border-radius:var(--radio);padding:2.2rem}
+  .info{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:4.5rem}
+  .info>div{position:relative;background:linear-gradient(160deg,var(--crema),var(--beige));border:1px solid rgba(201,106,102,.14);border-radius:var(--radio);padding:2.2rem}
+  .info-icono{display:grid;place-items:center;width:50px;height:50px;margin-bottom:1.1rem;border-radius:16px;background:var(--vino);color:var(--durazno);box-shadow:0 14px 24px -14px rgba(142,74,72,.9)}
+  .info-icono svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   .info h3{font-size:1.4rem;margin-bottom:.6rem}
   .info ul{list-style:none;display:grid;gap:.5rem}
   .info li::before{content:"\2726";color:var(--rosa);margin-right:.6rem}
@@ -283,19 +377,22 @@
 
   /* Entrada de la portada */
   @keyframes entra{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
-  @keyframes aparece{from{opacity:0}to{opacity:1}}
-  .con-js .hero .etiqueta{animation:entra .85s .05s both var(--curva)}
+  .con-js .hero .insignia{animation:entra .85s .05s both var(--curva)}
   .con-js .hero h1{animation:entra .85s .16s both var(--curva)}
   .con-js .hero p{animation:entra .85s .28s both var(--curva)}
   .con-js .hero .acciones{animation:entra .85s .40s both var(--curva)}
-  .con-js .hero-arte{animation:aparece 1.1s .30s both}
+  .con-js .hero .garantias{animation:entra .85s .52s both var(--curva)}
+  .con-js .hero-escenario{animation:asoma 1.2s .22s both var(--curva)}
+  .con-js .sello{animation:sella .9s 1.15s both var(--curva)}
+  @keyframes asoma{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+  @keyframes sella{from{opacity:0;transform:scale(.82) rotate(-35deg)}to{opacity:1;transform:none}}
 
-  /* Confites flotando detras de la portada */
-  .hero{position:relative}
-  .hero>.contenedor{position:relative;z-index:1}
-  .confites{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-  .confites span{position:absolute;left:var(--x);top:var(--y);width:var(--d);height:var(--h,var(--d));border-radius:var(--r,999px);background:var(--c);opacity:.45;animation:flota var(--t) ease-in-out var(--dl) infinite alternate}
-  @keyframes flota{from{transform:translate3d(0,0,0) rotate(0deg)}to{transform:translate3d(var(--dx),var(--dy),0) rotate(var(--rot))}}
+  /* Luces de vitrina: bokeh cálido y destellos de azúcar detrás de la portada */
+  .hero-luces{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+  .bokeh{position:absolute;left:var(--x);top:var(--y);width:var(--d);height:var(--d);margin:calc(var(--d) / -2) 0 0 calc(var(--d) / -2);border-radius:50%;background:radial-gradient(circle,var(--c) 0,var(--c) 18%,rgba(255,249,243,0) 70%);opacity:var(--o,.6);animation:deriva-luz var(--t,18s) ease-in-out var(--dl,0s) infinite alternate}
+  @keyframes deriva-luz{to{transform:translate3d(var(--dx),var(--dy),0) scale(1.08)}}
+  .destello{position:absolute;left:var(--x);top:var(--y);width:var(--d,10px);height:var(--d,10px);background:var(--c,var(--blanco));clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);opacity:0;animation:brilla var(--t,4.5s) ease-in-out var(--dl,0s) infinite}
+  @keyframes brilla{0%,100%{opacity:0;transform:scale(.4) rotate(0deg)}50%{opacity:.95;transform:scale(1) rotate(45deg)}}
 
   /* Encabezado que se compacta + barra de lectura */
   header{transition:background .3s,box-shadow .3s}
@@ -318,20 +415,33 @@
   .con-js .paso::before{opacity:0;transform:translateY(14px);transition:opacity .7s var(--curva) .2s,transform .7s var(--curva) .2s,color .3s}
   .con-js .paso.visible::before{opacity:1;transform:none}
 
-  /* La linea del seguimiento se dibuja sola */
-  .con-js .estados::before{transform:scaleX(0);transform-origin:left center;transition:transform 1.2s var(--curva) .15s}
-  .con-js .estados.dibujada::before{transform:scaleX(1)}
-  .estado i{transition:transform .3s var(--curva),background-color .3s,border-color .3s,color .3s,box-shadow .3s}
-
   /* Brillo que cruza los botones */
   .btn{position:relative;overflow:hidden}
-  .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.4) 50%,transparent 62%);transform:translateX(-130%);transition:transform .75s var(--curva)}
+  .btn:not(.aura)::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.4) 50%,transparent 62%);transform:translateX(-130%);transition:transform .75s var(--curva)}
   .btn.pendiente::after{display:none}
 
-  /* Tarjetas de personalizacion */
+  /* Botones de pedido con aura de betún: un borde degradado que recorre la
+     paleta y un halo difuminado debajo (adaptado de "Rainbow Borders Button",
+     21st.dev). El cuerpo va en ::after para que el halo quede detrás. */
+  .aura{--cuerpo:linear-gradient(180deg,#9D5553,#7E3E3C);--tinta:var(--blanco);--degradado-aura:linear-gradient(115deg,#FFF3EA,#C96A66,#EAC7B8,#8E4A48,#DFA69D,#FFF3EA,#C96A66,#EAC7B8,#8E4A48,#DFA69D);--halo:linear-gradient(115deg,#C96A66,#EAC7B8,#DFA69D,#F7E8D9,#C96A66,#DFA69D,#EAC7B8,#C96A66);position:relative;isolation:isolate;overflow:visible;background:none;color:var(--tinta);box-shadow:0 14px 26px -16px rgba(142,74,72,.85)}
+  .aura::before,.aura::after{content:"";position:absolute;border-radius:inherit;pointer-events:none}
+  .aura::before{inset:-3px;z-index:-2;background:var(--halo);background-size:400% 100%;filter:blur(14px);opacity:.9;animation:aura 10s linear infinite;transition:opacity .3s ease,transform .35s var(--curva)}
+  .aura::after{inset:0;z-index:-1;border:2px solid transparent;background:var(--cuerpo) padding-box,var(--degradado-aura) border-box;background-size:100% 100%,400% 100%;animation:aura-borde 10s linear infinite}
+  @keyframes aura{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  @keyframes aura-borde{0%,100%{background-position:0 0,0% 50%}50%{background-position:0 0,100% 50%}}
+  .aura.clara{--cuerpo:linear-gradient(180deg,#FFFFFF,#FBEFDF);--tinta:var(--vino)}
+  .aura.pendiente{--cuerpo:var(--durazno);--tinta:var(--vino);box-shadow:none}
+  .aura.pendiente::before{display:none}
+  .aura.pendiente::after{animation:none}
+
+  /* Tarjetas de personalizacion: el remolino (canvas .betun) queda bajo el velo vino */
   .icono{transition:transform .35s var(--curva),background .3s,color .3s}
-  .opcion{position:relative;overflow:hidden}
-  .opcion::before{content:"";position:absolute;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,var(--salmon),var(--rosa));transform:scaleX(0);transform-origin:left;transition:transform .45s var(--curva)}
+  .opcion{position:relative;overflow:hidden;isolation:isolate}
+  .opcion::before{content:"";position:absolute;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,var(--durazno),var(--salmon));transform:scaleX(0);transform-origin:left;transition:transform .45s var(--curva)}
+  .opcion::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:linear-gradient(200deg,rgba(94,43,42,.58),rgba(94,43,42,.8) 42%,rgba(84,38,37,.86));transition:opacity .45s var(--curva)}
+  /* Radio propio: si el navegador pasa el canvas a otra capa, el recorte del padre no siempre lo alcanza */
+  .betun{position:absolute;inset:0;z-index:-2;width:100%;height:100%;border-radius:inherit;opacity:0;transition:opacity 1.2s ease}
+  .betun.lista{opacity:1}
   .chips span{transition:background-color .25s,color .25s,transform .25s,box-shadow .25s}
 
   /* Ocasiones */
@@ -368,18 +478,22 @@
   @media (hover:hover) and (pointer:fine){
     .btn:hover{transform:translateY(-2px);box-shadow:0 16px 30px -14px rgba(142,74,72,.95),0 0 0 4px rgba(201,106,102,.22)}
     .btn:hover:active{transform:scale(.97)}
-    .btn.claro:hover{background:var(--vino);border-color:var(--vino);color:var(--blanco)}
+    .btn:hover .flecha,.enlace-suave:hover svg{transform:translateX(3px)}
+    .enlace-suave:hover{background-size:100% 1.5px}
     .btn.pendiente:hover{transform:none;box-shadow:none}
-    .btn:hover::after{transform:translateX(130%)}
+    .btn:not(.aura):hover::after{transform:translateX(130%)}
+    .aura:hover::before{opacity:1;transform:scale(1.08)}
+    .rastreo-etapa:hover{border-color:rgba(201,106,102,.42)}
+    .rastreo-repetir:hover{transform:rotate(-30deg)}
     .menu-boton:hover{background:var(--blanco)}
-    .opcion:hover{transform:translateY(-6px);box-shadow:0 24px 40px -26px rgba(142,74,72,.5)}
+    .opcion:hover{transform:translateY(-6px);box-shadow:0 34px 56px -30px rgba(94,43,42,.95);border-color:rgba(255,249,243,.3)}
     .opcion:hover::before{transform:scaleX(1)}
-    .opcion:hover .icono{transform:scale(1.08) rotate(-7deg);background:var(--rosa);color:var(--blanco)}
-    .opcion:hover .chips span{box-shadow:inset 0 0 0 1px rgba(201,106,102,.45)}
-    .chips span:hover{background:var(--vino);color:var(--blanco);transform:translateY(-2px)}
+    .opcion:hover::after{opacity:.93}
+    .opcion:hover .icono{transform:scale(1.08) rotate(-7deg);color:var(--blanco)}
+    .opcion:hover .chips span{box-shadow:inset 0 0 0 1px rgba(255,249,243,.38)}
+    .chips span:hover{background:var(--durazno);color:var(--vino);transform:translateY(-2px)}
     .ocasiones div:hover{transform:translateX(5px);border-color:var(--rosa)}
     .paso:hover::before{color:var(--durazno)}
-    .estado:hover i{transform:scale(1.12);background:var(--vino);border-color:var(--vino);color:var(--blanco);box-shadow:0 10px 20px -12px rgba(142,74,72,.9)}
     .info>div:hover{transform:translateY(-4px);box-shadow:0 24px 40px -30px rgba(142,74,72,.6)}
     .info li:hover{transform:translateX(4px)}
     .datos li:hover .icono{transform:rotate(-8deg) scale(1.06);background:var(--rosa);color:var(--blanco)}
@@ -397,25 +511,30 @@
   }
   @media (max-width:900px){
     .hero .contenedor,.nosotros .contenedor,.tarjeta-contacto,.info,.ocasiones-sec .contenedor{grid-template-columns:1fr}
-    .hero .contenedor{padding-top:3rem;text-align:center}
-    .hero p{margin-inline:auto}
+    /* En celular el pastel sube justo después del título, para que se vea sin bajar */
+    .hero>.contenedor{grid-template-rows:none;justify-items:center;text-align:center;padding:2.2rem 0 4.6rem}
+    .hero .insignia,.hero h1,.hero p,.hero .acciones,.hero .garantias,.hero-escenario{grid-column:1;grid-row:auto}
+    .hero .insignia{order:1;justify-self:center;margin-bottom:1.2rem}
+    .hero h1{order:2;margin-bottom:1.6rem}
+    .hero-escenario{order:3;max-width:340px;margin:.4rem 0 2.3rem}
+    .hero p{order:4;margin-inline:auto}
+    .hero .acciones{order:5}
+    .hero .garantias{order:6;display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;width:100%;max-width:440px;font-size:.74rem;line-height:1.3}
+    .garantias li{flex-direction:column;gap:.5rem;text-align:center}
+    .garantias svg{width:40px;height:40px;padding:10px;border-radius:50%;background:rgba(255,249,243,.72);border:1px solid rgba(201,106,102,.22);box-shadow:0 10px 20px -16px rgba(142,74,72,.8)}
     .acciones{justify-content:center}
-    .hero-arte{max-width:360px;margin:auto}
     .opciones{grid-template-columns:1fr 1fr}
     .pasos,.ocasiones{grid-template-columns:1fr 1fr}
     .tarjeta-contacto{padding:2rem}
   }
-  @media (max-width:700px){
-    .estados{flex-direction:column;gap:1.3rem;max-width:420px}
-    .estados::before{top:0;bottom:0;left:22px;right:auto;width:3px;height:auto;background:linear-gradient(180deg,var(--salmon),var(--rosa))}
-    .estado{display:flex;gap:1rem;align-items:center;text-align:left}
-    .estado i{margin:0;flex-shrink:0}
-    .con-js .estados::before{transform:scaleY(0);transform-origin:center top}
-    .con-js .estados.dibujada::before{transform:scaleY(1)}
+  @media (max-width:900px){
+    .rastreo{grid-template-columns:1fr;justify-items:center;gap:2.6rem}
+    .rastreo-lista{width:100%;max-width:520px}
   }
   @media (max-width:560px){
     section{padding:4rem 0}
     .opciones,.pasos,.ocasiones{grid-template-columns:1fr}
+    .opcion{min-height:15.5rem;padding:1.75rem}
     .btn.btn-cabecera{padding:.55rem .95rem;font-size:.82rem}
     .logo-nav{width:118px;background-size:190px}
   }
@@ -423,8 +542,7 @@
     html{scroll-behavior:auto}
     *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
     .con-js .rev,.con-js .cita::before,.con-js .paso::before{opacity:1;transform:none}
-    .con-js .estados::before{transform:scaleX(1)}
-    .confites{display:none}
+    .destello{display:none}
   }
   @media (prefers-reduced-motion:reduce){
     .con-js .cf-tarjeta,.con-js .cf-marco::after,.con-js .cf-contenido,.con-js .cf-tarjeta::before{transition-property:opacity!important;transition-duration:.25s!important;transition-delay:0s!important}
@@ -456,7 +574,7 @@
         <li><span>Contacto</span></li>
       </ul>
     </nav>
-    <a href="#contacto" class="btn btn-cabecera">Cotiza tu pastel</a>
+    <a href="#contacto" class="btn aura btn-cabecera">Cotiza tu pastel</a>
     <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir menú"><span></span><span></span><span></span></button>
     <div class="progreso" id="progreso" aria-hidden="true"></div>
   </div>
@@ -467,7 +585,7 @@
       <li style="--i:2"><a class="menu-enlace" href="#personaliza"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>Personaliza</a></li>
       <li style="--i:3"><a class="menu-enlace" href="#pedidos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></svg>Cómo pedir</a></li>
       <li style="--i:4"><a class="menu-enlace" href="#contacto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>Contacto</a></li>
-      <li style="--i:5"><a class="btn" id="menu-whatsapp" href="#contacto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3z"/></svg><span>Escríbenos por WhatsApp</span></a></li>
+      <li style="--i:5"><a class="btn aura" id="menu-whatsapp" href="#contacto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3z"/></svg><span>Escríbenos por WhatsApp</span></a></li>
     </ul>
   </nav>
 </header>
@@ -475,49 +593,62 @@
 <main id="contenido" tabindex="-1">
   <!-- Portada -->
   <div class="hero">
-    <div class="confites" aria-hidden="true">
-      <span style="--x:43%;--y:23%;--d:14px;--h:5px;--r:3px;--c:var(--salmon);--t:17s;--dl:3.9s;--dx:-26px;--dy:-14px;--rot:197deg"></span>
-      <span style="--x:14%;--y:50%;--d:6px;--c:var(--rosa);--t:20s;--dl:0.3s;--dx:2px;--dy:-34px;--rot:69deg"></span>
-      <span style="--x:57%;--y:57%;--d:12px;--c:var(--durazno);--t:12s;--dl:1.4s;--dx:5px;--dy:-27px;--rot:75deg"></span>
-      <span style="--x:74%;--y:19%;--d:14px;--h:5px;--r:3px;--c:var(--crema);--t:14s;--dl:3.8s;--dx:7px;--dy:-39px;--rot:207deg"></span>
-      <span style="--x:76%;--y:54%;--d:8px;--c:var(--blanco);--t:11s;--dl:5.9s;--dx:-28px;--dy:-23px;--rot:94deg"></span>
-      <span style="--x:55%;--y:22%;--d:6px;--c:var(--salmon);--t:19s;--dl:0.7s;--dx:-11px;--dy:-23px;--rot:106deg"></span>
-      <span style="--x:76%;--y:77%;--d:14px;--h:5px;--r:3px;--c:var(--rosa);--t:21s;--dl:1.1s;--dx:-24px;--dy:-23px;--rot:76deg"></span>
-      <span style="--x:74%;--y:11%;--d:12px;--c:var(--durazno);--t:20s;--dl:1.2s;--dx:13px;--dy:-23px;--rot:169deg"></span>
-      <span style="--x:42%;--y:63%;--d:12px;--c:var(--crema);--t:20s;--dl:5.5s;--dx:-7px;--dy:-31px;--rot:123deg"></span>
-      <span style="--x:25%;--y:35%;--d:14px;--h:5px;--r:3px;--c:var(--blanco);--t:12s;--dl:3.4s;--dx:3px;--dy:-25px;--rot:147deg"></span>
-      <span style="--x:95%;--y:61%;--d:9px;--c:var(--salmon);--t:15s;--dl:3.7s;--dx:-26px;--dy:-37px;--rot:191deg"></span>
-      <span style="--x:23%;--y:47%;--d:12px;--c:var(--rosa);--t:13s;--dl:5.6s;--dx:-4px;--dy:-39px;--rot:79deg"></span>
-      <span style="--x:73%;--y:77%;--d:14px;--h:5px;--r:3px;--c:var(--durazno);--t:16s;--dl:2.0s;--dx:-8px;--dy:-21px;--rot:187deg"></span>
-      <span style="--x:76%;--y:62%;--d:11px;--c:var(--crema);--t:12s;--dl:5.0s;--dx:30px;--dy:-32px;--rot:181deg"></span>
-      <span style="--x:87%;--y:12%;--d:11px;--c:var(--blanco);--t:11s;--dl:4.4s;--dx:-11px;--dy:-20px;--rot:207deg"></span>
-      <span style="--x:59%;--y:40%;--d:14px;--h:5px;--r:3px;--c:var(--salmon);--t:22s;--dl:2.3s;--dx:12px;--dy:-29px;--rot:65deg"></span>
+    <div class="hero-luces" aria-hidden="true">
+      <span class="bokeh" style="--x:74%;--y:20%;--d:190px;--c:rgba(255,249,243,.95);--o:.85;--t:19s;--dx:-26px;--dy:18px"></span>
+      <span class="bokeh" style="--x:94%;--y:52%;--d:130px;--c:rgba(234,199,184,.95);--o:.6;--t:23s;--dl:-6s;--dx:-20px;--dy:-22px"></span>
+      <span class="bokeh" style="--x:60%;--y:84%;--d:160px;--c:rgba(223,166,157,.5);--o:.4;--t:21s;--dl:-3s;--dx:24px;--dy:-16px"></span>
+      <span class="bokeh" style="--x:2%;--y:6%;--d:170px;--c:rgba(255,249,243,.95);--o:.7;--t:17s;--dl:-9s;--dx:20px;--dy:22px"></span>
+      <span class="bokeh" style="--x:28%;--y:92%;--d:100px;--c:rgba(234,199,184,.9);--o:.5;--t:15s;--dl:-2s;--dx:-16px;--dy:-18px"></span>
+      <span class="bokeh" style="--x:46%;--y:7%;--d:80px;--c:rgba(201,106,102,.28);--o:.4;--t:20s;--dl:-11s;--dx:18px;--dy:14px"></span>
+      <span class="bokeh" style="--x:86%;--y:90%;--d:70px;--c:rgba(255,249,243,.95);--o:.85;--t:13s;--dl:-5s;--dx:-12px;--dy:-18px"></span>
+      <span class="bokeh" style="--x:20%;--y:64%;--d:64px;--c:rgba(223,166,157,.4);--o:.4;--t:16s;--dl:-7s;--dx:14px;--dy:-22px"></span>
+      <span class="destello" style="--x:64%;--y:24%;--d:12px;--t:4.2s;--dl:.4s;--c:var(--salmon)"></span>
+      <span class="destello" style="--x:91%;--y:30%;--d:10px;--t:5.1s;--dl:1.6s;--c:var(--rosa)"></span>
+      <span class="destello" style="--x:60%;--y:72%;--d:10px;--t:4.6s;--dl:2.4s;--c:var(--durazno)"></span>
+      <span class="destello" style="--x:96%;--y:76%;--d:9px;--t:3.8s;--dl:.9s;--c:var(--salmon)"></span>
+      <span class="destello" style="--x:40%;--y:14%;--d:8px;--t:5.4s;--dl:3.1s;--c:var(--rosa)"></span>
+      <span class="destello" style="--x:10%;--y:42%;--d:10px;--t:4.9s;--dl:2s;--c:var(--durazno)"></span>
     </div>
     <div class="contenedor">
-      <div>
-        <span class="etiqueta">Pasteles personalizados</span>
-        <h1>El pastel que imaginas, <em>hecho a tu gusto.</em></h1>
-        <p>En BakeMe no hacemos pasteles en serie: cada pastel se diseña y se hornea para ti, con el sabor, tamaño, forma y decoración que elijas.</p>
-        <div class="acciones">
-          <a href="#personaliza" class="btn">Personaliza tu pastel</a>
-          <a href="#pedidos" class="btn claro">¿Cómo pedir?</a>
-        </div>
+      <span class="insignia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8 4 3 5-6 5 6 4-3-2 10H5z"/><path d="M5 21h14"/></svg>Pasteles personalizados</span>
+      <h1>El pastel que imaginas, <em>hecho a tu <span class="trazo">gusto.<svg viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 13C40 5 90 4 130 8s55 7 67-1"/></svg></span></em></h1>
+      <p>En BakeMe no hacemos pasteles en serie: cada pastel se diseña y se hornea para ti, con el sabor, tamaño, forma y decoración que elijas.</p>
+      <div class="acciones">
+        <a href="#personaliza" class="btn aura">Personaliza tu pastel <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        <a href="#pedidos" class="enlace-suave">¿Cómo pedir? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
       </div>
-      <div class="hero-arte" id="escena-pastel">
-        <!-- Ilustración: pastel de dos pisos con corona (guiño al logo) -->
-        <svg viewBox="0 0 200 200" role="img" aria-label="Ilustración de un pastel de dos pisos con una corona encima">
-          <ellipse cx="100" cy="176" rx="78" ry="8" fill="#EAC7B8"/>
-          <path d="M84 62 l-4-20 9 7 11-12 11 12 9-7 -4 20z" fill="#C96A66"/>
-          <circle cx="80" cy="40" r="2.6" fill="#DFA69D"/><circle cx="120" cy="40" r="2.6" fill="#DFA69D"/><circle cx="100" cy="35" r="2.6" fill="#DFA69D"/>
-          <rect x="72" y="66" width="56" height="46" rx="4" fill="#F7E8D9"/>
-          <path d="M72 66 h56 v12 q-7 11 -14 0 q-7 11 -14 0 q-7 11 -14 0 q-7 11 -14 0z" fill="#DFA69D"/>
-          <circle cx="86" cy="95" r="2.4" fill="#DFA69D"/><circle cx="100" cy="102" r="2.4" fill="#C96A66"/><circle cx="114" cy="93" r="2.4" fill="#DFA69D"/>
-          <rect x="42" y="112" width="116" height="62" rx="4" fill="#F7E8D9"/>
-          <path d="M42 112 h116 v14 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0z" fill="#C96A66"/>
-          <circle cx="60" cy="150" r="2.8" fill="#DFA69D"/><circle cx="82" cy="158" r="2.8" fill="#DFA69D"/><circle cx="104" cy="148" r="2.8" fill="#DFA69D"/><circle cx="126" cy="158" r="2.8" fill="#DFA69D"/><circle cx="146" cy="149" r="2.8" fill="#DFA69D"/>
-          <path d="M22 176 h156" stroke="#C96A66" stroke-width="3" stroke-linecap="round"/>
-        </svg>
-        <span class="pista-3d" aria-hidden="true">Toca el pastel</span>
+      <ul class="garantias">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>Diseño a tu gusto</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>Pedidos por WhatsApp</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>Entrega a domicilio</li>
+      </ul>
+      <div class="hero-escenario">
+        <div class="hero-arte" id="escena-pastel">
+          <!-- Ilustración: pastel de dos pisos con corona (guiño al logo) -->
+          <svg viewBox="0 0 200 200" role="img" aria-label="Ilustración de un pastel de dos pisos con una corona encima">
+            <ellipse cx="100" cy="176" rx="78" ry="8" fill="#EAC7B8"/>
+            <path d="M84 62 l-4-20 9 7 11-12 11 12 9-7 -4 20z" fill="#C96A66"/>
+            <circle cx="80" cy="40" r="2.6" fill="#DFA69D"/><circle cx="120" cy="40" r="2.6" fill="#DFA69D"/><circle cx="100" cy="35" r="2.6" fill="#DFA69D"/>
+            <rect x="72" y="66" width="56" height="46" rx="4" fill="#F7E8D9"/>
+            <path d="M72 66 h56 v12 q-7 11 -14 0 q-7 11 -14 0 q-7 11 -14 0 q-7 11 -14 0z" fill="#DFA69D"/>
+            <circle cx="86" cy="95" r="2.4" fill="#DFA69D"/><circle cx="100" cy="102" r="2.4" fill="#C96A66"/><circle cx="114" cy="93" r="2.4" fill="#DFA69D"/>
+            <rect x="42" y="112" width="116" height="62" rx="4" fill="#F7E8D9"/>
+            <path d="M42 112 h116 v14 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0z" fill="#C96A66"/>
+            <circle cx="60" cy="150" r="2.8" fill="#DFA69D"/><circle cx="82" cy="158" r="2.8" fill="#DFA69D"/><circle cx="104" cy="148" r="2.8" fill="#DFA69D"/><circle cx="126" cy="158" r="2.8" fill="#DFA69D"/><circle cx="146" cy="149" r="2.8" fill="#DFA69D"/>
+            <path d="M22 176 h156" stroke="#C96A66" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span class="pista-3d" aria-hidden="true">Toca el pastel</span>
+        </div>
+        <div class="sello" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <defs><path id="sello-circulo" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/></defs>
+            <g class="giro"><text><textPath href="#sello-circulo" textLength="280" lengthAdjust="spacing">PASTELES PERSONALIZADOS · BAKEME PASTELERÍA ·</textPath></text></g>
+            <circle cx="60" cy="60" r="31" fill="none" stroke="#DFA69D" stroke-width=".8"/>
+            <path d="M45 69 43 53l9 7 8-13 8 13 9-7-2 16z" fill="#C96A66"/>
+            <rect x="45" y="71" width="30" height="4" rx="1.6" fill="#C96A66"/>
+            <g fill="#8E4A48"><circle cx="43" cy="51" r="2.2"/><circle cx="60" cy="45" r="2.2"/><circle cx="77" cy="51" r="2.2"/></g>
+          </svg>
+        </div>
       </div>
     </div>
   </div>
@@ -556,7 +687,7 @@
                 <div class="cf-cuerpo">
                   <h3>Varios pisos<em>Rosas en cascada</em></h3>
                   <p>Pisos con acabado liso y rosas en tonos rosados.</p>
-                  <a class="cf-cta" href="#contacto" draggable="false">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                  <a class="cf-cta aura clara" href="#contacto" draggable="false">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
                 </div>
               </div>
             </div>
@@ -569,7 +700,7 @@
                 <div class="cf-cuerpo">
                   <h3>Chocolate<em>Con cobertura</em></h3>
                   <p>Bizcocho de chocolate, cobertura que escurre y rosetones de crema.</p>
-                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                  <a class="cf-cta aura clara" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
                 </div>
               </div>
             </div>
@@ -582,7 +713,7 @@
                 <div class="cf-cuerpo">
                   <h3>Corazón<em>Con tu mensaje</em></h3>
                   <p>En forma de corazón, con el nombre o la frase que elijas.</p>
-                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                  <a class="cf-cta aura clara" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
                 </div>
               </div>
             </div>
@@ -595,7 +726,7 @@
                 <div class="cf-cuerpo">
                   <h3>Perlas<em>Detalles dorados</em></h3>
                   <p>Bordes de perlas en betún y cerezas doradas encima.</p>
-                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                  <a class="cf-cta aura clara" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
                 </div>
               </div>
             </div>
@@ -608,7 +739,7 @@
                 <div class="cf-cuerpo">
                   <h3>Osito<em>Colores suaves</em></h3>
                   <p>Tonos suaves con un osito de azúcar encima.</p>
-                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                  <a class="cf-cta aura clara" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
                 </div>
               </div>
             </div>
@@ -621,7 +752,7 @@
                 <div class="cf-cuerpo">
                   <h3>Crema y galleta<em>Capas de crema</em></h3>
                   <p>Capas de crema con galleta triturada, ideal para cumpleaños.</p>
-                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                  <a class="cf-cta aura clara" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
                 </div>
               </div>
             </div>
@@ -634,7 +765,7 @@
                 <div class="cf-cuerpo">
                   <h3>Tu idea<em>Hecha pastel</em></h3>
                   <p>Envíanos tu imagen de referencia y lo diseñamos contigo.</p>
-                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Enviar mi idea <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                  <a class="cf-cta aura clara" href="#contacto" draggable="false" tabindex="-1">Enviar mi idea <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
                 </div>
               </div>
             </div>
@@ -743,22 +874,49 @@
   </section>
 
   <!-- Seguimiento, entrega y pago -->
-  <section>
+  <section class="seguimiento">
     <div class="contenedor">
       <div class="titulo-sec rev">
         <span class="etiqueta">Seguimiento</span>
         <h2>Siempre sabrás cómo va tu pedido</h2>
         <p>Te mantenemos informado en cada etapa, desde que recibimos tu pedido hasta que llega a tus manos.</p>
       </div>
-      <div class="estados">
-        <div class="estado rev"><i>1</i><div><b>Recibido</b><small>Registramos tu pedido</small></div></div>
-        <div class="estado rev"><i>2</i><div><b>En preparación</b><small>Horneamos y decoramos</small></div></div>
-        <div class="estado rev"><i>3</i><div><b>Listo</b><small>Tu pastel está terminado</small></div></div>
-        <div class="estado rev"><i>4</i><div><b>Entregado</b><small>¡A disfrutar!</small></div></div>
+      <div class="rastreo rev">
+        <div class="rastreo-dial">
+          <svg class="dial-anillo" viewBox="0 0 300 300" aria-hidden="true">
+            <defs><linearGradient id="dial-tono" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DFA69D"/><stop offset="1" stop-color="#C96A66"/></linearGradient></defs>
+            <circle class="dial-orbita" cx="150" cy="150" r="142"/>
+            <circle class="dial-pista" cx="150" cy="150" r="118"/>
+            <circle class="dial-avance" cx="150" cy="150" r="118" pathLength="100"/>
+          </svg>
+          <span class="dial-nodo" style="--a:-90deg" data-estado="hecho" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span>
+          <span class="dial-nodo" style="--a:0deg" data-estado="hecho" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.46.32-.84.73-1.04a4 4 0 0 0-2.14-7.59 5 5 0 0 0-9.18 0 4 4 0 0 0-2.14 7.59c.41.2.73.58.73 1.04V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg></span>
+          <span class="dial-nodo" style="--a:90deg" data-estado="hecho" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3M12 8v3M17 8v3"/><path d="M7 4h.01M12 4h.01M17 4h.01"/></svg></span>
+          <span class="dial-nodo" style="--a:180deg" data-estado="hecho" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg></span>
+          <div class="dial-centro" aria-hidden="true">
+            <div class="dial-escenas">
+              <span class="dial-escena"><svg viewBox="0 0 64 64"><path d="M18 8h28v46l-4.7-3-4.6 3-4.7-3-4.6 3-4.7-3-4.7 3z"/><path d="M24 19h16M24 27h16M24 35h9"/><path class="acento" d="M39.5 40.2c-1.3-1.5-3.9-.8-3.9 1.3 0 2 3.9 4.3 3.9 4.3s3.9-2.3 3.9-4.3c0-2.1-2.6-2.8-3.9-1.3z"/></svg></span>
+              <span class="dial-escena"><svg viewBox="0 0 64 64"><path d="M9 33h46"/><path d="M12 33c1 11 9 18 20 18s19-7 20-18"/><path d="M24 55h16"/><g class="acento batidor"><path d="M45 6l-5.6 12"/><ellipse cx="36" cy="24" rx="4.4" ry="8.4" transform="rotate(25 36 24)"/><path d="M36 15.6v16.8" transform="rotate(25 36 24)"/></g></svg></span>
+              <span class="dial-escena"><svg viewBox="0 0 64 64"><path d="M12 51h40"/><rect x="17" y="36" width="30" height="15" rx="2"/><rect x="23" y="23" width="18" height="13" rx="2"/><path d="M17 41c2.5 2 5 2 7.5 0s5-2 7.5 0 5 2 7.5 0 5-2 7.5 0"/><path d="M23 27.5c1.5 1.4 3 1.4 4.5 0s3-1.4 4.5 0 3 1.4 4.5 0 3-1.4 4.5 0"/><path d="M32 23v-6"/><path class="acento" d="M32 10.5c1.7 1.9 1.7 3.8 0 4.8-1.7-1-1.7-2.9 0-4.8z"/><path class="acento" d="M51 12v7M47.5 15.5h7"/></svg></span>
+              <span class="dial-escena activa"><svg viewBox="0 0 64 64"><rect x="14" y="29" width="36" height="23" rx="2"/><path d="M11 22h42v7H11z"/><path d="M32 22v30"/><path class="acento" d="M32 22c-3-7-11.5-9.5-12.5-4.5S26.5 22 32 22c5.5 0 13.5.5 12.5-4.5S35 15 32 22z"/></svg></span>
+            </div>
+            <b class="dial-nombre">Entregado</b>
+            <span class="dial-paso">Etapa 4 de 4</span>
+          </div>
+          <span class="dial-chispas" aria-hidden="true"><i style="--r:0deg;--d:118px;--c:var(--rosa)"></i><i style="--r:26deg;--d:132px;--c:var(--salmon)"></i><i style="--r:51deg;--d:112px;--c:var(--durazno)"></i><i style="--r:77deg;--d:128px;--c:var(--vino)"></i><i style="--r:103deg;--d:118px;--c:var(--rosa)"></i><i style="--r:129deg;--d:134px;--c:var(--salmon)"></i><i style="--r:154deg;--d:114px;--c:var(--durazno)"></i><i style="--r:180deg;--d:126px;--c:var(--vino)"></i><i style="--r:206deg;--d:120px;--c:var(--rosa)"></i><i style="--r:231deg;--d:130px;--c:var(--salmon)"></i><i style="--r:257deg;--d:112px;--c:var(--durazno)"></i><i style="--r:283deg;--d:128px;--c:var(--vino)"></i><i style="--r:309deg;--d:118px;--c:var(--rosa)"></i><i style="--r:334deg;--d:134px;--c:var(--salmon)"></i></span>
+          <button class="rastreo-repetir" type="button" aria-label="Ver otra vez el recorrido del pedido"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+        </div>
+        <ol class="rastreo-lista">
+          <li><button class="rastreo-etapa" type="button" data-estado="hecho"><span class="etapa-marca" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span class="etapa-texto"><b>Recibido</b><small>Registramos tu pedido</small></span><span class="etapa-estado">Hecho</span><span class="etapa-barra" aria-hidden="true"><i></i></span></button></li>
+          <li><button class="rastreo-etapa" type="button" data-estado="hecho"><span class="etapa-marca" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span class="etapa-texto"><b>En preparación</b><small>Horneamos y decoramos</small></span><span class="etapa-estado">Hecho</span><span class="etapa-barra" aria-hidden="true"><i></i></span></button></li>
+          <li><button class="rastreo-etapa" type="button" data-estado="hecho"><span class="etapa-marca" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span class="etapa-texto"><b>Listo</b><small>Tu pastel está terminado</small></span><span class="etapa-estado">Hecho</span><span class="etapa-barra" aria-hidden="true"><i></i></span></button></li>
+          <li><button class="rastreo-etapa" type="button" data-estado="hecho"><span class="etapa-marca" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span class="etapa-texto"><b>Entregado</b><small>¡A disfrutar!</small></span><span class="etapa-estado">Hecho</span><span class="etapa-barra" aria-hidden="true"><i></i></span></button></li>
+        </ol>
       </div>
 
       <div class="info">
         <div class="rev">
+          <span class="info-icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></span>
           <h3>Entrega</h3>
           <ul>
             <li>Retiro en tienda</li>
@@ -767,6 +925,7 @@
           </ul>
         </div>
         <div class="rev">
+          <span class="info-icono" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
           <h3>Formas de pago</h3>
           <ul>
             <li>Efectivo</li>
@@ -786,7 +945,7 @@
           <span class="etiqueta">Contacto</span>
           <h2>¿Ya tienes una idea en mente?</h2>
           <p>Escríbenos y cotizamos tu pastel personalizado. Si tienes una foto de referencia, envíanosla en el mismo mensaje.</p>
-          <a id="boton-whatsapp" class="btn" target="_blank" rel="noopener">
+          <a id="boton-whatsapp" class="btn aura" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3z"/></svg>
             <span id="texto-whatsapp">Escríbenos por WhatsApp</span>
           </a>
@@ -874,7 +1033,6 @@ document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
   var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var hayOjo = "IntersectionObserver" in window;
   var revelables = document.querySelectorAll(".rev");
-  var estados = document.querySelector(".estados");
 
   // Tras aparecer, el bloque deja la clase "rev" y su retraso escalonado para
   // que su hover y sus transiciones propias respondan al instante.
@@ -886,7 +1044,7 @@ document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
   }
 
   // Escalona los elementos que comparten una misma rejilla.
-  [".opciones", ".ocasiones", ".pasos", ".estados", ".info", ".nosotros .contenedor"]
+  [".opciones", ".ocasiones", ".pasos", ".info", ".nosotros .contenedor"]
     .forEach(function (selector) {
       document.querySelectorAll(selector).forEach(function (grupo) {
         grupo.querySelectorAll(":scope > .rev").forEach(function (hijo, i) {
@@ -897,7 +1055,6 @@ document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
 
   if (menos || !hayOjo) {
     revelables.forEach(function (el) { el.classList.add("visible"); soltar(el); });
-    if (estados) estados.classList.add("dibujada");
   } else {
     var ojo = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) {
@@ -908,17 +1065,6 @@ document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
       });
     }, { rootMargin: "0px 0px -12% 0px", threshold: 0.15 });
     revelables.forEach(function (el) { ojo.observe(el); });
-
-    if (estados) {
-      var ojoLinea = new IntersectionObserver(function (entradas) {
-        entradas.forEach(function (e) {
-          if (!e.isIntersecting) return;
-          e.target.classList.add("dibujada");
-          ojoLinea.unobserve(e.target);
-        });
-      }, { threshold: 0.3 });
-      ojoLinea.observe(estados);
-    }
   }
 
   // Encabezado compacto y barra de lectura.
@@ -939,6 +1085,327 @@ document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
   }, { passive: true });
   alDesplazar();
 
+})();
+</script>
+
+<script>
+/* =======================================================================
+   Personalización: detrás de cada tarjeta corre un remolino de betún, el
+   shader Warp de @paper-design/shaders portado a WebGL sin dependencias y
+   con la paleta de BakeMe. Un solo contexto WebGL pinta las seis tarjetas
+   en una franja y cada una copia su tramo a su propio canvas. Se anima
+   solo mientras la sección se ve, se acelera al pasar el cursor y con
+   movimiento reducido queda quieto. Sin WebGL se ve el degradado del CSS.
+   ======================================================================= */
+(function () {
+  var rejilla = document.querySelector(".opciones");
+  if (!rejilla) return;
+  var tarjetas = Array.prototype.slice.call(rejilla.querySelectorAll(".opcion"));
+  if (!tarjetas.length) return;
+
+  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var RESOLUCION = 0.7;   // bajo el velo no hace falta la resolución completa
+  var VELOCIDAD = 0.8;
+
+  function rgb(hex) {
+    return [1, 3, 5].map(function (i) { return parseInt(hex.slice(i, i + 2), 16) / 255; });
+  }
+  var hondo = rgb("#5E2B2A"), vino = rgb("#8E4A48"), rosa = rgb("#C96A66"),
+      salmon = rgb("#DFA69D"), durazno = rgb("#EAC7B8"), crema = rgb("#F7E8D9");
+
+  // Un ajuste por tarjeta, como el original. Colores del más oscuro al más claro;
+  // forma 0 = cuadros, 1 = rayas, 2 = puntos.
+  var AJUSTES = [
+    { colores: [hondo, rosa, vino, durazno],   forma: 0, proporcion: 0.40, suavidad: 0.80, distorsion: 0.15, remolino: 0.60, vueltas: 8,  escala: 0.08 },
+    { colores: [vino, salmon, hondo, crema],   forma: 2, proporcion: 0.40, suavidad: 1.00, distorsion: 0.20, remolino: 0.80, vueltas: 9,  escala: 0.05 },
+    { colores: [hondo, durazno, rosa, salmon], forma: 0, proporcion: 0.35, suavidad: 0.90, distorsion: 0.18, remolino: 0.70, vueltas: 10, escala: 0.10 },
+    { colores: [vino, rosa, hondo, durazno],   forma: 1, proporcion: 0.45, suavidad: 1.00, distorsion: 0.22, remolino: 0.70, vueltas: 8,  escala: 0.05 },
+    { colores: [hondo, salmon, vino, crema],   forma: 0, proporcion: 0.38, suavidad: 0.95, distorsion: 0.16, remolino: 0.85, vueltas: 11, escala: 0.11 },
+    { colores: [vino, durazno, hondo, rosa],   forma: 2, proporcion: 0.42, suavidad: 1.00, distorsion: 0.19, remolino: 0.75, vueltas: 8,  escala: 0.06 }
+  ];
+
+  var VERTICES = "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}";
+  var FRAGMENTOS = [
+    "#ifdef GL_FRAGMENT_PRECISION_HIGH",
+    "precision highp float;",
+    "#else",
+    "precision mediump float;",
+    "#endif",
+    "uniform vec2 u_res,u_desfase;",
+    "uniform vec3 u_c0,u_c1,u_c2,u_c3;",
+    "uniform float u_tiempo,u_proporcion,u_suavidad,u_distorsion,u_remolino,u_vueltas,u_forma,u_escala,u_semilla;",
+    "float azar(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}",
+    "float ruido(vec2 p){vec2 i=floor(p),f=fract(p),s=f*f*(3.-2.*f);",
+    "  return mix(mix(azar(i),azar(i+vec2(1.,0.)),s.x),mix(azar(i+vec2(0.,1.)),azar(i+vec2(1.,1.)),s.x),s.y);}",
+    "void main(){",
+    "  vec2 uv=(gl_FragCoord.xy-u_desfase)/u_res;",
+    "  vec2 p=(uv-.5)*vec2(u_res.x/u_res.y,1.)*2.4+.5+u_semilla;",
+    "  float t=.5*u_tiempo;",
+    "  float n1=ruido(p+t),n2=ruido(p*2.-t),ang=n1*6.2831853;",
+    "  p+=4.*u_distorsion*n2*vec2(cos(ang),sin(ang));",
+    "  for(int i=1;i<=16;i++){",
+    "    float fi=float(i);",
+    "    if(fi>u_vueltas)break;",
+    "    p.x+=u_remolino/fi*cos(t+fi*1.5*p.y);",
+    "    p.y+=u_remolino/fi*cos(t+fi*p.x);",
+    "  }",
+    "  float m;",
+    "  if(u_forma<.5){vec2 q=p*(.5+3.5*u_escala);m=.5+.5*sin(q.x)*cos(q.y);}",
+    "  else if(u_forma<1.5){float f=fract(p.y*(.25+3.*u_escala));m=smoothstep(0.,.55,f)*smoothstep(1.,.45,f);}",
+    "  else{vec2 q=fract(p*(.8+5.*u_escala))-.5;m=1.-smoothstep(.08,.5,length(q));}",
+    "  m=clamp(m+.48*sign(u_proporcion-.5)*pow(abs(u_proporcion-.5),.5),0.,1.);",
+    "  float w=mix(.02,.22,clamp(u_suavidad,0.,1.));",
+    "  vec3 c=mix(u_c0,u_c1,smoothstep(.25-w,.25+w,m));",
+    "  c=mix(c,u_c2,smoothstep(.5-w,.5+w,m));",
+    "  c=mix(c,u_c3,smoothstep(.75-w,.75+w,m));",
+    "  gl_FragColor=vec4(c,1.);",
+    "}"
+  ].join("\n");
+
+  var lienzo = document.createElement("canvas");
+  var gl = null;
+  try {
+    gl = lienzo.getContext("webgl", { alpha: false, antialias: false, depth: false, stencil: false,
+      preserveDrawingBuffer: true, powerPreference: "low-power" });
+  } catch (e) { gl = null; }
+  if (!gl) return;
+
+  function compilar(tipo, fuente) {
+    var s = gl.createShader(tipo);
+    gl.shaderSource(s, fuente);
+    gl.compileShader(s);
+    return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+  }
+  var vs = compilar(gl.VERTEX_SHADER, VERTICES);
+  var fs = compilar(gl.FRAGMENT_SHADER, FRAGMENTOS);
+  if (!vs || !fs) return;
+  var programa = gl.createProgram();
+  gl.attachShader(programa, vs);
+  gl.attachShader(programa, fs);
+  gl.bindAttribLocation(programa, 0, "a");
+  gl.linkProgram(programa);
+  if (!gl.getProgramParameter(programa, gl.LINK_STATUS)) return;
+  gl.useProgram(programa);
+
+  // Un triángulo que cubre todo el viewport de cada tarjeta.
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+  var u = {};
+  ["res", "desfase", "tiempo", "c0", "c1", "c2", "c3", "proporcion", "suavidad", "distorsion",
+   "remolino", "vueltas", "forma", "escala", "semilla"].forEach(function (n) {
+    u[n] = gl.getUniformLocation(programa, "u_" + n);
+  });
+
+  var capas = tarjetas.map(function (el, i) {
+    var c = document.createElement("canvas");
+    c.className = "betun";
+    c.setAttribute("aria-hidden", "true");
+    el.insertBefore(c, el.firstChild);
+    var capa = { el: el, canvas: c, ctx: c.getContext("2d"), ajuste: AJUSTES[i % AJUSTES.length],
+      semilla: i * 3.7, tiempo: i * 7.3, ritmo: 1, meta: 1, x: 0, w: 1, h: 1 };
+    // Al pasar el mouse el betún se revuelve más rápido; vuelve a su ritmo al salir.
+    el.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") capa.meta = 2.6; });
+    el.addEventListener("pointerleave", function () { capa.meta = 1; });
+    return capa;
+  });
+
+  // Cada tarjeta ocupa un tramo de la franja, a media resolución.
+  function medir() {
+    var x = 0, alto = 1;
+    capas.forEach(function (c) {
+      c.w = Math.max(8, Math.round(c.el.clientWidth * RESOLUCION));
+      c.h = Math.max(8, Math.round(c.el.clientHeight * RESOLUCION));
+      if (c.canvas.width !== c.w) c.canvas.width = c.w;
+      if (c.canvas.height !== c.h) c.canvas.height = c.h;
+      c.x = x;
+      x += c.w;
+      alto = Math.max(alto, c.h);
+    });
+    lienzo.width = x;
+    lienzo.height = alto;
+  }
+
+  function pintar(dt) {
+    var alto = lienzo.height;
+    capas.forEach(function (c) {
+      var a = c.ajuste;
+      c.ritmo += (c.meta - c.ritmo) * Math.min(1, dt * 2.5);
+      c.tiempo += dt * c.ritmo * VELOCIDAD;
+      var y = alto - c.h;   // WebGL cuenta desde abajo: el tramo queda arriba en la imagen
+      gl.viewport(c.x, y, c.w, c.h);
+      gl.uniform2f(u.res, c.w, c.h);
+      gl.uniform2f(u.desfase, c.x, y);
+      gl.uniform1f(u.tiempo, c.tiempo);
+      gl.uniform3fv(u.c0, a.colores[0]);
+      gl.uniform3fv(u.c1, a.colores[1]);
+      gl.uniform3fv(u.c2, a.colores[2]);
+      gl.uniform3fv(u.c3, a.colores[3]);
+      gl.uniform1f(u.proporcion, a.proporcion);
+      gl.uniform1f(u.suavidad, a.suavidad);
+      gl.uniform1f(u.distorsion, a.distorsion);
+      gl.uniform1f(u.remolino, a.remolino);
+      gl.uniform1f(u.vueltas, a.vueltas);
+      gl.uniform1f(u.forma, a.forma);
+      gl.uniform1f(u.escala, a.escala);
+      gl.uniform1f(u.semilla, c.semilla);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    });
+    capas.forEach(function (c) {
+      c.ctx.drawImage(lienzo, c.x, 0, c.w, c.h, 0, 0, c.w, c.h);
+      if (!c.lista) {
+        c.lista = true;
+        c.canvas.classList.add("lista");
+      }
+    });
+  }
+
+  var visible = false, perdido = false, pedido = 0, antes = 0;
+  function cuadro(ahora) {
+    pedido = requestAnimationFrame(cuadro);
+    if (ahora - antes < 32) return;   // unos 30 cuadros por segundo bastan para un remolino lento
+    var dt = antes ? Math.min((ahora - antes) / 1000, 0.1) : 0;
+    antes = ahora;
+    pintar(dt);
+  }
+  function revisar() {
+    var mover = visible && !document.hidden && !menos && !perdido;
+    if (mover && !pedido) {
+      antes = 0;
+      pedido = requestAnimationFrame(cuadro);
+    } else if (!mover && pedido) {
+      cancelAnimationFrame(pedido);
+      pedido = 0;
+    }
+  }
+
+  var enCola = 0;
+  function reajustar() {
+    if (enCola || perdido) return;
+    enCola = requestAnimationFrame(function () {
+      enCola = 0;
+      medir();
+      pintar(0);
+    });
+  }
+
+  medir();
+  pintar(0);
+
+  if ("ResizeObserver" in window) {
+    var talla = new ResizeObserver(reajustar);
+    capas.forEach(function (c) { talla.observe(c.el); });
+  } else {
+    window.addEventListener("resize", reajustar);
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (e) {
+      visible = e[0].isIntersecting;
+      revisar();
+    }, { rootMargin: "120px 0px" }).observe(rejilla);
+  } else {
+    visible = true;
+    revisar();
+  }
+  document.addEventListener("visibilitychange", revisar);
+
+  // Si el navegador suelta el contexto WebGL, el remolino se apaga y queda el degradado.
+  lienzo.addEventListener("webglcontextlost", function (e) {
+    e.preventDefault();
+    perdido = true;
+    revisar();
+    capas.forEach(function (c) { c.canvas.classList.remove("lista"); });
+  });
+})();
+</script>
+
+<script>
+/* =======================================================================
+   Seguimiento: la primera vez que la sección se ve, el pedido recorre sus
+   cuatro etapas solo y al llegar a "Entregado" suelta chispas de azúcar.
+   Tocar una etapa la muestra; el botón circular repite el recorrido. Sin
+   JavaScript o con movimiento reducido queda todo como entregado.
+   ======================================================================= */
+(function () {
+  var rastreo = document.querySelector(".rastreo");
+  if (!rastreo) return;
+  var etapas = Array.prototype.slice.call(rastreo.querySelectorAll(".rastreo-etapa"));
+  var nodos = Array.prototype.slice.call(rastreo.querySelectorAll(".dial-nodo"));
+  var escenas = Array.prototype.slice.call(rastreo.querySelectorAll(".dial-escena"));
+  var nombre = rastreo.querySelector(".dial-nombre");
+  var paso = rastreo.querySelector(".dial-paso");
+  var avance = rastreo.querySelector(".dial-avance");
+  var repetir = rastreo.querySelector(".rastreo-repetir");
+  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var total = etapas.length;
+  var ARCO = [0, 25, 50, 100];      // al entregar, el anillo se cierra completo
+  var PAUSA = 2000;                 // ms que dura cada etapa en el recorrido
+  var reloj = 0;
+  var TEXTO = { hecho: "Hecho", curso: "En curso", pendiente: "Pendiente" };
+
+  rastreo.style.setProperty("--pausa", PAUSA + "ms");
+
+  function pintar(i) {
+    var fin = i === total - 1;
+    etapas.forEach(function (e, k) {
+      var estado = k < i || (fin && k === i) ? "hecho" : (k === i ? "curso" : "pendiente");
+      e.setAttribute("data-estado", estado);
+      e.querySelector(".etapa-estado").textContent = TEXTO[estado];
+      if (k === i) e.setAttribute("aria-current", "step");
+      else e.removeAttribute("aria-current");
+      if (nodos[k]) nodos[k].setAttribute("data-estado", estado);
+    });
+    escenas.forEach(function (s, k) { s.classList.toggle("activa", k === i); });
+    nombre.textContent = etapas[i].querySelector("b").textContent;
+    paso.textContent = "Etapa " + (i + 1) + " de " + total;
+    avance.style.strokeDashoffset = 100 - ARCO[i];
+    rastreo.classList.remove("celebra");
+    if (fin && !menos) {
+      void rastreo.offsetWidth;       // reinicia las chispas si ya habían salido
+      rastreo.classList.add("celebra");
+    }
+  }
+
+  function recorrer() {
+    clearTimeout(reloj);
+    repetir.classList.remove("lista");
+    rastreo.classList.add("en-marcha");
+    var i = 0;
+    pintar(0);
+    (function siguiente() {
+      if (i >= total - 1) {
+        rastreo.classList.remove("en-marcha");
+        repetir.classList.add("lista");
+        return;
+      }
+      reloj = setTimeout(function () { i++; pintar(i); siguiente(); }, PAUSA);
+    })();
+  }
+
+  etapas.forEach(function (e, k) {
+    e.addEventListener("click", function () {
+      clearTimeout(reloj);
+      rastreo.classList.remove("en-marcha");
+      pintar(k);
+      repetir.classList.add("lista");
+    });
+  });
+  repetir.addEventListener("click", recorrer);
+
+  if (menos || !("IntersectionObserver" in window)) {
+    pintar(total - 1);
+    repetir.classList.add("lista");
+    return;
+  }
+  pintar(0);
+  var ojo = new IntersectionObserver(function (entradas) {
+    if (!entradas[0].isIntersecting) return;
+    ojo.disconnect();
+    reloj = setTimeout(recorrer, 450);
+  }, { threshold: 0.45 });
+  ojo.observe(rastreo);
 })();
 </script>
 
