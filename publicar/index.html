@@ -81,9 +81,6 @@
   .titulo-sec{text-align:center;max-width:620px;margin:0 auto 3.5rem}
   .titulo-sec .etiqueta::after{content:"";display:inline-block;width:28px;height:2px;background:var(--salmon);vertical-align:middle;margin-left:.7rem}
   .titulo-sec h2{font-size:clamp(2rem,4vw,2.8rem);margin-bottom:.8rem}
-  .titulo-lado{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;margin-bottom:2.8rem;flex-wrap:wrap}
-  .titulo-lado h2{font-size:clamp(1.9rem,3.6vw,2.6rem)}
-  .titulo-lado p{max-width:42ch}
 
   /* Nosotros */
   .nosotros .contenedor{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
@@ -94,16 +91,102 @@
   .cita p{font-family:"Playfair Display",serif;font-style:italic;font-size:1.45rem;color:var(--vino);line-height:1.45;padding-top:1.5rem}
   .cita span{display:block;margin-top:1.2rem;font-size:.9rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--rosa)}
 
-  /* Galería */
-  .galeria{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem}
-  .pieza{background:var(--blanco);border:1px solid rgba(201,106,102,.14);border-radius:var(--radio);overflow:hidden;transition:transform .25s,box-shadow .25s}
-  .pieza:hover{transform:translateY(-6px);box-shadow:0 26px 44px -28px rgba(142,74,72,.5)}
-  .marco{background:var(--crema);aspect-ratio:4/3;overflow:hidden}
-  .marco img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-  .pieza:hover .marco img{transform:scale(1.05)}
-  .pieza .texto{padding:1.4rem 1.6rem 1.7rem}
-  .pieza h3{font-size:1.25rem;margin-bottom:.3rem}
-  .pieza p{font-size:.95rem}
+  /* ---------- Catálogo: carrusel coverflow 3D ---------- */
+  @property --luz{syntax:"<color>";inherits:false;initial-value:rgba(223,166,157,.55)}
+  .catalogo{position:relative;overflow:hidden;background:var(--vino);color:#F5DCD3;padding-bottom:4.5rem}
+  .catalogo::after{content:"";position:absolute;top:0;left:0;right:0;height:18px;z-index:3;pointer-events:none;background:radial-gradient(circle at 9px 0,var(--blanco) 9px,rgba(0,0,0,0) 9.5px) repeat-x;background-size:18px 18px}
+  .catalogo-luz{--luz:rgba(223,166,157,.55);position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 58% 52% at 50% 64%,var(--luz),rgba(142,74,72,0) 72%),radial-gradient(ellipse 90% 60% at 50% 118%,rgba(40,14,13,.55),rgba(40,14,13,0) 70%);transition:--luz 1s ease}
+  .catalogo>.contenedor{position:relative;z-index:1}
+  .catalogo .titulo-sec{margin-bottom:2.4rem}
+  .catalogo .titulo-sec h2{color:var(--blanco);text-wrap:balance}
+  .catalogo .etiqueta{color:var(--durazno)}
+
+  .coverflow{--cf-w:330px;--cf-h:500px;--cf-x1:285px;--cf-x2:510px;--cf-ms:5200ms;--cf-curva:cubic-bezier(.22,1,.36,1);position:relative;border-radius:28px}
+  .coverflow:focus{outline:none}
+  .coverflow:focus-visible{outline:2px solid var(--durazno);outline-offset:10px}
+  /* Sin JavaScript: fila que se desliza con el dedo */
+  .cf-pista{display:flex;gap:1.2rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:.5rem 0 1.2rem}
+  .cf-tarjeta{position:relative;flex:0 0 var(--cf-w);height:var(--cf-h);scroll-snap-align:center}
+  .cf-tarjeta::before{content:"";position:absolute;inset:0;border-radius:22px;pointer-events:none;box-shadow:0 44px 80px -30px rgba(40,14,13,.85),0 0 56px rgba(234,199,184,.3);opacity:0;transition:opacity .8s var(--cf-curva)}
+  .cf-marco{position:relative;width:100%;height:100%;border-radius:22px;overflow:hidden;isolation:isolate;background:var(--crema);box-shadow:0 26px 48px -26px rgba(40,14,13,.8);outline:1px solid rgba(255,249,243,.16);outline-offset:-1px}
+  .cf-marco img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-user-drag:none;user-select:none}
+  .cf-marco::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(142,74,72,0) 42%,rgba(142,74,72,.55) 54%,rgba(142,74,72,.88) 66%,rgba(142,74,72,.97) 100%)}
+  .cf-marco::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:var(--vino);opacity:0;transition:opacity .75s var(--cf-curva)}
+  .cf-contenido{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:1.1rem 1.1rem 1.4rem;text-align:center}
+  .cf-etiqueta{align-self:flex-end;background:rgba(255,249,243,.92);color:var(--vino);font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:.38rem .8rem;border-radius:999px;box-shadow:0 8px 18px -12px rgba(40,14,13,.8)}
+  .cf-cuerpo{display:flex;flex-direction:column;align-items:center}
+  .cf-cuerpo h3{color:var(--blanco);font-size:1.8rem;line-height:1.05;text-wrap:balance;text-shadow:0 2px 14px rgba(40,14,13,.55)}
+  .cf-cuerpo h3 em{display:block;margin-top:.3rem;font-size:1.08rem;font-weight:500;color:#F5DCD3}
+  .cf-cuerpo p{position:relative;max-width:26ch;margin:1.05rem 0 1.1rem;font-size:.86rem;line-height:1.45;font-style:italic;color:rgba(255,249,243,.92);text-shadow:0 1px 8px rgba(40,14,13,.5)}
+  .cf-cuerpo p::before{content:"";position:absolute;left:50%;top:-.6rem;width:34px;height:2px;margin-left:-17px;border-radius:2px;background:var(--durazno);box-shadow:0 0 10px rgba(234,199,184,.7)}
+  .cf-cta{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;padding:.66rem 1.15rem;border-radius:999px;background:var(--blanco);color:var(--vino);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 12px 26px -14px rgba(40,14,13,.95);transition:transform .16s var(--cf-curva),background-color .2s ease}
+  .cf-cta svg{width:14px;height:14px;transition:transform .2s var(--cf-curva)}
+  .cf-cta:active{transform:scale(.97)}
+  .cf-cta:focus-visible{outline:2px solid var(--durazno);outline-offset:3px}
+
+  .cf-controles{display:none;align-items:center;justify-content:center;gap:1rem;margin-top:1.6rem}
+  .cf-flecha{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,249,243,.28);background:rgba(255,249,243,.12);color:var(--blanco);cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 10px 26px -14px rgba(40,14,13,.9);transition:transform .16s var(--cf-curva),background-color .2s ease,border-color .2s ease}
+  .cf-flecha svg{width:20px;height:20px}
+  .cf-flecha:active{transform:scale(.94)}
+  .cf-flecha:focus-visible{outline:2px solid var(--durazno);outline-offset:3px}
+  .cf-puntos{display:flex;align-items:center;gap:2px}
+  .cf-puntos button{display:grid;place-items:center;min-width:22px;height:30px;padding:0 3px;border:0;background:none;cursor:pointer}
+  .cf-puntos button:focus{outline:none}
+  .cf-puntos button:focus-visible i{box-shadow:0 0 0 2px var(--vino),0 0 0 4px var(--durazno)}
+  .cf-puntos i{position:relative;display:block;width:8px;height:8px;border-radius:999px;overflow:hidden;background:rgba(255,249,243,.3);transition:width .4s var(--cf-curva)}
+  .cf-puntos i::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--durazno);transform:scaleX(0);transform-origin:left center}
+  .cf-puntos [aria-current] i{width:30px}
+  .cf-puntos .corriendo i::after{animation:cf-progreso var(--cf-ms) linear forwards}
+  .coverflow.pausado .cf-puntos .corriendo i::after{animation-play-state:paused}
+  .coverflow.manual .cf-puntos [aria-current] i::after{transform:none}
+  @keyframes cf-progreso{to{transform:scaleX(1)}}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+  @media (hover:hover) and (pointer:fine){
+    .cf-cta:hover{background:var(--durazno)}
+    .cf-cta:hover svg{transform:translateX(3px)}
+    .cf-flecha:hover{background:rgba(255,249,243,.24);border-color:rgba(255,249,243,.5)}
+  }
+
+  /* Con JavaScript: escenario 3D */
+  .con-js .cf-controles{display:flex}
+  .con-js .cf-pista{position:relative;display:block;overflow:visible;height:calc(var(--cf-h) + 24px);padding:0;perspective:1400px;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .45s var(--cf-curva)}
+  .con-js .coverflow.arrastrando .cf-pista{transition:none;cursor:grabbing}
+  .con-js .cf-tarjeta{position:absolute;left:50%;top:12px;width:var(--cf-w);margin-left:calc(var(--cf-w) / -2);backface-visibility:hidden;transition:transform .8s var(--cf-curva),opacity .6s var(--cf-curva)}
+  .con-js .cf-tarjeta[data-pos="0"]{transform:translateX(0) scale(1) rotateY(0deg);z-index:30}
+  .con-js .cf-tarjeta[data-pos="1"]{transform:translateX(var(--cf-x1)) scale(.84) rotateY(-24deg);z-index:20;cursor:pointer}
+  .con-js .cf-tarjeta[data-pos="-1"]{transform:translateX(calc(var(--cf-x1) * -1)) scale(.84) rotateY(24deg);z-index:20;cursor:pointer}
+  .con-js .cf-tarjeta[data-pos="2"]{transform:translateX(var(--cf-x2)) scale(.68) rotateY(-38deg);z-index:10;cursor:pointer}
+  .con-js .cf-tarjeta[data-pos="-2"]{transform:translateX(calc(var(--cf-x2) * -1)) scale(.68) rotateY(38deg);z-index:10;cursor:pointer}
+  .con-js .cf-tarjeta[data-pos="3"]{transform:translateX(calc(var(--cf-x2) * 1.35)) scale(.52) rotateY(-46deg);opacity:0;z-index:0;pointer-events:none}
+  .con-js .cf-tarjeta[data-pos="-3"]{transform:translateX(calc(var(--cf-x2) * -1.35)) scale(.52) rotateY(46deg);opacity:0;z-index:0;pointer-events:none}
+  .con-js .cf-tarjeta[data-pos="0"]::before{opacity:1}
+  .con-js .cf-tarjeta[data-pos="1"] .cf-marco::after,.con-js .cf-tarjeta[data-pos="-1"] .cf-marco::after{opacity:.36}
+  .con-js .cf-tarjeta[data-pos="2"] .cf-marco::after,.con-js .cf-tarjeta[data-pos="-2"] .cf-marco::after,
+  .con-js .cf-tarjeta[data-pos="3"] .cf-marco::after,.con-js .cf-tarjeta[data-pos="-3"] .cf-marco::after{opacity:.6}
+  .con-js .cf-contenido{opacity:0;transform:translateY(14px);transition:opacity .2s ease-out,transform .2s ease-out}
+  .con-js .cf-tarjeta[data-pos="0"] .cf-contenido{opacity:1;transform:none;transition:opacity .45s var(--cf-curva) .16s,transform .5s var(--cf-curva) .16s}
+  /* Entrada: las tarjetas se abren en abanico desde el centro */
+  .con-js .coverflow:not(.cf-visible) .cf-tarjeta{opacity:0;transform:translateX(0) scale(.86) rotateY(0deg)}
+  .con-js .coverflow.cf-entrando .cf-tarjeta{transition-delay:calc(var(--cf-orden, 0) * 70ms)}
+  @media (hover:hover) and (pointer:fine){
+    .con-js .cf-tarjeta[data-pos="1"]:hover .cf-marco::after,.con-js .cf-tarjeta[data-pos="-1"]:hover .cf-marco::after{opacity:.14}
+    .con-js .cf-tarjeta[data-pos="2"]:hover .cf-marco::after,.con-js .cf-tarjeta[data-pos="-2"]:hover .cf-marco::after{opacity:.36}
+  }
+  @media (min-width:901px){
+    .con-js .cf-flecha{position:absolute;z-index:40;top:calc((var(--cf-h) + 24px) / 2);margin-top:-23px}
+    .con-js .cf-anterior{left:0}
+    .con-js .cf-siguiente{right:0}
+  }
+  @media (max-width:900px){
+    .coverflow{--cf-w:300px;--cf-h:456px;--cf-x1:215px;--cf-x2:390px}
+  }
+  @media (max-width:560px){
+    .coverflow{--cf-w:256px;--cf-h:440px;--cf-x1:166px;--cf-x2:300px}
+    .cf-cta{letter-spacing:.08em;padding:.62rem .95rem}
+    .cf-cuerpo h3{font-size:1.5rem}
+    .cf-cuerpo h3 em{font-size:1rem}
+    .cf-cuerpo p{font-size:.82rem;margin:.95rem 0 1rem}
+  }
 
   /* Personalización */
   .personaliza{background:var(--beige)}
@@ -230,14 +313,6 @@
   .opcion:hover .chips span{background:var(--durazno)}
   .chips span:hover{background:var(--rosa);color:var(--blanco);transform:translateY(-2px)}
 
-  /* Galeria */
-  .marco{position:relative}
-  .marco::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(142,74,72,0) 55%,rgba(142,74,72,.32));opacity:0;transition:opacity .45s}
-  .pieza:hover .marco::after{opacity:1}
-  .pieza .texto{position:relative}
-  .pieza .texto::before{content:"";position:absolute;top:0;left:1.6rem;width:0;height:2px;background:var(--rosa);transition:width .45s var(--curva)}
-  .pieza:hover .texto::before{width:34px}
-
   /* Ocasiones */
   .ocasiones div{transition:transform .3s var(--curva),border-color .3s}
   .ocasiones div:hover{transform:translateX(5px);border-color:var(--rosa)}
@@ -284,7 +359,7 @@
     .hero p{margin-inline:auto}
     .acciones{justify-content:center}
     .hero-arte{max-width:360px;margin:auto}
-    .opciones,.galeria{grid-template-columns:1fr 1fr}
+    .opciones{grid-template-columns:1fr 1fr}
     .pasos,.ocasiones{grid-template-columns:1fr 1fr}
     .tarjeta-contacto{padding:2rem}
   }
@@ -298,7 +373,7 @@
   }
   @media (max-width:560px){
     section{padding:4rem 0}
-    .opciones,.pasos,.galeria,.ocasiones{grid-template-columns:1fr}
+    .opciones,.pasos,.ocasiones{grid-template-columns:1fr}
     nav .btn{padding:.7rem 1.1rem;font-size:.85rem}
   }
   @media (prefers-reduced-motion:reduce){
@@ -307,6 +382,10 @@
     .con-js .rev,.con-js .cita::before,.con-js .paso::before{opacity:1;transform:none}
     .con-js .estados::before{transform:scaleX(1)}
     .confites{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .con-js .cf-tarjeta,.con-js .cf-marco::after,.con-js .cf-contenido,.con-js .cf-tarjeta::before{transition-property:opacity!important;transition-duration:.25s!important;transition-delay:0s!important}
+    .catalogo-luz{transition:none}
   }
 </style>
 </head>
@@ -322,7 +401,7 @@
     </label>
     <ul>
       <li><a href="#nosotros">Nosotros</a></li>
-      <li><a href="#galeria">Diseños</a></li>
+      <li><a href="#catalogo">Catálogo</a></li>
       <li><a href="#personaliza">Personaliza</a></li>
       <li><a href="#pedidos">Cómo pedir</a></li>
       <li><a href="#contacto">Contacto</a></li>
@@ -398,43 +477,122 @@
     </div>
   </section>
 
-  <!-- Galería de diseños -->
-  <section id="galeria">
+  <!-- Catálogo -->
+  <section class="catalogo" id="catalogo" aria-labelledby="titulo-catalogo">
+    <div class="catalogo-luz" aria-hidden="true"></div>
     <div class="contenedor">
-      <div class="titulo-lado rev">
-        <div>
-          <span class="etiqueta">Nuestros diseños</span>
-          <h2>Así se ve un pastel hecho a la medida</h2>
-        </div>
+      <div class="titulo-sec rev">
+        <span class="etiqueta">Catálogo</span>
+        <h2 id="titulo-catalogo">Así se ve un pastel hecho a la medida</h2>
       </div>
-      <div class="galeria">
-        <article class="pieza rev">
-          <div class="marco">
-            <img src="https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=800&h=600&fit=crop&crop=entropy&q=70" alt="Pastel de tres pisos con flores de crema en tonos rosados" width="800" height="600" loading="lazy">
+      <div class="coverflow" id="coverflow" role="region" aria-roledescription="carrusel" aria-label="Catálogo de pasteles" tabindex="0">
+        <div class="cf-pista">
+          <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="1 de 7" data-pos="0" data-nombre="Varios pisos" data-luz="rgba(223,166,157,.55)">
+            <div class="cf-marco">
+              <img src="pasteles/pisos.svg" alt="Ilustración de un pastel de tres pisos con flores de crema" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <div class="cf-contenido">
+                <span class="cf-etiqueta">Bodas</span>
+                <div class="cf-cuerpo">
+                  <h3>Varios pisos<em>Flores de crema</em></h3>
+                  <p>Tres pisos con acabado liso y flores en tonos rosados.</p>
+                  <a class="cf-cta" href="#contacto" draggable="false">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="2 de 7" data-pos="1" data-nombre="Chocolate con cobertura" data-luz="rgba(201,106,102,.6)" aria-hidden="true">
+            <div class="cf-marco">
+              <img src="pasteles/chocolate.svg" alt="Ilustración de un pastel de chocolate con cobertura derramada y rosetones" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <div class="cf-contenido">
+                <span class="cf-etiqueta">Cumpleaños</span>
+                <div class="cf-cuerpo">
+                  <h3>Chocolate<em>Con cobertura</em></h3>
+                  <p>Bizcocho de chocolate, cobertura que escurre y rosetones de crema.</p>
+                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="3 de 7" data-pos="2" data-nombre="Corazón con mensaje" data-luz="rgba(201,106,102,.5)" aria-hidden="true">
+            <div class="cf-marco">
+              <img src="pasteles/corazon.svg" alt="Ilustración de un pastel en forma de corazón con un mensaje escrito" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <div class="cf-contenido">
+                <span class="cf-etiqueta">Aniversarios</span>
+                <div class="cf-cuerpo">
+                  <h3>Corazón<em>Con tu mensaje</em></h3>
+                  <p>En forma de corazón, con el nombre o la frase que elijas.</p>
+                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="4 de 7" data-pos="3" data-nombre="Corona y perlas" data-luz="rgba(234,199,184,.5)" aria-hidden="true">
+            <div class="cf-marco">
+              <img src="pasteles/corona.svg" alt="Ilustración de un pastel de dos pisos con perlas y una corona encima" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <div class="cf-contenido">
+                <span class="cf-etiqueta">XV años</span>
+                <div class="cf-cuerpo">
+                  <h3>Corona<em>Perlas y listón</em></h3>
+                  <p>Dos pisos altos con guirnaldas de perlas y una corona encima.</p>
+                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="5 de 7" data-pos="-3" data-nombre="Nubes y estrellas" data-luz="rgba(247,232,217,.45)" aria-hidden="true">
+            <div class="cf-marco">
+              <img src="pasteles/nubes.svg" alt="Ilustración de un pastel con lunares, nubes y una luna con estrellas encima" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <div class="cf-contenido">
+                <span class="cf-etiqueta">Baby shower</span>
+                <div class="cf-cuerpo">
+                  <h3>Nubes y estrellas<em>Colores suaves</em></h3>
+                  <p>Tonos suaves con luna, estrellas y nubes de azúcar.</p>
+                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="6 de 7" data-pos="-2" data-nombre="Crema y galleta" data-luz="rgba(234,199,184,.5)" aria-hidden="true">
+            <div class="cf-marco">
+              <img src="pasteles/galleta.svg" alt="Ilustración de un pastel de capas de crema con galleta triturada encima" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <div class="cf-contenido">
+                <span class="cf-etiqueta">Clásico</span>
+                <div class="cf-cuerpo">
+                  <h3>Crema y galleta<em>Capas de crema</em></h3>
+                  <p>Capas de crema con galleta triturada, ideal para cumpleaños.</p>
+                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Cotizar este diseño <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="7 de 7" data-pos="-1" data-nombre="Tu idea" data-luz="rgba(255,249,243,.38)" data-mensaje="¡Hola BakeMe! Tengo una idea para un pastel personalizado. Les envío mi imagen de referencia." aria-hidden="true">
+            <div class="cf-marco">
+              <img src="pasteles/idea.svg" alt="Ilustración de un boceto de pastel junto a una foto de referencia y un lápiz" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <div class="cf-contenido">
+                <span class="cf-etiqueta">A tu medida</span>
+                <div class="cf-cuerpo">
+                  <h3>Tu idea<em>Hecha pastel</em></h3>
+                  <p>Envíanos tu imagen de referencia y lo diseñamos contigo.</p>
+                  <a class="cf-cta" href="#contacto" draggable="false" tabindex="-1">Enviar mi idea <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="cf-controles">
+          <button class="cf-flecha cf-anterior" type="button" aria-label="Pastel anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 19l-7-7 7-7"/></svg></button>
+          <div class="cf-puntos" role="group" aria-label="Elegir pastel">
+            <button type="button" aria-label="Varios pisos" aria-current="true"><i></i></button>
+            <button type="button" aria-label="Chocolate con cobertura"><i></i></button>
+            <button type="button" aria-label="Corazón con mensaje"><i></i></button>
+            <button type="button" aria-label="Corona y perlas"><i></i></button>
+            <button type="button" aria-label="Nubes y estrellas"><i></i></button>
+            <button type="button" aria-label="Crema y galleta"><i></i></button>
+            <button type="button" aria-label="Tu idea"><i></i></button>
           </div>
-          <div class="texto">
-            <h3>Varios pisos</h3>
-            <p>Para bodas y XV años, con acabado liso y decoración de flores.</p>
-          </div>
-        </article>
-        <article class="pieza rev">
-          <div class="marco">
-            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=600&fit=crop&crop=entropy&q=70" alt="Pastel de chocolate con cobertura derramada y rosetones" width="800" height="600" loading="lazy">
-          </div>
-          <div class="texto">
-            <h3>Chocolate con cobertura</h3>
-            <p>Bizcocho de chocolate con cobertura y el decorado que elijas.</p>
-          </div>
-        </article>
-        <article class="pieza rev">
-          <div class="marco">
-            <img src="https://images.unsplash.com/photo-1557925923-cd4648e211a0?w=800&h=600&fit=crop&crop=entropy&q=70" alt="Pastel de crema con galleta triturada por encima" width="800" height="600" loading="lazy">
-          </div>
-          <div class="texto">
-            <h3>Crema y galleta</h3>
-            <p>Relleno de crema con galleta, ideal para cumpleaños.</p>
-          </div>
-        </article>
+          <button class="cf-flecha cf-siguiente" type="button" aria-label="Pastel siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <p class="cf-anuncio sr" aria-live="polite" aria-atomic="true"></p>
       </div>
     </div>
   </section>
@@ -633,6 +791,17 @@ if (CONTACTO.whatsapp) {
   document.getElementById("texto-whatsapp").textContent = "Agrega tu número de WhatsApp";
 }
 
+// Cada pastel del catálogo abre WhatsApp con su nombre ya escrito.
+document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
+  var cta = t.querySelector(".cf-cta");
+  if (!cta || !CONTACTO.whatsapp) return;
+  var texto = t.dataset.mensaje ||
+    "¡Hola BakeMe! Me interesa el diseño «" + t.dataset.nombre + "» del catálogo. ¿Me pueden cotizar?";
+  cta.href = "https://wa.me/" + CONTACTO.whatsapp + "?text=" + encodeURIComponent(texto);
+  cta.target = "_blank";
+  cta.rel = "noopener";
+});
+
 // Cierra el menú del celular al tocar un enlace.
 document.querySelectorAll("nav ul a").forEach(function (a) {
   a.addEventListener("click", function () {
@@ -653,7 +822,7 @@ document.querySelectorAll("nav ul a").forEach(function (a) {
   var estados = document.querySelector(".estados");
 
   // Escalona los elementos que comparten una misma rejilla.
-  [".galeria", ".opciones", ".ocasiones", ".pasos", ".estados", ".info", ".nosotros .contenedor"]
+  [".opciones", ".ocasiones", ".pasos", ".estados", ".info", ".nosotros .contenedor"]
     .forEach(function (selector) {
       document.querySelectorAll(selector).forEach(function (grupo) {
         grupo.querySelectorAll(":scope > .rev").forEach(function (hijo, i) {
@@ -727,6 +896,172 @@ document.querySelectorAll("nav ul a").forEach(function (a) {
       secciones.forEach(function (sec) { ojoMenu.observe(sec); });
     }
   }
+})();
+</script>
+
+<script>
+/* =======================================================================
+   Catálogo: carrusel coverflow 3D. Avanza solo mientras se ve; se pausa
+   con el cursor encima, con el foco dentro o con la pestaña oculta, y se
+   detiene para siempre en cuanto el visitante lo mueve a mano.
+   ======================================================================= */
+(function () {
+  var raiz = document.getElementById("coverflow");
+  if (!raiz) return;
+  var pista = raiz.querySelector(".cf-pista");
+  var tarjetas = Array.prototype.slice.call(raiz.querySelectorAll(".cf-tarjeta"));
+  var puntos = Array.prototype.slice.call(raiz.querySelectorAll(".cf-puntos button"));
+  var anuncio = raiz.querySelector(".cf-anuncio");
+  var luz = document.querySelector(".catalogo-luz");
+  var total = tarjetas.length;
+  var actual = 0;
+  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var automatico = !menos && total > 1;
+  var enPantalla = false, encima = false, enfocado = false, huboArrastre = false;
+
+  // Distancia con signo al centro; con 3 o más de separación la tarjeta se esconde.
+  function posicion(i) {
+    var d = (i - actual + total) % total;
+    if (d > total / 2) d -= total;
+    return Math.max(-3, Math.min(3, d));
+  }
+
+  function pintar(anunciar) {
+    tarjetas.forEach(function (t, i) {
+      var d = posicion(i);
+      t.setAttribute("data-pos", d);
+      t.style.setProperty("--cf-orden", Math.abs(d));
+      if (d === 0) t.removeAttribute("aria-hidden");
+      else t.setAttribute("aria-hidden", "true");
+      var cta = t.querySelector(".cf-cta");
+      if (cta) cta.tabIndex = d === 0 ? 0 : -1;
+    });
+    puntos.forEach(function (p, i) {
+      if (i === actual) p.setAttribute("aria-current", "true");
+      else p.removeAttribute("aria-current");
+      p.classList.remove("corriendo");
+    });
+    if (automatico) {
+      void puntos[actual].offsetWidth;   // reinicia la barra de progreso
+      puntos[actual].classList.add("corriendo");
+    }
+    if (luz) luz.style.setProperty("--luz", tarjetas[actual].getAttribute("data-luz"));
+    if (anunciar && anuncio) {
+      anuncio.textContent = "Pastel " + (actual + 1) + " de " + total + ": " +
+        tarjetas[actual].getAttribute("data-nombre");
+    }
+  }
+
+  function ir(i, aMano) {
+    actual = ((i % total) + total) % total;
+    if (aMano && automatico) {
+      automatico = false;
+      raiz.classList.add("manual");
+    }
+    pintar(aMano);
+  }
+
+  function pausar() {
+    raiz.classList.toggle("pausado", !enPantalla || encima || enfocado || document.hidden);
+  }
+
+  // El avance lo marca la barra del punto activo: si se pausa, el tiempo también.
+  raiz.querySelector(".cf-puntos").addEventListener("animationend", function (e) {
+    if (e.animationName === "cf-progreso" && automatico) ir(actual + 1, false);
+  });
+
+  raiz.querySelector(".cf-anterior").addEventListener("click", function () { ir(actual - 1, true); });
+  raiz.querySelector(".cf-siguiente").addEventListener("click", function () { ir(actual + 1, true); });
+  puntos.forEach(function (p, i) {
+    p.addEventListener("click", function () { ir(i, true); });
+  });
+
+  // Tocar una tarjeta lateral la trae al centro.
+  tarjetas.forEach(function (t, i) {
+    t.addEventListener("click", function (e) {
+      if (huboArrastre) { e.preventDefault(); return; }
+      if (i !== actual) { e.preventDefault(); ir(i, true); }
+    });
+  });
+
+  // Teclado: solo con el foco dentro del carrusel, nunca en toda la página.
+  raiz.addEventListener("keydown", function (e) {
+    var destino = { ArrowLeft: actual - 1, ArrowRight: actual + 1, Home: 0, End: total - 1 }[e.key];
+    if (destino === undefined) return;
+    e.preventDefault();
+    var enTarjeta = tarjetas.some(function (t) { return t.contains(document.activeElement); });
+    ir(destino, true);
+    if (enTarjeta) raiz.focus({ preventScroll: true });
+  });
+
+  raiz.addEventListener("pointerenter", function (e) {
+    if (e.pointerType === "mouse") { encima = true; pausar(); }
+  });
+  raiz.addEventListener("pointerleave", function (e) {
+    if (e.pointerType === "mouse") { encima = false; pausar(); }
+  });
+  raiz.addEventListener("focusin", function () { enfocado = true; pausar(); });
+  raiz.addEventListener("focusout", function (e) {
+    if (!raiz.contains(e.relatedTarget)) { enfocado = false; pausar(); }
+  });
+  document.addEventListener("visibilitychange", pausar);
+
+  // Deslizar con el dedo o arrastrar con el mouse; un gesto rápido basta.
+  var toque = null;
+  pista.addEventListener("pointerdown", function (e) {
+    if (toque || (e.pointerType === "mouse" && e.button !== 0)) return;
+    toque = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), activo: false };
+    huboArrastre = false;
+  });
+  pista.addEventListener("pointermove", function (e) {
+    if (!toque || e.pointerId !== toque.id) return;
+    var dx = e.clientX - toque.x, dy = e.clientY - toque.y;
+    if (!toque.activo) {
+      if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy)) return;
+      toque.activo = true;
+      huboArrastre = true;
+      pista.setPointerCapture(e.pointerId);
+      raiz.classList.add("arrastrando");
+    }
+    pista.style.transform = "translateX(" + (dx * 0.3).toFixed(1) + "px)";
+  });
+  function soltar(e, cancelado) {
+    if (!toque || e.pointerId !== toque.id) return;
+    var dx = e.clientX - toque.x;
+    var velocidad = Math.abs(dx) / Math.max(performance.now() - toque.t, 1);
+    var activo = toque.activo;
+    toque = null;
+    raiz.classList.remove("arrastrando");
+    pista.style.transform = "";
+    if (activo && !cancelado && (Math.abs(dx) > 45 || velocidad > 0.11)) {
+      ir(actual + (dx < 0 ? 1 : -1), true);
+    }
+    setTimeout(function () { huboArrastre = false; }, 0);
+  }
+  pista.addEventListener("pointerup", function (e) { soltar(e, false); });
+  pista.addEventListener("pointercancel", function (e) { soltar(e, true); });
+
+  // Entrada en abanico la primera vez que el carrusel aparece en pantalla.
+  function entrar() {
+    if (raiz.classList.contains("cf-visible")) return;
+    raiz.classList.add("cf-entrando", "cf-visible");
+    setTimeout(function () { raiz.classList.remove("cf-entrando"); }, 1400);
+  }
+  if (!automatico) raiz.classList.add("manual");
+  pintar(false);
+  if (menos || !("IntersectionObserver" in window)) {
+    raiz.classList.add("cf-visible");
+    enPantalla = true;
+  } else {
+    new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        enPantalla = e.isIntersecting;
+        if (enPantalla) entrar();
+        pausar();
+      });
+    }, { threshold: 0.35 }).observe(raiz);
+  }
+  pausar();
 })();
 </script>
 
