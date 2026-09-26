@@ -20,6 +20,7 @@
     --blanco:#FFF9F3;        /* Blanco suave */
     --logo-fondo:#FCE6D6;    /* fondo del logo */
     --vino:#8E4A48;          /* rosa oscuro para textos */
+    --rubor:#F5DCD3;         /* texto claro sobre vino */
     --texto:#6B4F4A;
     --radio:24px;
   }
@@ -30,34 +31,63 @@
   a{color:inherit;text-decoration:none}
   img{max-width:100%;display:block}
   .contenedor{width:min(1120px,92%);margin:auto}
-  section[id],div[id]{scroll-margin-top:90px}
+  html{scroll-padding-top:88px}
 
-  /* ---------- Navegación ---------- */
-  header{position:sticky;top:0;z-index:20;background:rgba(252,230,214,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(201,106,102,.15)}
-  nav{display:flex;align-items:center;justify-content:space-between;height:76px;position:relative}
-  .logo-nav{width:140px;height:64px;background:var(--logo-fondo) url("logo.jpeg") center/222px no-repeat;flex-shrink:0}
-  nav ul{display:flex;gap:2rem;list-style:none;font-weight:700;font-size:.95rem}
-  nav ul a{position:relative;padding:4px 0;color:var(--vino)}
-  nav ul a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--rosa);transition:width .25s}
-  nav ul a:hover::after{width:100%}
-  .hamburguesa{display:none;cursor:pointer;color:var(--vino);padding:.5rem;margin-left:auto;margin-right:1rem}
-  .hamburguesa svg{width:28px;height:28px}
-  #menu:checked ~ nav .abrir{display:none}
-  #menu:checked ~ nav .cerrar{display:block}
-  .cerrar{display:none}
+  /* ---------- Encabezado ---------- */
+  .saltar{position:fixed;left:16px;top:12px;z-index:100;padding:.7rem 1.1rem;border-radius:999px;background:var(--vino);color:var(--blanco);font-weight:700;transform:translateY(-160%);transition:transform .2s var(--curva)}
+  .saltar:focus{transform:none}
+  main:focus{outline:none}
+  header{position:sticky;top:0;z-index:20;background:rgba(252,230,214,.94);-webkit-backdrop-filter:blur(12px) saturate(1.15);backdrop-filter:blur(12px) saturate(1.15);border-bottom:1px solid rgba(201,106,102,.16)}
+  .barra{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1.2rem;height:76px;position:relative}
+  .logo-nav{justify-self:start;width:140px;height:64px;background:var(--logo-fondo) url("logo.jpeg") center/222px no-repeat;flex-shrink:0}
+  .btn.btn-cabecera{justify-self:end;min-height:44px;padding:.65rem 1.25rem;font-size:.9rem}
 
-  .btn{display:inline-flex;align-items:center;gap:.55rem;background:var(--rosa);color:var(--blanco);padding:.9rem 1.7rem;border-radius:999px;font-weight:700;transition:transform .2s,background .2s,box-shadow .2s;box-shadow:0 10px 22px -12px rgba(201,106,102,.8)}
-  .btn:hover{background:var(--vino);transform:translateY(-2px)}
-  .btn.claro{background:transparent;color:var(--rosa);border:2px solid var(--rosa);box-shadow:none}
-  .btn.claro:hover{background:var(--rosa);color:var(--blanco)}
-  .btn svg{width:20px;height:20px}
+  /* Menú de escritorio: píldora que se desliza entre secciones */
+  @property --pl{syntax:"<length>";inherits:true;initial-value:0px}
+  @property --pr{syntax:"<length>";inherits:true;initial-value:0px}
+  .pestanas{--pl:0px;--pr:0px;position:relative;display:flex;padding:5px;border-radius:999px;background:rgba(255,249,243,.8);border:1px solid rgba(201,106,102,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 22px -16px rgba(142,74,72,.6);transition:--pl .42s var(--curva),--pr .42s var(--curva)}
+  .pestanas[data-dir="der"]{transition:--pl .52s var(--curva),--pr .3s var(--curva)}
+  .pestanas[data-dir="izq"]{transition:--pl .3s var(--curva),--pr .52s var(--curva)}
+  .pestanas.sin-salto{transition:none}
+  .pestanas ul{display:flex;list-style:none}
+  .pestanas a,.pestanas-tinta span{display:block;padding:.62rem 1.05rem;border-radius:999px;font-size:.9rem;font-weight:700;letter-spacing:.01em;line-height:1.2;white-space:nowrap;color:var(--vino)}
+  .pestanas-cursor,.pestanas-tinta{position:absolute;inset:0;pointer-events:none;clip-path:inset(5px var(--pr) 5px var(--pl) round 999px);opacity:0;transition:opacity .22s ease}
+  .pestanas-cursor{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,0) 62%),var(--vino)}
+  .pestanas-tinta{display:flex;padding:5px}
+  .pestanas-tinta span{color:var(--blanco)}
+  .pestanas.con-cursor .pestanas-cursor,.pestanas.con-cursor .pestanas-tinta{opacity:1}
+  .pestanas a:focus-visible{outline:2px solid var(--rosa);outline-offset:2px;border-radius:999px}
+
+  /* Menú del celular */
+  .menu-boton{display:none;place-items:center;width:46px;height:46px;flex-shrink:0;border-radius:14px;border:1px solid rgba(201,106,102,.28);background:rgba(255,249,243,.72);color:var(--vino);cursor:pointer;transition:transform .16s var(--curva),background-color .2s ease}
+  .menu-boton:active{transform:scale(.94)}
+  .menu-boton span{grid-area:1/1;width:20px;height:2px;border-radius:2px;background:currentColor;transition:transform .32s var(--curva),opacity .2s ease}
+  .menu-boton span:nth-child(1){transform:translateY(-6px)}
+  .menu-boton span:nth-child(3){transform:translateY(6px)}
+  .menu-boton[aria-expanded="true"] span:nth-child(1){transform:rotate(45deg)}
+  .menu-boton[aria-expanded="true"] span:nth-child(2){opacity:0;transform:scaleX(.2)}
+  .menu-boton[aria-expanded="true"] span:nth-child(3){transform:rotate(-45deg)}
+  .menu-movil{display:none}
+  .menu-movil ul{list-style:none;display:grid;gap:4px;width:min(560px,100%);margin:0 auto}
+  .menu-movil li{--i:0;opacity:0;transform:translateY(-8px);transition:opacity .15s ease,transform .15s ease}
+  .menu-movil.abierto li{opacity:1;transform:none;transition:opacity .3s ease calc(60ms + var(--i) * 35ms),transform .38s var(--curva) calc(60ms + var(--i) * 35ms)}
+  .menu-enlace{display:flex;align-items:center;gap:.9rem;min-height:52px;padding:0 1rem;border-radius:16px;font-size:1.02rem;font-weight:700;color:var(--vino);transition:background-color .2s ease,color .2s ease}
+  .menu-enlace svg{width:22px;height:22px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;color:var(--rosa);transition:color .2s ease}
+  .menu-enlace:active{background:rgba(201,106,102,.12)}
+  .menu-enlace[aria-current="true"]{background:var(--vino);color:var(--blanco)}
+  .menu-enlace[aria-current="true"] svg{color:var(--durazno)}
+  .menu-movil .btn{display:flex;width:100%;margin-top:.7rem}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;min-height:48px;background:var(--vino);color:var(--blanco);padding:.85rem 1.6rem;border-radius:999px;font-weight:700;transition:transform .16s var(--curva),background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .25s ease;box-shadow:0 12px 24px -14px rgba(142,74,72,.9)}
+  .btn:active{transform:scale(.97)}
+  .btn.claro{background:transparent;color:var(--vino);border:2px solid var(--rosa);box-shadow:none}
+  .btn svg{width:20px;height:20px;flex-shrink:0}
   .btn.pendiente{background:var(--durazno);color:var(--vino);box-shadow:none;cursor:not-allowed}
-  .btn.pendiente:hover{transform:none;background:var(--durazno)}
 
   /* ---------- Portada ---------- */
   .hero{background:linear-gradient(180deg,var(--logo-fondo),var(--beige));overflow:hidden}
   .hero .contenedor{display:grid;grid-template-columns:1.05fr .95fr;gap:3.5rem;align-items:center;padding:4.5rem 0 5.5rem}
-  .etiqueta{display:inline-block;color:var(--rosa);font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:1rem}
+  .etiqueta{display:inline-block;color:var(--vino);font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:1rem}
   .etiqueta::before{content:"";display:inline-block;width:28px;height:2px;background:var(--salmon);vertical-align:middle;margin-right:.7rem}
   .hero h1{font-size:clamp(2.5rem,5.5vw,4.2rem);margin-bottom:1.3rem}
   .hero h1 em{color:var(--rosa)}
@@ -89,17 +119,17 @@
   .cita{background:var(--crema);border-radius:var(--radio);padding:2.8rem;position:relative}
   .cita::before{content:"\201C";position:absolute;top:-.3rem;left:1.4rem;font-family:"Playfair Display",serif;font-size:6rem;color:var(--salmon);line-height:1}
   .cita p{font-family:"Playfair Display",serif;font-style:italic;font-size:1.45rem;color:var(--vino);line-height:1.45;padding-top:1.5rem}
-  .cita span{display:block;margin-top:1.2rem;font-size:.9rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--rosa)}
+  .cita span{display:block;margin-top:1.2rem;font-size:.9rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--vino)}
 
   /* ---------- Catálogo: carrusel coverflow 3D ---------- */
   @property --luz{syntax:"<color>";inherits:false;initial-value:rgba(223,166,157,.55)}
-  .catalogo{position:relative;overflow:hidden;background:var(--vino);color:#F5DCD3;padding-bottom:4.5rem}
+  .catalogo{position:relative;overflow:hidden;background:var(--vino);color:var(--rubor);padding-bottom:4.5rem}
   .catalogo::after{content:"";position:absolute;top:0;left:0;right:0;height:18px;z-index:3;pointer-events:none;background:radial-gradient(circle at 9px 0,var(--blanco) 9px,rgba(0,0,0,0) 9.5px) repeat-x;background-size:18px 18px}
   .catalogo-luz{--luz:rgba(223,166,157,.55);position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 58% 52% at 50% 64%,var(--luz),rgba(142,74,72,0) 72%),radial-gradient(ellipse 90% 60% at 50% 118%,rgba(40,14,13,.55),rgba(40,14,13,0) 70%);transition:--luz 1s ease}
   .catalogo>.contenedor{position:relative;z-index:1}
   .catalogo .titulo-sec{margin-bottom:2.4rem}
   .catalogo .titulo-sec h2{color:var(--blanco);text-wrap:balance}
-  .catalogo .etiqueta{color:var(--durazno)}
+  .catalogo .etiqueta{color:var(--rubor)}
 
   .coverflow{--cf-w:330px;--cf-h:500px;--cf-x1:285px;--cf-x2:510px;--cf-ms:5200ms;--cf-curva:cubic-bezier(.22,1,.36,1);position:relative;border-radius:28px}
   .coverflow:focus{outline:none}
@@ -116,7 +146,7 @@
   .cf-etiqueta{align-self:flex-end;background:rgba(255,249,243,.92);color:var(--vino);font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:.38rem .8rem;border-radius:999px;box-shadow:0 8px 18px -12px rgba(40,14,13,.8)}
   .cf-cuerpo{display:flex;flex-direction:column;align-items:center}
   .cf-cuerpo h3{color:var(--blanco);font-size:1.8rem;line-height:1.05;text-wrap:balance;text-shadow:0 2px 14px rgba(40,14,13,.55)}
-  .cf-cuerpo h3 em{display:block;margin-top:.3rem;font-size:1.08rem;font-weight:500;color:#F5DCD3}
+  .cf-cuerpo h3 em{display:block;margin-top:.3rem;font-size:1.08rem;font-weight:500;color:var(--rubor)}
   .cf-cuerpo p{position:relative;max-width:26ch;margin:1.05rem 0 1.1rem;font-size:.86rem;line-height:1.45;font-style:italic;color:rgba(255,249,243,.92);text-shadow:0 1px 8px rgba(40,14,13,.5)}
   .cf-cuerpo p::before{content:"";position:absolute;left:50%;top:-.6rem;width:34px;height:2px;margin-left:-17px;border-radius:2px;background:var(--durazno);box-shadow:0 0 10px rgba(234,199,184,.7)}
   .cf-cta{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;padding:.66rem 1.15rem;border-radius:999px;background:var(--blanco);color:var(--vino);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 12px 26px -14px rgba(40,14,13,.95);transition:transform .16s var(--cf-curva),background-color .2s ease}
@@ -130,7 +160,7 @@
   .cf-flecha:active{transform:scale(.94)}
   .cf-flecha:focus-visible{outline:2px solid var(--durazno);outline-offset:3px}
   .cf-puntos{display:flex;align-items:center;gap:2px}
-  .cf-puntos button{display:grid;place-items:center;min-width:22px;height:30px;padding:0 3px;border:0;background:none;cursor:pointer}
+  .cf-puntos button{display:grid;place-items:center;min-width:26px;height:32px;padding:0 4px;border:0;background:none;cursor:pointer}
   .cf-puntos button:focus{outline:none}
   .cf-puntos button:focus-visible i{box-shadow:0 0 0 2px var(--vino),0 0 0 4px var(--durazno)}
   .cf-puntos i{position:relative;display:block;width:8px;height:8px;border-radius:999px;overflow:hidden;background:rgba(255,249,243,.3);transition:width .4s var(--cf-curva)}
@@ -192,7 +222,6 @@
   .personaliza{background:var(--beige)}
   .opciones{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
   .opcion{background:var(--blanco);border-radius:var(--radio);padding:2rem;border:1px solid rgba(201,106,102,.12);transition:transform .25s,box-shadow .25s}
-  .opcion:hover{transform:translateY(-6px);box-shadow:0 24px 40px -26px rgba(142,74,72,.5)}
   .icono{width:58px;height:58px;border-radius:50%;background:var(--durazno);display:grid;place-items:center;margin-bottom:1.2rem;color:var(--vino)}
   .icono svg{width:28px;height:28px}
   .opcion h3{font-size:1.35rem;margin-bottom:.4rem}
@@ -209,9 +238,9 @@
   .ocasiones small{font-size:.85rem;line-height:1.5;display:block}
 
   /* Cómo pedir */
-  .pasos-sec{background:var(--vino);color:#F5DCD3}
+  .pasos-sec{background:var(--vino);color:var(--rubor)}
   .pasos-sec .titulo-sec h2{color:var(--blanco)}
-  .pasos-sec .etiqueta{color:var(--durazno)}
+  .pasos-sec .etiqueta{color:var(--rubor)}
   .pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;counter-reset:paso}
   .paso{position:relative;padding-top:4.2rem}
   .paso::before{counter-increment:paso;content:"0" counter(paso);position:absolute;top:0;left:0;font-family:"Playfair Display",serif;font-size:3.2rem;color:var(--salmon)}
@@ -221,7 +250,7 @@
   .estados{display:flex;justify-content:space-between;position:relative;max-width:820px;margin:0 auto}
   .estados::before{content:"";position:absolute;top:22px;left:10%;right:10%;height:3px;background:linear-gradient(90deg,var(--salmon),var(--rosa))}
   .estado{position:relative;text-align:center;flex:1}
-  .estado i{display:grid;place-items:center;width:47px;height:47px;margin:0 auto .8rem;border-radius:50%;background:var(--blanco);border:3px solid var(--rosa);color:var(--rosa);font-style:normal;font-weight:700}
+  .estado i{display:grid;place-items:center;width:47px;height:47px;margin:0 auto .8rem;border-radius:50%;background:var(--blanco);border:3px solid var(--rosa);color:var(--vino);font-style:normal;font-weight:700}
   .estado b{display:block;color:var(--vino)}
   .estado small{font-size:.85rem}
 
@@ -270,12 +299,10 @@
   /* Encabezado que se compacta + barra de lectura */
   header{transition:background .3s,box-shadow .3s}
   header.desplazado{background:rgba(252,230,214,.98);box-shadow:0 12px 32px -26px rgba(142,74,72,.9)}
-  nav{transition:height .3s var(--curva)}
-  header.desplazado nav{height:64px}
+  .barra{transition:height .3s var(--curva)}
+  header.desplazado .barra{height:64px}
   .logo-nav{transition:transform .3s var(--curva);transform-origin:left center}
   header.desplazado .logo-nav{transform:scale(.88)}
-  nav ul a.activo{color:var(--rosa)}
-  nav ul a.activo::after{width:100%}
   .progreso{position:absolute;left:0;bottom:-1px;z-index:2;height:2px;width:0;border-radius:0 2px 2px 0;background:linear-gradient(90deg,var(--salmon),var(--rosa));transition:width .12s linear}
 
   /* Revelado al hacer scroll */
@@ -289,33 +316,25 @@
   /* Los numeros de los pasos suben al aparecer */
   .con-js .paso::before{opacity:0;transform:translateY(14px);transition:opacity .7s var(--curva) .2s,transform .7s var(--curva) .2s,color .3s}
   .con-js .paso.visible::before{opacity:1;transform:none}
-  .paso:hover::before{color:var(--durazno)}
 
   /* La linea del seguimiento se dibuja sola */
   .con-js .estados::before{transform:scaleX(0);transform-origin:left center;transition:transform 1.2s var(--curva) .15s}
   .con-js .estados.dibujada::before{transform:scaleX(1)}
-  .estado i{transition:transform .3s var(--curva),background .3s,color .3s,box-shadow .3s}
-  .estado:hover i{transform:scale(1.12);background:var(--rosa);color:var(--blanco);box-shadow:0 10px 20px -12px rgba(201,106,102,.9)}
+  .estado i{transition:transform .3s var(--curva),background-color .3s,border-color .3s,color .3s,box-shadow .3s}
 
   /* Brillo que cruza los botones */
   .btn{position:relative;overflow:hidden}
   .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.4) 50%,transparent 62%);transform:translateX(-130%);transition:transform .75s var(--curva)}
-  .btn:hover::after{transform:translateX(130%)}
   .btn.pendiente::after{display:none}
 
   /* Tarjetas de personalizacion */
   .icono{transition:transform .35s var(--curva),background .3s,color .3s}
   .opcion{position:relative;overflow:hidden}
   .opcion::before{content:"";position:absolute;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,var(--salmon),var(--rosa));transform:scaleX(0);transform-origin:left;transition:transform .45s var(--curva)}
-  .opcion:hover::before{transform:scaleX(1)}
-  .opcion:hover .icono{transform:scale(1.08) rotate(-7deg);background:var(--rosa);color:var(--blanco)}
-  .chips span{transition:background .25s,color .25s,transform .25s}
-  .opcion:hover .chips span{background:var(--durazno)}
-  .chips span:hover{background:var(--rosa);color:var(--blanco);transform:translateY(-2px)}
+  .chips span{transition:background-color .25s,color .25s,transform .25s,box-shadow .25s}
 
   /* Ocasiones */
   .ocasiones div{transition:transform .3s var(--curva),border-color .3s}
-  .ocasiones div:hover{transform:translateX(5px);border-color:var(--rosa)}
 
   /* Resplandor lento en la banda oscura */
   .pasos-sec{position:relative;overflow:hidden}
@@ -331,29 +350,51 @@
 
   /* Entrega y pago */
   .info>div{transition:transform .3s var(--curva),box-shadow .3s}
-  .info>div:hover{transform:translateY(-4px);box-shadow:0 24px 40px -30px rgba(142,74,72,.6)}
   .info li{transition:transform .25s var(--curva)}
-  .info li:hover{transform:translateX(4px)}
 
   /* Datos de contacto */
   .datos li .icono{transition:transform .3s var(--curva),background .3s,color .3s}
-  .datos li:hover .icono{transform:rotate(-8deg) scale(1.06);background:var(--rosa);color:var(--blanco)}
-  .datos li a{border-bottom:1px solid transparent;transition:color .25s,border-color .25s}
-  .datos li a:hover{color:var(--rosa);border-bottom-color:var(--rosa)}
+  .datos li a{display:inline-block;padding-block:3px;border-bottom:1px solid transparent;transition:border-color .25s}
 
   /* Pie */
   .logo-pie{transition:transform .4s var(--curva)}
-  footer:hover .logo-pie{transform:scale(1.04)}
 
   /* Foco visible para teclado */
-  a:focus-visible,label:focus-visible{outline:2px solid var(--rosa);outline-offset:4px;border-radius:8px}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--rosa);outline-offset:3px;border-radius:10px}
+  .pasos-sec :focus-visible,.catalogo :focus-visible{outline-color:var(--durazno)}
 
+  /* Efectos al pasar el cursor: solo con mouse, para que no se queden pegados al tocar */
+  @media (hover:hover) and (pointer:fine){
+    .btn:hover{transform:translateY(-2px);box-shadow:0 16px 30px -14px rgba(142,74,72,.95),0 0 0 4px rgba(201,106,102,.22)}
+    .btn:hover:active{transform:scale(.97)}
+    .btn.claro:hover{background:var(--vino);border-color:var(--vino);color:var(--blanco)}
+    .btn.pendiente:hover{transform:none;box-shadow:none}
+    .btn:hover::after{transform:translateX(130%)}
+    .menu-boton:hover{background:var(--blanco)}
+    .opcion:hover{transform:translateY(-6px);box-shadow:0 24px 40px -26px rgba(142,74,72,.5)}
+    .opcion:hover::before{transform:scaleX(1)}
+    .opcion:hover .icono{transform:scale(1.08) rotate(-7deg);background:var(--rosa);color:var(--blanco)}
+    .opcion:hover .chips span{box-shadow:inset 0 0 0 1px rgba(201,106,102,.45)}
+    .chips span:hover{background:var(--vino);color:var(--blanco);transform:translateY(-2px)}
+    .ocasiones div:hover{transform:translateX(5px);border-color:var(--rosa)}
+    .paso:hover::before{color:var(--durazno)}
+    .estado:hover i{transform:scale(1.12);background:var(--vino);border-color:var(--vino);color:var(--blanco);box-shadow:0 10px 20px -12px rgba(142,74,72,.9)}
+    .info>div:hover{transform:translateY(-4px);box-shadow:0 24px 40px -30px rgba(142,74,72,.6)}
+    .info li:hover{transform:translateX(4px)}
+    .datos li:hover .icono{transform:rotate(-8deg) scale(1.06);background:var(--rosa);color:var(--blanco)}
+    .datos li a:hover{border-bottom-color:var(--rosa)}
+    footer:hover .logo-pie{transform:scale(1.04)}
+  }
+
+  @media (max-width:1024px){
+    .barra{display:flex;gap:.6rem}
+    .pestanas{display:none}
+    .btn.btn-cabecera{margin-left:auto}
+    .menu-boton{display:grid}
+    .menu-movil{display:block;position:absolute;left:0;right:0;top:100%;background:var(--logo-fondo);border-bottom:1px solid rgba(201,106,102,.2);border-radius:0 0 26px 26px;box-shadow:0 30px 44px -30px rgba(142,74,72,.6);padding:.5rem 16px 1.2rem;clip-path:inset(0 0 100% 0);visibility:hidden;transition:clip-path .22s var(--curva),visibility 0s linear .22s}
+    .menu-movil.abierto{clip-path:inset(0 0 -60px 0);visibility:visible;transition:clip-path .38s var(--curva),visibility 0s}
+  }
   @media (max-width:900px){
-    .hamburguesa{display:block}
-    nav ul{display:none;position:absolute;top:76px;left:-4%;width:108%;flex-direction:column;gap:0;background:var(--logo-fondo);padding:.5rem 4% 1.2rem;border-bottom:1px solid rgba(201,106,102,.2);box-shadow:0 18px 30px -22px rgba(142,74,72,.6)}
-    nav ul li{border-top:1px solid rgba(201,106,102,.15)}
-    nav ul a{display:block;padding:.9rem 0}
-    #menu:checked ~ nav ul{display:flex}
     .hero .contenedor,.nosotros .contenedor,.tarjeta-contacto,.info,.ocasiones-sec .contenedor{grid-template-columns:1fr}
     .hero .contenedor{padding-top:3rem;text-align:center}
     .hero p{margin-inline:auto}
@@ -374,7 +415,8 @@
   @media (max-width:560px){
     section{padding:4rem 0}
     .opciones,.pasos,.ocasiones{grid-template-columns:1fr}
-    nav .btn{padding:.7rem 1.1rem;font-size:.85rem}
+    .btn.btn-cabecera{padding:.55rem .95rem;font-size:.82rem}
+    .logo-nav{width:118px;background-size:190px}
   }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
@@ -386,32 +428,50 @@
   @media (prefers-reduced-motion:reduce){
     .con-js .cf-tarjeta,.con-js .cf-marco::after,.con-js .cf-contenido,.con-js .cf-tarjeta::before{transition-property:opacity!important;transition-duration:.25s!important;transition-delay:0s!important}
     .catalogo-luz{transition:none}
+    .pestanas{transition:none}
   }
 </style>
 </head>
 <body>
 
+<a class="saltar" href="#contenido">Saltar al contenido</a>
 <header>
-  <input type="checkbox" id="menu" hidden>
-  <nav class="contenedor">
-    <a href="#" class="logo-nav" aria-label="BakeMe Pastelería"></a>
-    <label for="menu" class="hamburguesa" aria-label="Abrir menú">
-      <svg class="abrir" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      <svg class="cerrar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </label>
-    <ul>
-      <li><a href="#nosotros">Nosotros</a></li>
-      <li><a href="#catalogo">Catálogo</a></li>
-      <li><a href="#personaliza">Personaliza</a></li>
-      <li><a href="#pedidos">Cómo pedir</a></li>
-      <li><a href="#contacto">Contacto</a></li>
-    </ul>
-    <a href="#contacto" class="btn">Cotiza tu pastel</a>
+  <div class="barra contenedor">
+    <a href="#" class="logo-nav" aria-label="BakeMe Pastelería, ir al inicio"></a>
+    <nav class="pestanas" aria-label="Secciones">
+      <ul class="pestanas-lista">
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#catalogo">Catálogo</a></li>
+        <li><a href="#personaliza">Personaliza</a></li>
+        <li><a href="#pedidos">Cómo pedir</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+      <span class="pestanas-cursor" aria-hidden="true"></span>
+      <ul class="pestanas-tinta" aria-hidden="true">
+        <li><span>Nosotros</span></li>
+        <li><span>Catálogo</span></li>
+        <li><span>Personaliza</span></li>
+        <li><span>Cómo pedir</span></li>
+        <li><span>Contacto</span></li>
+      </ul>
+    </nav>
+    <a href="#contacto" class="btn btn-cabecera">Cotiza tu pastel</a>
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir menú"><span></span><span></span><span></span></button>
     <div class="progreso" id="progreso" aria-hidden="true"></div>
+  </div>
+  <nav class="menu-movil" id="menu-movil" aria-label="Secciones" inert>
+    <ul>
+      <li style="--i:0"><a class="menu-enlace" href="#nosotros"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>Nosotros</a></li>
+      <li style="--i:1"><a class="menu-enlace" href="#catalogo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 13H3"/><path d="M16 17H3"/><path d="m7.2 7.9-3.388 2.5A2 2 0 0 0 3 12.01V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-8.654c0-2-2.44-6.026-6.44-8.026a1 1 0 0 0-1.082.057L10.4 5.6"/><circle cx="9" cy="7" r="2"/></svg>Catálogo</a></li>
+      <li style="--i:2"><a class="menu-enlace" href="#personaliza"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>Personaliza</a></li>
+      <li style="--i:3"><a class="menu-enlace" href="#pedidos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></svg>Cómo pedir</a></li>
+      <li style="--i:4"><a class="menu-enlace" href="#contacto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>Contacto</a></li>
+      <li style="--i:5"><a class="btn" id="menu-whatsapp" href="#contacto"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3z"/></svg><span>Escríbenos por WhatsApp</span></a></li>
+    </ul>
   </nav>
 </header>
 
-<main>
+<main id="contenido" tabindex="-1">
   <!-- Portada -->
   <div class="hero">
     <div class="confites" aria-hidden="true">
@@ -802,12 +862,6 @@ document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
   cta.rel = "noopener";
 });
 
-// Cierra el menú del celular al tocar un enlace.
-document.querySelectorAll("nav ul a").forEach(function (a) {
-  a.addEventListener("click", function () {
-    document.getElementById("menu").checked = false;
-  });
-});
 </script>
 
 <script>
@@ -821,6 +875,15 @@ document.querySelectorAll("nav ul a").forEach(function (a) {
   var revelables = document.querySelectorAll(".rev");
   var estados = document.querySelector(".estados");
 
+  // Tras aparecer, el bloque deja la clase "rev" y su retraso escalonado para
+  // que su hover y sus transiciones propias respondan al instante.
+  function soltar(el) {
+    setTimeout(function () {
+      el.classList.remove("rev");
+      el.style.transitionDelay = "";
+    }, 1400);
+  }
+
   // Escalona los elementos que comparten una misma rejilla.
   [".opciones", ".ocasiones", ".pasos", ".estados", ".info", ".nosotros .contenedor"]
     .forEach(function (selector) {
@@ -832,7 +895,7 @@ document.querySelectorAll("nav ul a").forEach(function (a) {
     });
 
   if (menos || !hayOjo) {
-    revelables.forEach(function (el) { el.classList.add("visible"); });
+    revelables.forEach(function (el) { el.classList.add("visible"); soltar(el); });
     if (estados) estados.classList.add("dibujada");
   } else {
     var ojo = new IntersectionObserver(function (entradas) {
@@ -840,6 +903,7 @@ document.querySelectorAll("nav ul a").forEach(function (a) {
         if (!e.isIntersecting) return;
         e.target.classList.add("visible");
         ojo.unobserve(e.target);
+        soltar(e.target);
       });
     }, { rootMargin: "0px 0px -12% 0px", threshold: 0.15 });
     revelables.forEach(function (el) { ojo.observe(el); });
@@ -874,28 +938,6 @@ document.querySelectorAll("nav ul a").forEach(function (a) {
   }, { passive: true });
   alDesplazar();
 
-  // Marca en el menu la seccion que se esta viendo.
-  if (hayOjo) {
-    var enlaces = {};
-    document.querySelectorAll('nav ul a[href^="#"]').forEach(function (a) {
-      enlaces[a.getAttribute("href").slice(1)] = a;
-    });
-    var secciones = Object.keys(enlaces)
-      .map(function (id) { return document.getElementById(id); })
-      .filter(Boolean);
-    if (secciones.length) {
-      var dentro = {};
-      var ojoMenu = new IntersectionObserver(function (entradas) {
-        entradas.forEach(function (e) { dentro[e.target.id] = e.isIntersecting; });
-        var actual = null;
-        secciones.forEach(function (sec) { if (!actual && dentro[sec.id]) actual = sec.id; });
-        Object.keys(enlaces).forEach(function (id) {
-          enlaces[id].classList.toggle("activo", actual === id);
-        });
-      }, { rootMargin: "-45% 0px -45% 0px" });
-      secciones.forEach(function (sec) { ojoMenu.observe(sec); });
-    }
-  }
 })();
 </script>
 
@@ -1062,6 +1104,121 @@ document.querySelectorAll("nav ul a").forEach(function (a) {
     }, { threshold: 0.35 }).observe(raiz);
   }
   pausar();
+})();
+</script>
+
+<script>
+/* =======================================================================
+   Encabezado: píldora que se desliza entre secciones en escritorio y menú
+   desplegable accesible en celular. Los dos siguen la sección que se ve.
+   ======================================================================= */
+(function () {
+  var pestanas = document.querySelector(".pestanas");
+  var enlaces = pestanas ? [].slice.call(pestanas.querySelectorAll(".pestanas-lista a")) : [];
+  var boton = document.querySelector(".menu-boton");
+  var panel = document.getElementById("menu-movil");
+  var enlacesMovil = panel ? [].slice.call(panel.querySelectorAll(".menu-enlace")) : [];
+  var activo = null, enPildora = null, oculta = true, explorando = false;
+
+  // ---- Píldora: sus dos bordes viajan a distinto ritmo, así se estira y alcanza
+  function pildora(a) {
+    if (!pestanas) return;
+    if (!a) { pestanas.classList.remove("con-cursor"); oculta = true; return; }
+    var caja = pestanas.getBoundingClientRect(), r = a.getBoundingClientRect(), borde = pestanas.clientLeft;
+    if (oculta) pestanas.classList.add("sin-salto");
+    else if (enPildora && enPildora !== a) {
+      pestanas.setAttribute("data-dir", enlaces.indexOf(a) > enlaces.indexOf(enPildora) ? "der" : "izq");
+    }
+    pestanas.style.setProperty("--pl", (r.left - caja.left - borde).toFixed(2) + "px");
+    pestanas.style.setProperty("--pr", (caja.right - borde - r.right).toFixed(2) + "px");
+    if (oculta) { void pestanas.offsetWidth; pestanas.classList.remove("sin-salto"); }
+    pestanas.classList.add("con-cursor");
+    oculta = false;
+    enPildora = a;
+  }
+  function recolocar() {
+    if (oculta || !enPildora) return;
+    oculta = true;
+    pildora(enPildora);
+  }
+  enlaces.forEach(function (a) {
+    a.addEventListener("pointerenter", function (e) {
+      if (e.pointerType === "mouse") { explorando = true; pildora(a); }
+    });
+    a.addEventListener("focus", function () { explorando = true; pildora(a); });
+  });
+  if (pestanas) {
+    pestanas.addEventListener("pointerleave", function (e) {
+      if (e.pointerType === "mouse") { explorando = false; pildora(activo); }
+    });
+    pestanas.addEventListener("focusout", function (e) {
+      if (!pestanas.contains(e.relatedTarget)) { explorando = false; pildora(activo); }
+    });
+    window.addEventListener("resize", recolocar);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(recolocar);
+  }
+
+  // ---- Menú del celular
+  var abierto = false;
+  function menu(abrir, devolverFoco) {
+    if (!boton || !panel) return;
+    abierto = abrir;
+    boton.setAttribute("aria-expanded", abrir ? "true" : "false");
+    boton.setAttribute("aria-label", abrir ? "Cerrar menú" : "Abrir menú");
+    panel.classList.toggle("abierto", abrir);
+    if (abrir) panel.removeAttribute("inert");
+    else panel.setAttribute("inert", "");
+    if (!abrir && devolverFoco) boton.focus();
+  }
+  if (boton && panel) {
+    boton.addEventListener("click", function (e) {
+      menu(!abierto);
+      if (abierto && e.detail === 0) enlacesMovil[0].focus();   // abierto con teclado
+    });
+    panel.addEventListener("click", function (e) { if (e.target.closest("a")) menu(false); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && abierto) menu(false, true);
+    });
+    document.addEventListener("pointerdown", function (e) {
+      if (abierto && !e.target.closest("header")) menu(false);
+    });
+    var escritorio = window.matchMedia("(min-width: 1025px)");
+    var alCambiar = function (m) { if (m.matches) menu(false); };
+    if (escritorio.addEventListener) escritorio.addEventListener("change", alCambiar);
+  }
+  var wa = document.getElementById("menu-whatsapp");
+  if (wa && typeof CONTACTO !== "undefined" && CONTACTO.whatsapp) {
+    wa.href = "https://wa.me/" + CONTACTO.whatsapp + "?text=" +
+      encodeURIComponent("¡Hola BakeMe! Quiero cotizar un pastel personalizado.");
+    wa.target = "_blank";
+    wa.rel = "noopener";
+  }
+
+  // ---- Sección visible. Entre dos secciones del menú se queda marcada la
+  // última; en la portada no se marca ninguna.
+  var ids = (enlaces.length ? enlaces : enlacesMovil).map(function (a) { return a.getAttribute("href").slice(1); });
+  var secciones = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  if (!secciones.length || !("IntersectionObserver" in window)) return;
+  var dentro = {}, ultima = null;
+  function marcar(lista, id) {
+    lista.forEach(function (a) {
+      if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "true");
+      else a.removeAttribute("aria-current");
+    });
+  }
+  var ojo = new IntersectionObserver(function (entradas) {
+    entradas.forEach(function (e) { dentro[e.target.id] = e.isIntersecting; });
+    var actual = null;
+    secciones.forEach(function (sec) { if (!actual && dentro[sec.id]) actual = sec.id; });
+    if (!actual) actual = secciones[0].getBoundingClientRect().top > window.innerHeight / 2 ? null : ultima;
+    ultima = actual;
+    marcar(enlaces, actual);
+    marcar(enlacesMovil, actual);
+    activo = null;
+    enlaces.forEach(function (a) { if (a.getAttribute("href") === "#" + actual) activo = a; });
+    if (!explorando) pildora(activo);
+  }, { rootMargin: "-45% 0px -45% 0px" });
+  secciones.forEach(function (sec) { ojo.observe(sec); });
 })();
 </script>
 
