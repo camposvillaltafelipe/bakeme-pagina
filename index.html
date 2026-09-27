@@ -149,14 +149,33 @@
   .titulo-sec .etiqueta::after{content:"";display:inline-block;width:28px;height:2px;background:var(--salmon);vertical-align:middle;margin-left:.7rem}
   .titulo-sec h2{font-size:clamp(2rem,4vw,2.8rem);margin-bottom:.8rem;text-wrap:balance}
 
-  /* Nosotros */
-  .nosotros .contenedor{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
-  .nosotros h2{font-size:clamp(2rem,4vw,2.7rem);margin-bottom:1.2rem}
-  .nosotros p+p{margin-top:1rem}
-  .cita{background:var(--crema);border-radius:var(--radio);padding:2.8rem;position:relative}
-  .cita::before{content:"\201C";position:absolute;top:-.3rem;left:1.4rem;font-family:"Playfair Display",serif;font-size:6rem;color:var(--salmon);line-height:1}
-  .cita p{font-family:"Playfair Display",serif;font-style:italic;font-size:1.45rem;color:var(--vino);line-height:1.45;padding-top:1.5rem}
-  .cita span{display:block;margin-top:1.2rem;font-size:.9rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--vino)}
+  /* Nosotros: una frase que se enciende palabra por palabra mientras se lee, con
+     fotos dentro del texto (ideas de "Hero Modern" y "Text Block Animation",
+     21st.dev), y la comanda donde anotamos cada detalle del pedido. */
+  .nosotros{position:relative;background:radial-gradient(36% 52% at 94% 78%,rgba(234,199,184,.34),rgba(234,199,184,0) 70%),var(--blanco)}
+  .nosotros-rejilla{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:3rem 5rem}
+  .nosotros-texto .etiqueta{margin-bottom:1.4rem}
+  .frase{font-size:clamp(1.85rem,3.9vw,3.1rem);font-weight:500;line-height:1.24;letter-spacing:-.012em;text-wrap:pretty}
+  .foto-linea{display:inline-block;width:1.9em;height:.9em;margin:0 .05em;vertical-align:-.1em;border-radius:999px;overflow:hidden;background:var(--durazno);transform:rotate(var(--giro,0deg));box-shadow:0 0 0 2px var(--blanco),0 12px 22px -12px rgba(142,74,72,.85)}
+  .foto-linea img{width:100%;height:100%;object-fit:cover}
+  .con-js .frase .palabra{opacity:.18;transition:opacity .5s ease}
+  .con-js .frase .palabra.encendida{opacity:1}
+  .con-js .frase .foto-linea{opacity:0;transform:rotate(var(--giro,0deg)) scale(.5);transition:opacity .3s ease,transform .6s cubic-bezier(.34,1.56,.64,1)}
+  .con-js .frase .foto-linea.encendida{opacity:1;transform:rotate(var(--giro,0deg))}
+
+  /* La comanda: papel con borde festoneado, cinta encima y cada detalle marcado */
+  .comanda{position:relative;width:min(290px,100%);margin:0 0 .4rem;filter:drop-shadow(0 26px 26px rgba(142,74,72,.2)) drop-shadow(0 3px 3px rgba(142,74,72,.08))}
+  .comanda::before{content:"";position:absolute;z-index:1;left:50%;top:-14px;width:96px;height:28px;margin-left:-48px;transform:rotate(3deg);background:repeating-linear-gradient(90deg,rgba(223,166,157,.62) 0 7px,rgba(234,199,184,.62) 7px 14px);border-left:2px dotted rgba(255,249,243,.7);border-right:2px dotted rgba(255,249,243,.7)}
+  .comanda-papel{position:relative;padding:2.2rem 1.7rem 2.6rem;background:linear-gradient(180deg,#FFFDF9,#FFF4EB);transform:rotate(-2.5deg);-webkit-mask:radial-gradient(circle 7px at 50% 100%,rgba(0,0,0,0) 6.5px,#000 7px) bottom/15px 16px repeat-x,linear-gradient(#000 0 0) top/100% calc(100% - 15.5px) no-repeat;mask:radial-gradient(circle 7px at 50% 100%,rgba(0,0,0,0) 6.5px,#000 7px) bottom/15px 16px repeat-x,linear-gradient(#000 0 0) top/100% calc(100% - 15.5px) no-repeat;transition:transform .5s var(--curva)}
+  .comanda-titulo{margin-bottom:1.1rem;padding-bottom:.9rem;border-bottom:1.5px dashed rgba(201,106,102,.42);font:italic 500 1.4rem/1.2 "Playfair Display",Georgia,serif;color:var(--vino);text-align:center}
+  .comanda-lista{list-style:none;display:grid;gap:.62rem}
+  .comanda-lista li{display:flex;align-items:center;gap:.75rem;font-weight:700;font-size:.98rem;color:var(--vino)}
+  .casilla{display:grid;place-items:center;width:22px;height:22px;flex-shrink:0;border-radius:7px;border:1.5px solid var(--salmon);background:rgba(245,220,211,.4)}
+  .casilla svg{width:15px;height:15px;fill:none;stroke:var(--rosa);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .casilla path{stroke-dasharray:1 2;stroke-dashoffset:0}
+  .con-js .comanda .casilla path{stroke-dashoffset:1;transition:stroke-dashoffset .4s var(--curva) calc(.45s + var(--i,0) * .15s)}
+  .con-js .comanda.visible .casilla path{stroke-dashoffset:0}
+  .comanda-nota{margin-top:1.2rem;padding-top:.9rem;border-top:1.5px dashed rgba(201,106,102,.42);font-size:.82rem;line-height:1.45;text-align:center}
 
   /* ---------- Catálogo: carrusel coverflow 3D ---------- */
   @property --luz{syntax:"<color>";inherits:false;initial-value:rgba(223,166,157,.55)}
@@ -269,23 +288,70 @@
   .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:auto;padding-top:1.2rem}
   .chips span{background:rgba(255,249,243,.12);color:var(--blanco);font-size:.82rem;padding:.25rem .75rem;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,249,243,.2)}
 
-  /* Ocasiones: banda compacta */
-  .ocasiones-sec{background:var(--crema);padding:3.2rem 0}
-  .ocasiones-sec .contenedor{display:grid;grid-template-columns:.8fr 2fr;gap:3rem;align-items:center}
-  .ocasiones-sec h2{font-size:1.75rem}
-  .ocasiones{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem 1.8rem}
-  .ocasiones div{border-left:2px solid var(--salmon);padding-left:.9rem}
-  .ocasiones b{display:block;color:var(--vino);font-family:"Playfair Display",serif;font-size:1.1rem;font-weight:600}
-  .ocasiones small{font-size:.85rem;line-height:1.5;display:block}
+  /* Ocasiones: vitrina en arco. La lista elige la celebración y su foto se abre
+     en círculo desde el lado de donde vino el gesto (ideas de "Lumina
+     Interactive List" y "Connoisseur Stack Interactor", 21st.dev). */
+  .ocasiones-sec{position:relative;background:radial-gradient(40% 58% at 77% 52%,rgba(234,199,184,.8),rgba(234,199,184,0) 72%),var(--crema)}
+  .ocasiones-rejilla{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,430px);grid-template-areas:"cabeza vitrina" "lista vitrina";grid-template-rows:auto 1fr;column-gap:5rem}
+  .ocasiones-cabeza{grid-area:cabeza;margin-bottom:1.8rem}
+  .ocasiones-cabeza h2{font-size:clamp(2rem,4vw,2.8rem);text-wrap:balance}
+  .ocasiones-lista{grid-area:lista;display:flex;flex-direction:column;align-items:flex-start}
+  .ocasion{position:relative;padding:.16rem 3.4rem .16rem 0;border:0;background:none;font:500 clamp(1.5rem,2.5vw,2.2rem)/1.2 "Playfair Display",Georgia,serif;color:var(--vino);text-align:left;cursor:pointer;opacity:.7;transition:opacity .3s ease}
+  .ocasion span{display:block;transition:transform .5s var(--curva)}
+  .ocasion::before{content:"";position:absolute;left:0;top:50%;width:2.3rem;height:2px;margin-top:-1px;border-radius:2px;background:var(--rosa);transform:scaleX(0);transform-origin:left center;transition:transform .45s var(--curva)}
+  .ocasion[aria-selected="true"]{opacity:1;font-style:italic}
+  .ocasion[aria-selected="true"] span{transform:translateX(3.2rem)}
+  .ocasion[aria-selected="true"]::before{transform:scaleX(1)}
+  .ocasion:focus-visible{outline:2px solid var(--rosa);outline-offset:2px;border-radius:12px}
 
-  /* Cómo pedir */
+  .ocasiones-vitrina{grid-area:vitrina;position:relative;align-self:center;width:100%;margin:0}
+  .ocasiones-vitrina::before{content:"";position:absolute;inset:-13px;border-radius:50% 50% 40px 40px/42% 42% 40px 40px;border:1px solid rgba(201,106,102,.36);pointer-events:none}
+  .vitrina-marco{position:relative;aspect-ratio:4/5;overflow:hidden;isolation:isolate;border-radius:50% 50% 28px 28px/40% 40% 28px 28px;background:var(--durazno);box-shadow:inset 0 0 0 1px rgba(255,249,243,.6),0 46px 70px -42px rgba(142,74,72,.78)}
+  .vitrina-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+  .vitrina-foto.activa{opacity:1;z-index:1}
+  .vitrina-foto.entra{opacity:1;z-index:2;animation:vitrina-abre .9s var(--curva) both}
+  @keyframes vitrina-abre{from{clip-path:circle(0% at var(--ox,0%) var(--oy,50%));transform:scale(1.1)}to{clip-path:circle(160% at var(--ox,0%) var(--oy,50%));transform:none}}
+  .vitrina-pie{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;flex-direction:column;align-items:center;padding:5.5rem 1.2rem 1.4rem;text-align:center;color:var(--blanco);background:linear-gradient(180deg,rgba(94,43,42,0),rgba(94,43,42,.5) 38%,rgba(84,38,37,.9))}
+  .vitrina-nombre{font:500 1.75rem/1.1 "Playfair Display",Georgia,serif}
+  .vitrina-texto{margin:.3rem 0 1rem;font-size:.92rem;line-height:1.4;color:var(--rubor)}
+  .vitrina-pie.cambia .vitrina-nombre,.vitrina-pie.cambia .vitrina-texto{animation:pie-cambia .5s var(--curva) both}
+  .vitrina-pie.cambia .vitrina-texto{animation-delay:.06s}
+  @keyframes pie-cambia{from{opacity:0;transform:translateY(8px)}}
+
+  /* Cómo pedir: una línea de betún se traza con el desplazamiento y va pasando
+     por cada paso, con la manga pastelera en la punta (ideas de "How It Works"
+     y "Timeline", 21st.dev). */
   .pasos-sec{background:var(--vino);color:var(--rubor)}
   .pasos-sec .titulo-sec h2{color:var(--blanco)}
   .pasos-sec .etiqueta{color:var(--rubor)}
-  .pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;counter-reset:paso}
-  .paso{position:relative;padding-top:4.2rem}
-  .paso::before{counter-increment:paso;content:"0" counter(paso);position:absolute;top:0;left:0;font-family:"Playfair Display",serif;font-size:3.2rem;color:var(--salmon)}
-  .paso h3{color:var(--blanco);font-size:1.3rem;margin-bottom:.4rem}
+  .receta{position:relative;max-width:980px;margin:0 auto}
+  .receta-linea{display:none;position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  .con-js .receta-linea{display:block}
+  .receta-linea path{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 2;stroke-dashoffset:1}
+  .linea-sombra{stroke:rgba(40,14,13,.4);stroke-width:13;transform:translateY(4px)}
+  .linea-betun{stroke:url(#betun-tono);stroke-width:12}
+  .linea-brillo{stroke:rgba(255,249,243,.6);stroke-width:3;transform:translate(-2px,-3px)}
+  .manga{position:absolute;left:0;top:0;z-index:3;width:30px;height:50px;margin:-47px 0 0 -15px;transform-origin:15px 47px;pointer-events:none;opacity:0;transition:opacity .25s ease;filter:drop-shadow(0 8px 8px rgba(20,6,6,.35))}
+  .manga.activa{opacity:1}
+  .pasos{position:relative;list-style:none;display:flex;flex-direction:column}
+  .paso{position:relative;width:41%}
+  .paso:nth-child(odd){align-self:flex-start}
+  .paso:nth-child(even){align-self:flex-end}
+  .paso+.paso{margin-top:-2.4rem}
+  .paso-tarjeta{position:relative;padding:1.7rem 1.8rem 1.8rem;border-radius:22px;background:var(--blanco);color:var(--texto);box-shadow:0 34px 50px -32px rgba(20,6,6,.85);transform:rotate(var(--giro,0deg))}
+  .paso-num{position:absolute;top:.4rem;right:1.3rem;font:italic 500 3.6rem/1 "Playfair Display",Georgia,serif;color:var(--durazno)}
+  .paso-dibujo{display:block;width:44px;height:44px;margin-bottom:.9rem;fill:none;stroke:var(--rosa);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .paso-tarjeta h3{font-size:1.35rem;margin-bottom:.35rem}
+  .paso-tarjeta p{font-size:.95rem;line-height:1.6}
+  /* Gota de betún donde la línea toca cada paso */
+  .paso-gota{position:absolute;z-index:2;top:50%;width:28px;height:28px;margin-top:-14px;border-radius:50%;background:radial-gradient(circle at 36% 32%,var(--blanco) 0 16%,var(--durazno) 48%,var(--salmon));box-shadow:0 6px 12px -4px rgba(20,6,6,.65)}
+  .paso:nth-child(odd) .paso-gota{right:-14px}
+  .paso:nth-child(even) .paso-gota{left:-14px}
+  .con-js .receta .paso-tarjeta{opacity:.4;transform:translateY(18px);transition:opacity .6s ease,transform .75s var(--curva)}
+  .con-js .receta .paso.llego .paso-tarjeta{opacity:1;transform:rotate(var(--giro,0deg))}
+  .con-js .receta .paso-gota{opacity:0;transform:scale(.3);transition:opacity .2s ease,transform .5s cubic-bezier(.34,1.56,.64,1)}
+  .con-js .receta .paso.llego .paso-gota{opacity:1;transform:none}
+  .receta-fin{position:relative;z-index:2;display:flex;justify-content:center;padding-top:3.4rem}
 
   /* Seguimiento: el recorrido del pastel. Un dial orbital (idea de "Radial Orbital
      Timeline", 21st.dev) y una lista de etapas con estado y avance (idea de
@@ -356,16 +422,70 @@
   .info ul{list-style:none;display:grid;gap:.5rem}
   .info li::before{content:"\2726";color:var(--rosa);margin-right:.6rem}
 
-  /* Contacto */
+  /* Contacto: el visitante elige lo básico y ve el mensaje de WhatsApp armado
+     antes de enviarlo (ideas de "Cuisine Selector Chips", "Chat Bubble" y
+     "Location Map", 21st.dev). */
   .contacto{background:linear-gradient(180deg,var(--beige),var(--logo-fondo))}
-  .tarjeta-contacto{display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;background:var(--blanco);border-radius:32px;padding:3.5rem;box-shadow:0 30px 60px -40px rgba(142,74,72,.5)}
-  .tarjeta-contacto h2{font-size:clamp(2rem,4vw,2.6rem);margin-bottom:1rem}
-  .tarjeta-contacto>div>p{margin-bottom:1.8rem}
-  .datos{list-style:none;display:grid;gap:1.3rem;align-content:center}
-  .datos li{display:flex;gap:1rem;align-items:center}
-  .datos .icono{margin:0;width:48px;height:48px;flex-shrink:0}
-  .datos .icono svg{width:22px;height:22px}
-  .datos b{display:block;color:var(--vino)}
+  .tarjeta-contacto{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);grid-template-areas:"armador chat" "datos datos";gap:2.6rem 3.6rem;background:var(--blanco);border-radius:32px;padding:3.3rem;box-shadow:0 30px 60px -40px rgba(142,74,72,.5)}
+  .armador{grid-area:armador;min-width:0}
+  .armador h2{font-size:clamp(2rem,4vw,2.6rem);margin-bottom:.7rem}
+  .armador>p{max-width:46ch;margin-bottom:1.7rem}
+  .campo{min-width:0;margin:0 0 1.3rem;padding:0;border:0}
+  .campo legend,.campo>label{display:block;margin-bottom:.55rem;padding:0;font-size:.86rem;font-weight:700;color:var(--vino)}
+  .chips-radio{display:flex;flex-wrap:wrap;gap:.45rem}
+  .chip{position:relative;display:inline-flex}
+  .chip input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+  .chip span{display:inline-flex;align-items:center;min-height:40px;padding:.45rem .95rem;border-radius:999px;border:1px solid rgba(201,106,102,.32);background:var(--blanco);font-size:.88rem;font-weight:700;line-height:1.2;color:var(--vino);pointer-events:none;transition:background-color .2s ease,border-color .2s ease,color .2s ease,transform .16s var(--curva)}
+  .chip span::before{content:"";flex-shrink:0;width:0;height:14px;margin-right:0;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/contain no-repeat;transition:width .22s var(--curva),margin .22s var(--curva)}
+  .chip input:checked+span{background:var(--vino);border-color:var(--vino);color:var(--blanco)}
+  .chip input:checked+span::before{width:14px;margin-right:.4rem}
+  .chip input:focus-visible+span{outline:2px solid var(--rosa);outline-offset:2px}
+  .chip input:active+span{transform:scale(.96)}
+  .campo input[type="date"]{width:100%;max-width:290px;min-height:46px;padding:.55rem .95rem;border:1px solid rgba(201,106,102,.32);border-radius:14px;background:var(--blanco);font:700 .95rem/1.2 "Lato",system-ui,sans-serif;color:var(--vino);color-scheme:light;accent-color:var(--rosa)}
+  .campo input[type="date"]:focus-visible{outline:2px solid var(--rosa);outline-offset:2px}
+
+  /* Vista previa: así llega el mensaje al chat de BakeMe */
+  .chat{grid-area:chat;align-self:start;position:sticky;top:96px;display:flex;flex-direction:column;min-width:0;border-radius:26px;overflow:hidden;background:#F6E6DA;box-shadow:inset 0 0 0 1px rgba(201,106,102,.16),0 34px 56px -40px rgba(142,74,72,.75)}
+  .chat-cabeza{display:flex;align-items:center;gap:.75rem;padding:.8rem 1.1rem;background:var(--vino);color:var(--blanco)}
+  .chat-avatar{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border-radius:50%;background:var(--logo-fondo);color:var(--rosa);box-shadow:0 0 0 2px rgba(255,249,243,.3)}
+  .chat-avatar svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .chat-cabeza b{display:block;font-size:.95rem;line-height:1.25}
+  .chat-cabeza small{display:block;font-size:.74rem;color:var(--rubor)}
+  .chat-fondo{display:flex;flex-direction:column;align-items:flex-end;gap:.9rem;min-height:236px;padding:1.4rem 1.1rem 1.2rem;background:radial-gradient(circle at 14px 14px,rgba(201,106,102,.13) 1.6px,rgba(0,0,0,0) 2px) 0 0/28px 28px,radial-gradient(circle at 0 0,rgba(223,166,157,.12) 1.2px,rgba(0,0,0,0) 1.6px) 0 0/28px 28px}
+  .burbuja{position:relative;max-width:94%;padding:.65rem .85rem .4rem;border-radius:16px 4px 16px 16px;background:var(--blanco);color:var(--texto);font-size:.93rem;line-height:1.5;box-shadow:0 2px 0 rgba(142,74,72,.08);transform-origin:100% 0}
+  .burbuja::after{content:"";position:absolute;top:0;right:-7px;width:8px;height:12px;background:var(--blanco);clip-path:polygon(0 0,100% 0,0 100%)}
+  .burbuja p{overflow-wrap:anywhere}
+  .burbuja b{border-radius:4px;color:var(--vino)}
+  .burbuja b.resalta{animation:resalta 1.4s ease-out}
+  @keyframes resalta{from{background:rgba(223,166,157,.6);box-shadow:0 0 0 3px rgba(223,166,157,.6)}}
+  .burbuja.nueva{animation:burbuja-late .38s var(--curva)}
+  @keyframes burbuja-late{from{transform:scale(.97)}}
+  .burbuja-hora{display:flex;justify-content:flex-end;align-items:center;gap:.25rem;margin-top:.1rem;font-size:.7rem;color:rgba(107,79,74,.65)}
+  .burbuja-hora svg{width:17px;height:17px;fill:none;stroke:var(--rosa);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .chat-pista{align-self:stretch;display:flex;align-items:center;gap:.5rem;margin-top:auto;font-size:.8rem;line-height:1.4}
+  .chat-pista svg{width:17px;height:17px;flex-shrink:0;fill:none;stroke:var(--rosa);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .chat .btn{margin:0 1.1rem 1.1rem}
+
+  /* Datos de la tienda */
+  .datos{grid-area:datos;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6rem 2rem;padding-top:2.2rem;border-top:1.5px dashed rgba(201,106,102,.32)}
+  .datos li{display:flex;gap:1rem;align-items:flex-start;min-width:0}
+  .dato-icono{position:relative;display:grid;place-items:center;width:56px;height:56px;flex-shrink:0;border-radius:18px;overflow:hidden;background:var(--crema);color:var(--vino)}
+  .dato-icono svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .dato-icono .plano{width:100%;height:100%;stroke-width:1}
+  .datos b{display:block;color:var(--vino);font-size:.95rem}
+  .datos li>div>span{display:block;font-size:.92rem;line-height:1.5}
+  .dato-accion{display:inline-flex;align-items:center;gap:.35rem;min-height:36px;margin-top:.2rem;padding:0;border:0;background:none;font:700 .85rem/1.2 "Lato",system-ui,sans-serif;color:var(--rosa);cursor:pointer}
+  .dato-accion svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s var(--curva)}
+  .dato-acciones{display:flex;flex-wrap:wrap;gap:0 1.1rem}
+  .estado{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:.5rem;margin-top:.55rem}
+  .estado::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--salmon)}
+  .estado b{font-size:.84rem;color:var(--vino)}
+  .estado small{grid-column:2;font-size:.8rem;line-height:1.35}
+  .estado.abierto::before{background:var(--rosa);animation:late-punto 2s ease-out infinite}
+  @keyframes late-punto{from{box-shadow:0 0 0 0 rgba(201,106,102,.55)}to{box-shadow:0 0 0 7px rgba(201,106,102,0)}}
+  .aguja{transform-box:view-box;transform-origin:50% 50%;transition:transform .6s var(--curva)}
+  .pin-onda{transform-box:fill-box;transform-origin:50% 50%;animation:pin-onda 2.4s ease-out infinite}
+  @keyframes pin-onda{from{transform:scale(.4);opacity:.8}to{transform:scale(1.6);opacity:0}}
   .sin-dato{font-style:italic;color:var(--salmon)}
 
   footer{background:var(--logo-fondo);text-align:center;padding:2.5rem 0;font-size:.9rem;border-top:1px solid rgba(201,106,102,.15)}
@@ -407,14 +527,6 @@
   .con-js .rev{opacity:0;transform:translateY(28px);transition:opacity .75s var(--curva),transform .75s var(--curva)}
   .con-js .rev.visible{opacity:1;transform:none}
 
-  /* La comilla de la cita entra girando */
-  .con-js .cita::before{opacity:0;transform:translateY(14px) rotate(-10deg);transition:opacity .7s var(--curva) .25s,transform .7s var(--curva) .25s}
-  .con-js .cita.visible::before{opacity:1;transform:none}
-
-  /* Los numeros de los pasos suben al aparecer */
-  .con-js .paso::before{opacity:0;transform:translateY(14px);transition:opacity .7s var(--curva) .2s,transform .7s var(--curva) .2s,color .3s}
-  .con-js .paso.visible::before{opacity:1;transform:none}
-
   /* Brillo que cruza los botones */
   .btn{position:relative;overflow:hidden}
   .btn:not(.aura)::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.4) 50%,transparent 62%);transform:translateX(-130%);transition:transform .75s var(--curva)}
@@ -444,9 +556,6 @@
   .betun.lista{opacity:1}
   .chips span{transition:background-color .25s,color .25s,transform .25s,box-shadow .25s}
 
-  /* Ocasiones */
-  .ocasiones div{transition:transform .3s var(--curva),border-color .3s}
-
   /* Resplandor lento en la banda oscura */
   .pasos-sec{position:relative;overflow:hidden}
   .pasos-sec::before{content:"";position:absolute;inset:-35% -12%;pointer-events:none;background:radial-gradient(circle at 22% 28%,rgba(223,166,157,.20),transparent 46%),radial-gradient(circle at 78% 72%,rgba(234,199,184,.16),transparent 46%);animation:deriva 24s ease-in-out infinite alternate}
@@ -464,8 +573,7 @@
   .info li{transition:transform .25s var(--curva)}
 
   /* Datos de contacto */
-  .datos li .icono{transition:transform .3s var(--curva),background .3s,color .3s}
-  .datos li a{display:inline-block;padding-block:3px;border-bottom:1px solid transparent;transition:border-color .25s}
+  .datos li>div>span a{display:inline-block;padding-block:3px;border-bottom:1px solid transparent;transition:border-color .25s}
 
   /* Pie */
   .logo-pie{transition:transform .4s var(--curva)}
@@ -492,12 +600,14 @@
     .opcion:hover .icono{transform:scale(1.08) rotate(-7deg);color:var(--blanco)}
     .opcion:hover .chips span{box-shadow:inset 0 0 0 1px rgba(255,249,243,.38)}
     .chips span:hover{background:var(--durazno);color:var(--vino);transform:translateY(-2px)}
-    .ocasiones div:hover{transform:translateX(5px);border-color:var(--rosa)}
-    .paso:hover::before{color:var(--durazno)}
+    .comanda:hover .comanda-papel{transform:rotate(-1deg) translateY(-3px)}
+    .ocasion:not([aria-selected="true"]):hover{opacity:1}
+    .chip:hover span{border-color:var(--rosa)}
+    .chip:hover input:checked+span{border-color:var(--vino)}
+    .dato-accion:hover svg{transform:translateX(3px)}
     .info>div:hover{transform:translateY(-4px);box-shadow:0 24px 40px -30px rgba(142,74,72,.6)}
     .info li:hover{transform:translateX(4px)}
-    .datos li:hover .icono{transform:rotate(-8deg) scale(1.06);background:var(--rosa);color:var(--blanco)}
-    .datos li a:hover{border-bottom-color:var(--rosa)}
+    .datos li>div>span a:hover{border-bottom-color:var(--rosa)}
     footer:hover .logo-pie{transform:scale(1.04)}
   }
 
@@ -510,7 +620,7 @@
     .menu-movil.abierto{clip-path:inset(0 0 -60px 0);visibility:visible;transition:clip-path .38s var(--curva),visibility 0s}
   }
   @media (max-width:900px){
-    .hero .contenedor,.nosotros .contenedor,.tarjeta-contacto,.info,.ocasiones-sec .contenedor{grid-template-columns:1fr}
+    .hero .contenedor,.info{grid-template-columns:1fr}
     /* En celular el pastel sube justo después del título, para que se vea sin bajar */
     .hero>.contenedor{grid-template-rows:none;justify-items:center;text-align:center;padding:2.2rem 0 4.6rem}
     .hero .insignia,.hero h1,.hero p,.hero .acciones,.hero .garantias,.hero-escenario{grid-column:1;grid-row:auto}
@@ -524,8 +634,31 @@
     .garantias svg{width:40px;height:40px;padding:10px;border-radius:50%;background:rgba(255,249,243,.72);border:1px solid rgba(201,106,102,.22);box-shadow:0 10px 20px -16px rgba(142,74,72,.8)}
     .acciones{justify-content:center}
     .opciones{grid-template-columns:1fr 1fr}
-    .pasos,.ocasiones{grid-template-columns:1fr 1fr}
-    .tarjeta-contacto{padding:2rem}
+    /* Nosotros: la comanda baja debajo de la frase */
+    .nosotros-rejilla{grid-template-columns:1fr;gap:3rem}
+    .comanda{justify-self:center}
+    /* Ocasiones: primero la foto y debajo las ocasiones como píldoras */
+    .ocasiones-rejilla{grid-template-columns:1fr;grid-template-areas:"cabeza" "vitrina" "lista";grid-template-rows:none;justify-items:center;text-align:center}
+    .ocasiones-cabeza{margin-bottom:2.4rem}
+    .ocasiones-vitrina{max-width:340px;margin-bottom:2.4rem}
+    .ocasiones-lista{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:.5rem;max-width:540px}
+    .ocasion{min-height:44px;padding:.5rem 1.05rem;border:1px solid rgba(201,106,102,.32);border-radius:999px;background:rgba(255,249,243,.8);font:700 .92rem/1.2 "Lato",system-ui,sans-serif;opacity:1;transition:background-color .25s ease,border-color .25s ease,color .25s ease}
+    .ocasion::before{display:none}
+    .ocasion[aria-selected="true"]{background:var(--vino);border-color:var(--vino);color:var(--blanco);font-style:normal}
+    .ocasion[aria-selected="true"] span{transform:none}
+    /* Contacto: el armador, la vista previa y los datos, uno debajo del otro */
+    .tarjeta-contacto{grid-template-columns:minmax(0,1fr);grid-template-areas:"armador" "chat" "datos";padding:2.2rem 1.4rem;border-radius:28px}
+    .chat{position:static}
+    .datos{grid-template-columns:minmax(0,1fr)}
+  }
+  @media (max-width:760px){
+    /* Cómo pedir: la línea corre por la izquierda y los pasos a su derecha */
+    .paso,.paso:nth-child(odd),.paso:nth-child(even){width:auto;align-self:stretch;margin-left:3.2rem}
+    .paso+.paso{margin-top:1.3rem}
+    .paso:nth-child(odd) .paso-gota,.paso:nth-child(even) .paso-gota{left:calc(22px - 3.2rem - 14px);right:auto}
+    .paso-tarjeta{padding:1.5rem 1.4rem 1.6rem}
+    .paso-num{font-size:3rem}
+    .receta-fin{justify-content:flex-start;padding-left:3.2rem}
   }
   @media (max-width:900px){
     .rastreo{grid-template-columns:1fr;justify-items:center;gap:2.6rem}
@@ -533,7 +666,7 @@
   }
   @media (max-width:560px){
     section{padding:4rem 0}
-    .opciones,.pasos,.ocasiones{grid-template-columns:1fr}
+    .opciones{grid-template-columns:1fr}
     .opcion{min-height:15.5rem;padding:1.75rem}
     .btn.btn-cabecera{padding:.55rem .95rem;font-size:.82rem}
     .logo-nav{width:118px;background-size:190px}
@@ -541,7 +674,7 @@
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-    .con-js .rev,.con-js .cita::before,.con-js .paso::before{opacity:1;transform:none}
+    .con-js .rev{opacity:1;transform:none}
     .destello{display:none}
   }
   @media (prefers-reduced-motion:reduce){
@@ -656,15 +789,25 @@
   <!-- Nosotros -->
   <section class="nosotros" id="nosotros">
     <div class="contenedor">
-      <div class="rev">
-        <span class="etiqueta">Sobre nosotros</span>
-        <h2>Nos dedicamos a una sola cosa: tu pastel</h2>
-        <p>BakeMe es una pastelería especializada únicamente en pasteles personalizados. Escuchamos lo que quieres para tu celebración y lo convertimos en un pastel único, pensado solo para ese momento.</p>
-        <p>Tú eliges cada detalle y nosotros nos encargamos de que llegue tal como lo pediste, anotando todo desde el primer mensaje: sabor, relleno, tamaño, forma, el mensaje escrito y tu imagen de referencia.</p>
-      </div>
-      <div class="cita rev">
-        <p>Cada celebración es diferente, por eso ningún pastel nuestro es igual a otro.</p>
-        <span>— BakeMe Pastelería</span>
+      <div class="nosotros-rejilla">
+        <div class="nosotros-texto">
+          <div class="rev"><span class="etiqueta">Sobre nosotros</span></div>
+          <h2 class="frase">Nos dedicamos a una sola cosa: <span class="foto-linea" style="--giro:-5deg"><img src="https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=100&h=48&q=70" srcset="https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=200&h=96&q=65 2x" alt="" width="100" height="48" loading="lazy" decoding="async"></span> tu pastel. Cada celebración es diferente, por eso <span class="foto-linea" style="--giro:4deg"><img src="https://images.unsplash.com/photo-1602663491496-73f07481dbea?auto=format&fit=crop&w=100&h=48&q=70" srcset="https://images.unsplash.com/photo-1602663491496-73f07481dbea?auto=format&fit=crop&w=200&h=96&q=65 2x" alt="" width="100" height="48" loading="lazy" decoding="async"></span> ningún pastel nuestro es igual&nbsp;<span class="foto-linea" style="--giro:-3deg"><img src="https://images.unsplash.com/photo-1577998474517-7eeeed4e448a?auto=format&fit=crop&w=100&h=48&q=70" srcset="https://images.unsplash.com/photo-1577998474517-7eeeed4e448a?auto=format&fit=crop&w=200&h=96&q=65 2x" alt="" width="100" height="48" loading="lazy" decoding="async"></span>&nbsp;a&nbsp;otro.</h2>
+        </div>
+        <div class="comanda rev">
+          <div class="comanda-papel">
+            <p class="comanda-titulo">Tu pedido</p>
+            <ul class="comanda-lista">
+              <li style="--i:0"><span class="casilla" aria-hidden="true"><svg viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Sabor</li>
+              <li style="--i:1"><span class="casilla" aria-hidden="true"><svg viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Relleno</li>
+              <li style="--i:2"><span class="casilla" aria-hidden="true"><svg viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Tamaño</li>
+              <li style="--i:3"><span class="casilla" aria-hidden="true"><svg viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Forma</li>
+              <li style="--i:4"><span class="casilla" aria-hidden="true"><svg viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Mensaje escrito</li>
+              <li style="--i:5"><span class="casilla" aria-hidden="true"><svg viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Imagen de referencia</li>
+            </ul>
+            <p class="comanda-nota">Lo anotamos todo desde tu primer mensaje.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -838,21 +981,38 @@
   </section>
 
   <!-- Ocasiones -->
-  <section class="ocasiones-sec">
-    <div class="contenedor">
-      <div class="rev">
+  <section class="ocasiones-sec" id="ocasiones" aria-labelledby="titulo-ocasiones">
+    <div class="contenedor ocasiones-rejilla">
+      <div class="ocasiones-cabeza rev">
         <span class="etiqueta">Ocasiones</span>
-        <h2>Para cada celebración</h2>
+        <h2 id="titulo-ocasiones">Para cada celebración</h2>
       </div>
-      <div class="ocasiones">
-        <div class="rev"><b>Cumpleaños</b><small>Del tema favorito de quien cumple.</small></div>
-        <div class="rev"><b>Bodas</b><small>Varios pisos y decoración fina.</small></div>
-        <div class="rev"><b>XV años</b><small>Diseños elegantes a gran escala.</small></div>
-        <div class="rev"><b>Baby shower</b><small>Colores suaves y figuras.</small></div>
-        <div class="rev"><b>Bautizos</b><small>Detalles sencillos y delicados.</small></div>
-        <div class="rev"><b>Graduaciones</b><small>Con los colores de la institución.</small></div>
-        <div class="rev"><b>Aniversarios</b><small>Formas de corazón y mensajes.</small></div>
-        <div class="rev"><b>Empresas</b><small>Con el logo o la marca del negocio.</small></div>
+      <div class="ocasiones-lista rev" role="tablist" aria-label="Ocasiones" aria-orientation="vertical">
+        <button class="ocasion" type="button" role="tab" id="oc-0" aria-controls="oc-panel" aria-selected="true" data-nombre="Cumpleaños" data-frase="un cumpleaños" data-texto="Del tema favorito de quien cumple."><span>Cumpleaños</span></button>
+        <button class="ocasion" type="button" role="tab" id="oc-1" aria-controls="oc-panel" aria-selected="false" tabindex="-1" data-nombre="Bodas" data-frase="una boda" data-texto="Varios pisos y decoración fina."><span>Bodas</span></button>
+        <button class="ocasion" type="button" role="tab" id="oc-2" aria-controls="oc-panel" aria-selected="false" tabindex="-1" data-nombre="XV años" data-frase="unos XV años" data-texto="Diseños elegantes a gran escala."><span>XV años</span></button>
+        <button class="ocasion" type="button" role="tab" id="oc-3" aria-controls="oc-panel" aria-selected="false" tabindex="-1" data-nombre="Baby shower" data-frase="un baby shower" data-texto="Colores suaves y figuras."><span>Baby shower</span></button>
+        <button class="ocasion" type="button" role="tab" id="oc-4" aria-controls="oc-panel" aria-selected="false" tabindex="-1" data-nombre="Bautizos" data-frase="un bautizo" data-texto="Detalles sencillos y delicados."><span>Bautizos</span></button>
+        <button class="ocasion" type="button" role="tab" id="oc-5" aria-controls="oc-panel" aria-selected="false" tabindex="-1" data-nombre="Graduaciones" data-frase="una graduación" data-texto="Con los colores de la institución."><span>Graduaciones</span></button>
+        <button class="ocasion" type="button" role="tab" id="oc-6" aria-controls="oc-panel" aria-selected="false" tabindex="-1" data-nombre="Aniversarios" data-frase="un aniversario" data-texto="Formas de corazón y mensajes."><span>Aniversarios</span></button>
+        <button class="ocasion" type="button" role="tab" id="oc-7" aria-controls="oc-panel" aria-selected="false" tabindex="-1" data-nombre="Empresas" data-frase="una empresa" data-texto="Con el logo o la marca del negocio."><span>Empresas</span></button>
+      </div>
+      <div class="ocasiones-vitrina rev" id="oc-panel" role="tabpanel" aria-labelledby="oc-0">
+        <div class="vitrina-marco">
+          <img class="vitrina-foto activa" src="https://images.unsplash.com/photo-1694043325785-d841a964257f?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1694043325785-d841a964257f?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1694043325785-d841a964257f?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel rosa de varios pisos con chispas de colores y velas" width="430" height="538" loading="lazy" decoding="async">
+          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel de bodas de tres pisos con acabado semidesnudo y rosas rosadas" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco de tres pisos con betún rosa, bengalas y el número 15" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel color durazno con zapatitos de bebé de azúcar y un nombre escrito en dorado" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco con una paloma de adorno sobre un mantel de encaje" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel color arena con birrete de graduación, diploma y una rosa blanca" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco decorado con rosas de betún rosadas y hojas verdes" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Evento de empresa con un pastel grande sobre la mesa y personas alrededor" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <div class="vitrina-pie">
+            <b class="vitrina-nombre">Cumpleaños</b>
+            <span class="vitrina-texto">Del tema favorito de quien cumple.</span>
+            <a class="cf-cta aura clara vitrina-cta" href="#contacto" data-ocasion="Cumpleaños"><span>Cotizar para un cumpleaños</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -864,11 +1024,60 @@
         <span class="etiqueta">Cómo pedir</span>
         <h2>Tu pastel en 4 pasos</h2>
       </div>
-      <div class="pasos">
-        <div class="paso rev"><h3>Escríbenos</h3><p>Contáctanos por WhatsApp y cuéntanos la fecha y el tipo de celebración.</p></div>
-        <div class="paso rev"><h3>Diseñamos juntos</h3><p>Elige sabor, relleno, tamaño, forma y mensaje, y envíanos tu imagen de referencia.</p></div>
-        <div class="paso rev"><h3>Confirmamos</h3><p>Te damos el precio total y apartas tu pedido con un anticipo.</p></div>
-        <div class="paso rev"><h3>¡A celebrar!</h3><p>Recoge tu pastel en tienda o recíbelo a domicilio el día acordado.</p></div>
+      <div class="receta">
+        <svg class="receta-linea" aria-hidden="true" focusable="false">
+          <defs><linearGradient id="betun-tono" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBEFDF"/><stop offset=".45" stop-color="#EAC7B8"/><stop offset="1" stop-color="#DFA69D"/></linearGradient></defs>
+          <path class="linea-sombra" pathLength="1"/>
+          <path class="linea-betun" pathLength="1"/>
+          <path class="linea-brillo" pathLength="1"/>
+        </svg>
+        <!-- Manga pastelera: sigue la punta de la línea mientras se dibuja -->
+        <svg class="manga" viewBox="0 0 30 50" aria-hidden="true" focusable="false">
+          <path d="M3.5 4.5C3.5 2.6 5 1.5 7 1.5h16c2 0 3.5 1.1 3.5 3L18.4 38.5h-6.8z" fill="#FFF9F3" stroke="#8E4A48" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M6.2 9.5c5.8 1.6 11.8 1.6 17.6 0" fill="none" stroke="#DFA69D" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M11.6 38.5h6.8l-1.6 8.6h-3.6z" fill="#EAC7B8" stroke="#8E4A48" stroke-width="1.4" stroke-linejoin="round"/>
+        </svg>
+        <ol class="pasos">
+          <li class="paso" style="--giro:-1.8deg">
+            <span class="paso-gota" aria-hidden="true"></span>
+            <div class="paso-tarjeta">
+              <span class="paso-num" aria-hidden="true">1</span>
+              <svg class="paso-dibujo" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 38.5l2.6-7.2A17 17 0 1 1 17 37.2z"/><path d="M17.5 21.5h13M17.5 27h8"/></svg>
+              <h3>Escríbenos</h3>
+              <p>Contáctanos por WhatsApp y cuéntanos la fecha y el tipo de celebración.</p>
+            </div>
+          </li>
+          <li class="paso" style="--giro:1.6deg">
+            <span class="paso-gota" aria-hidden="true"></span>
+            <div class="paso-tarjeta">
+              <span class="paso-num" aria-hidden="true">2</span>
+              <svg class="paso-dibujo" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 7c-9.4 0-17 6.7-17 15.4 0 7 5.3 9.2 9.6 9.2h3c2 0 3 1.4 2.4 3.3-.8 2.8.9 6.1 4.6 6.1C35.4 41 41 33 41 23.4 41 13.9 33.4 7 24 7z"/><circle cx="16" cy="20" r="2.2"/><circle cx="23" cy="14.5" r="2.2"/><circle cx="31" cy="17" r="2.2"/><circle cx="33" cy="25.5" r="2.2"/></svg>
+              <h3>Diseñamos juntos</h3>
+              <p>Elige sabor, relleno, tamaño, forma y mensaje, y envíanos tu imagen de referencia.</p>
+            </div>
+          </li>
+          <li class="paso" style="--giro:-1.2deg">
+            <span class="paso-gota" aria-hidden="true"></span>
+            <div class="paso-tarjeta">
+              <span class="paso-num" aria-hidden="true">3</span>
+              <svg class="paso-dibujo" viewBox="0 0 48 48" aria-hidden="true"><path d="M12 6h24v36l-4-2.6-4 2.6-4-2.6-4 2.6-4-2.6-4 2.6z"/><path d="M18 16h12M18 22h12"/><path d="M18.5 30.5l3.4 3.4 7.6-7.6"/></svg>
+              <h3>Confirmamos</h3>
+              <p>Te damos el precio total y apartas tu pedido con un anticipo.</p>
+            </div>
+          </li>
+          <li class="paso" style="--giro:1.9deg">
+            <span class="paso-gota" aria-hidden="true"></span>
+            <div class="paso-tarjeta">
+              <span class="paso-num" aria-hidden="true">4</span>
+              <svg class="paso-dibujo" viewBox="0 0 48 48" aria-hidden="true"><path d="M9 41h30"/><rect x="12" y="27" width="24" height="14" rx="2"/><rect x="16.5" y="18" width="15" height="9" rx="2"/><path d="M12 31.5c2 1.6 4 1.6 6 0s4-1.6 6 0 4 1.6 6 0 4-1.6 6 0"/><path d="M24 18v-5"/><path d="M24 5.5c1.6 1.8 1.6 3.6 0 4.6-1.6-1-1.6-2.8 0-4.6z"/></svg>
+              <h3>¡A celebrar!</h3>
+              <p>Recoge tu pastel en tienda o recíbelo a domicilio el día acordado.</p>
+            </div>
+          </li>
+        </ol>
+        <div class="receta-fin">
+          <a class="btn aura" href="#contacto">Empezar mi pedido <svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
       </div>
     </div>
   </section>
@@ -941,19 +1150,97 @@
   <section class="contacto" id="contacto">
     <div class="contenedor">
       <div class="tarjeta-contacto rev">
-        <div>
+        <div class="armador">
           <span class="etiqueta">Contacto</span>
           <h2>¿Ya tienes una idea en mente?</h2>
-          <p>Escríbenos y cotizamos tu pastel personalizado. Si tienes una foto de referencia, envíanosla en el mismo mensaje.</p>
+          <p>Elige lo básico y te dejamos el mensaje listo para enviarlo por WhatsApp.</p>
+          <form class="armador-form" id="armador" action="#" novalidate>
+            <fieldset class="campo">
+              <legend>¿Qué celebras?</legend>
+              <div class="chips-radio">
+                <label class="chip"><input type="radio" name="ocasion" value="Cumpleaños" data-frase="un cumpleaños"><span>Cumpleaños</span></label>
+                <label class="chip"><input type="radio" name="ocasion" value="Bodas" data-frase="una boda"><span>Boda</span></label>
+                <label class="chip"><input type="radio" name="ocasion" value="XV años" data-frase="unos XV años"><span>XV años</span></label>
+                <label class="chip"><input type="radio" name="ocasion" value="Baby shower" data-frase="un baby shower"><span>Baby shower</span></label>
+                <label class="chip"><input type="radio" name="ocasion" value="Bautizos" data-frase="un bautizo"><span>Bautizo</span></label>
+                <label class="chip"><input type="radio" name="ocasion" value="Graduaciones" data-frase="una graduación"><span>Graduación</span></label>
+                <label class="chip"><input type="radio" name="ocasion" value="Aniversarios" data-frase="un aniversario"><span>Aniversario</span></label>
+                <label class="chip"><input type="radio" name="ocasion" value="Empresas" data-frase="una empresa"><span>Empresa</span></label>
+              </div>
+            </fieldset>
+            <div class="campo">
+              <label for="fecha-pedido">¿Para qué fecha?</label>
+              <input type="date" id="fecha-pedido" name="fecha">
+            </div>
+            <fieldset class="campo">
+              <legend>Tamaño</legend>
+              <div class="chips-radio">
+                <label class="chip"><input type="radio" name="tamano" value="Pequeño"><span>Pequeño</span></label>
+                <label class="chip"><input type="radio" name="tamano" value="Mediano"><span>Mediano</span></label>
+                <label class="chip"><input type="radio" name="tamano" value="Grande"><span>Grande</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="campo">
+              <legend>Sabor</legend>
+              <div class="chips-radio">
+                <label class="chip"><input type="radio" name="sabor" value="Vainilla"><span>Vainilla</span></label>
+                <label class="chip"><input type="radio" name="sabor" value="Chocolate"><span>Chocolate</span></label>
+                <label class="chip"><input type="radio" name="sabor" value="Red velvet"><span>Red velvet</span></label>
+                <label class="chip"><input type="radio" name="sabor" value="Tres leches"><span>Tres leches</span></label>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+
+        <div class="chat">
+          <div class="chat-cabeza">
+            <span class="chat-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 8 4 3 5-6 5 6 4-3-2 10H5z"/><path d="M5 21h14"/></svg></span>
+            <div><b>BakeMe Pastelería</b><small>Así llegará tu mensaje</small></div>
+          </div>
+          <div class="chat-fondo">
+            <div class="burbuja">
+              <p id="mensaje-vista" aria-live="polite">¡Hola BakeMe! Quiero cotizar un pastel personalizado.</p>
+              <span class="burbuja-hora"><span id="hora-vista"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12.5l4 4 8-8.5"/><path d="M11.5 16l.5.5 8-8.5"/></svg></span>
+            </div>
+            <p class="chat-pista"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21.4 11.1-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg>¿Tienes una foto de referencia? Adjúntala en el chat.</p>
+          </div>
           <a id="boton-whatsapp" class="btn aura" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3z"/></svg>
-            <span id="texto-whatsapp">Escríbenos por WhatsApp</span>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3z"/></svg>
+            <span id="texto-whatsapp">Enviar por WhatsApp</span>
           </a>
         </div>
+
         <ul class="datos">
-          <li><span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><b>Ubicación</b><span data-dato="direccion"></span></div></li>
-          <li><span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><b>Horario de atención</b><span data-dato="horario"></span></div></li>
-          <li><span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><div><b>Teléfono / WhatsApp</b><span data-dato="telefono"></span></div></li>
+          <li>
+            <span class="dato-icono" aria-hidden="true">
+              <svg class="plano" viewBox="0 0 56 56"><path d="M-2 20 60 9M-2 42 60 30M17-2l6 60M40-2l-5 60" stroke="#FFF9F3" stroke-width="5"/><path d="M-2 20 60 9M-2 42 60 30M17-2l6 60M40-2l-5 60" stroke="#EAC7B8" stroke-width="1"/><circle class="pin-onda" cx="29" cy="25" r="9" fill="#C96A66" stroke="none" opacity=".35"/><path d="M29 34s-7-6.1-7-11.1a7 7 0 0 1 14 0C36 27.9 29 34 29 34z" fill="#C96A66" stroke="#8E4A48" stroke-width="1.2"/><circle cx="29" cy="23" r="2.6" fill="#FFF9F3" stroke="none"/></svg>
+            </span>
+            <div>
+              <b>Ubicación</b>
+              <span data-dato="direccion"></span>
+              <a class="dato-accion" id="como-llegar" target="_blank" rel="noopener" hidden>Cómo llegar <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+            </div>
+          </li>
+          <li>
+            <span class="dato-icono" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path class="aguja aguja-hora" d="M12 12V8"/><path class="aguja aguja-minuto" d="M12 12V5.5"/></svg>
+            </span>
+            <div>
+              <b>Horario de atención</b>
+              <span data-dato="horario"></span>
+              <span class="estado" id="estado-horario" hidden><b></b><small></small></span>
+            </div>
+          </li>
+          <li>
+            <span class="dato-icono" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+            </span>
+            <div>
+              <b>Teléfono / WhatsApp</b>
+              <span data-dato="telefono"></span>
+              <button class="dato-accion" id="copiar-telefono" type="button" hidden><span>Copiar número</span> <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M4 16V5a2 2 0 0 1 2-2h11"/></svg></button>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -978,7 +1265,13 @@ const CONTACTO = {
   whatsapp:  "50362242717",   // +503 6224 2717
   telefono:  "+503 6224 2717",
   direccion: "5a Avenida Norte, Barrio San Miguelito",
-  horario:   "Lunes a sábado, 7:00 a. m. a 5:00 p. m."
+  // Se agrega a la dirección solo para buscarla en Google Maps ("Cómo llegar").
+  ciudad:    "El Salvador",
+  horario:   "Lunes a sábado, 7:00 a. m. a 5:00 p. m.",
+  // El mismo horario en números, para el aviso "Abierto ahora". Si cambias el
+  // texto de arriba, cambia también esto. Días: 0 domingo, 1 lunes ... 6 sábado.
+  horas:     { dias: [1, 2, 3, 4, 5, 6], abre: "07:00", cierra: "17:00" },
+  zona:      "America/El_Salvador"
 };
 
 // Rellena los datos de contacto y marca los que falten.
@@ -1000,16 +1293,93 @@ document.querySelectorAll("[data-dato]").forEach(function (el) {
   }
 });
 
-// El botón solo se activa si hay un número de WhatsApp configurado.
+// El botón solo se activa si hay un número de WhatsApp configurado; el
+// armador de mensajes de abajo le va cambiando el texto.
 var boton = document.getElementById("boton-whatsapp");
+function enlaceWhatsApp(texto) {
+  return "https://wa.me/" + CONTACTO.whatsapp + "?text=" + encodeURIComponent(texto);
+}
 if (CONTACTO.whatsapp) {
-  boton.href = "https://wa.me/" + CONTACTO.whatsapp +
-    "?text=" + encodeURIComponent("¡Hola BakeMe! Quiero cotizar un pastel personalizado.");
+  boton.href = enlaceWhatsApp("¡Hola BakeMe! Quiero cotizar un pastel personalizado.");
 } else {
   boton.classList.add("pendiente");
   boton.setAttribute("aria-disabled", "true");
   document.getElementById("texto-whatsapp").textContent = "Agrega tu número de WhatsApp";
 }
+
+// "Cómo llegar" busca la dirección en Google Maps.
+var llegar = document.getElementById("como-llegar");
+if (llegar && CONTACTO.direccion) {
+  llegar.href = "https://www.google.com/maps/search/?api=1&query=" +
+    encodeURIComponent(CONTACTO.direccion + (CONTACTO.ciudad ? ", " + CONTACTO.ciudad : ""));
+  llegar.hidden = false;
+}
+
+// Copiar el número con un toque.
+var copiar = document.getElementById("copiar-telefono");
+if (copiar && CONTACTO.telefono && navigator.clipboard && window.isSecureContext) {
+  copiar.hidden = false;
+  var textoCopiar = copiar.querySelector("span");
+  var relojCopia = 0;
+  copiar.addEventListener("click", function () {
+    navigator.clipboard.writeText(CONTACTO.telefono).then(function () {
+      textoCopiar.textContent = "Número copiado";
+      clearTimeout(relojCopia);
+      relojCopia = setTimeout(function () { textoCopiar.textContent = "Copiar número"; }, 2000);
+    });
+  });
+}
+
+// "Abierto ahora" o "Cerrado ahora", con la hora de la tienda y no la del
+// visitante. El reloj del ícono marca esa misma hora.
+(function () {
+  var estado = document.getElementById("estado-horario");
+  var h = CONTACTO.horas;
+  if (!estado || !h || !h.dias || !h.abre || !h.cierra) return;
+  var DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  var hora = document.querySelector(".aguja-hora"), minuto = document.querySelector(".aguja-minuto");
+  function aMinutos(t) { var p = t.split(":"); return +p[0] * 60 + +p[1]; }
+  function legible(m) {
+    var hh = Math.floor(m / 60), mm = m % 60;
+    return ((hh + 11) % 12 + 1) + ":" + (mm < 10 ? "0" : "") + mm + (hh < 12 ? " a. m." : " p. m.");
+  }
+  function ahora() {
+    try {
+      var partes = {};
+      new Intl.DateTimeFormat("en-US", { timeZone: CONTACTO.zona, weekday: "short", hour: "numeric", minute: "numeric", hourCycle: "h23" })
+        .formatToParts(new Date()).forEach(function (p) { partes[p.type] = p.value; });
+      return { dia: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(partes.weekday), min: (+partes.hour % 24) * 60 + +partes.minute };
+    } catch (e) {
+      var d = new Date();
+      return { dia: d.getDay(), min: d.getHours() * 60 + d.getMinutes() };
+    }
+  }
+  function pintar() {
+    var t = ahora(), abre = aMinutos(h.abre), cierra = aMinutos(h.cierra);
+    var hoyAbre = h.dias.indexOf(t.dia) >= 0;
+    var abierto = hoyAbre && t.min >= abre && t.min < cierra;
+    var detalle;
+    if (abierto) {
+      detalle = "Cierra a las " + legible(cierra);
+    } else if (hoyAbre && t.min < abre) {
+      detalle = "Abre hoy a las " + legible(abre);
+    } else {
+      var salto = 1;
+      while (salto < 8 && h.dias.indexOf((t.dia + salto) % 7) < 0) salto++;
+      detalle = "Abre " + (salto === 1 ? "mañana" : "el " + DIAS[(t.dia + salto) % 7]) + " a las " + legible(abre);
+    }
+    estado.querySelector("b").textContent = abierto ? "Abierto ahora" : "Cerrado ahora";
+    estado.querySelector("small").textContent = detalle;
+    estado.classList.toggle("abierto", abierto);
+    estado.hidden = false;
+    if (hora && minuto) {
+      hora.style.transform = "rotate(" + ((t.min % 720) / 2) + "deg)";
+      minuto.style.transform = "rotate(" + ((t.min % 60) * 6) + "deg)";
+    }
+  }
+  pintar();
+  setInterval(pintar, 60000);
+})();
 
 // Cada pastel del catálogo abre WhatsApp con su nombre ya escrito.
 document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
@@ -1044,7 +1414,7 @@ document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
   }
 
   // Escalona los elementos que comparten una misma rejilla.
-  [".opciones", ".ocasiones", ".pasos", ".info", ".nosotros .contenedor"]
+  [".opciones", ".info", ".ocasiones-rejilla"]
     .forEach(function (selector) {
       document.querySelectorAll(selector).forEach(function (grupo) {
         grupo.querySelectorAll(":scope > .rev").forEach(function (hijo, i) {
@@ -1687,6 +2057,407 @@ document.querySelectorAll(".cf-tarjeta").forEach(function (t) {
     if (!explorando) pildora(activo);
   }, { rootMargin: "-45% 0px -45% 0px" });
   secciones.forEach(function (sec) { ojo.observe(sec); });
+})();
+</script>
+
+<script>
+/* =======================================================================
+   Nosotros: la frase se enciende palabra por palabra al ritmo del
+   desplazamiento y cada foto aparece cuando le toca. Sin JavaScript o con
+   movimiento reducido se ve completa desde el inicio.
+   ======================================================================= */
+(function () {
+  var frase = document.querySelector(".frase");
+  if (!frase) return;
+  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var piezas = [];
+  Array.prototype.slice.call(frase.childNodes).forEach(function (nodo) {
+    if (nodo.nodeType === 1) { piezas.push(nodo); return; }
+    if (nodo.nodeType !== 3) return;
+    var trozo = document.createDocumentFragment();
+    nodo.textContent.split(/(\s+)/).forEach(function (t) {
+      if (!t) return;
+      if (/^\s+$/.test(t)) { trozo.appendChild(document.createTextNode(t)); return; }
+      var palabra = document.createElement("span");
+      palabra.className = "palabra";
+      palabra.textContent = t;
+      trozo.appendChild(palabra);
+      piezas.push(palabra);
+    });
+    frase.replaceChild(trozo, nodo);
+  });
+
+  var total = piezas.length, encendidas = -1;
+  function encender(n) {
+    if (n === encendidas) return;
+    encendidas = n;
+    for (var i = 0; i < total; i++) piezas[i].classList.toggle("encendida", i < n);
+  }
+  if (menos || !("IntersectionObserver" in window)) { encender(total); return; }
+
+  // Empieza cuando la frase asoma por abajo y termina cuando ya se ve entera,
+  // con su última línea a un cuarto del borde inferior.
+  var enCola = false, escuchando = false;
+  function medir() {
+    enCola = false;
+    var r = frase.getBoundingClientRect(), alto = window.innerHeight;
+    var avance = (alto * 0.92 - r.top) / (alto * 0.18 + r.height);
+    encender(Math.round(Math.max(0, Math.min(1, avance)) * total));
+  }
+  function alDesplazar() {
+    if (enCola) return;
+    enCola = true;
+    window.requestAnimationFrame(medir);
+  }
+  new IntersectionObserver(function (entradas) {
+    var dentro = entradas[0].isIntersecting;
+    if (dentro && !escuchando) window.addEventListener("scroll", alDesplazar, { passive: true });
+    if (!dentro && escuchando) window.removeEventListener("scroll", alDesplazar);
+    escuchando = dentro;
+    medir();
+  }, { rootMargin: "10% 0px" }).observe(frase);
+})();
+</script>
+
+<script>
+/* =======================================================================
+   Ocasiones: pestañas accesibles. Al elegir una, su foto se abre en círculo
+   desde el lado donde está la pestaña; el pie cambia nombre, texto y el
+   botón, que deja la ocasión marcada en el armador de Contacto.
+   ======================================================================= */
+(function () {
+  var lista = document.querySelector(".ocasiones-lista");
+  var panel = document.getElementById("oc-panel");
+  if (!lista || !panel) return;
+  var pestanas = [].slice.call(lista.querySelectorAll(".ocasion"));
+  var fotos = [].slice.call(panel.querySelectorAll(".vitrina-foto"));
+  var marco = panel.querySelector(".vitrina-marco");
+  var pie = panel.querySelector(".vitrina-pie");
+  var nombre = pie.querySelector(".vitrina-nombre");
+  var texto = pie.querySelector(".vitrina-texto");
+  var boton = pie.querySelector(".vitrina-cta");
+  var botonTexto = boton.querySelector("span");
+  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var celular = window.matchMedia("(max-width: 900px)");
+  var actual = 0, intento = 0;
+
+  function orientar() { lista.setAttribute("aria-orientation", celular.matches ? "horizontal" : "vertical"); }
+  orientar();
+  if (celular.addEventListener) celular.addEventListener("change", orientar);
+
+  function elegir(i, desde) {
+    if (i === actual) return;
+    var pestana = pestanas[i], nueva = fotos[i];
+    pestanas.forEach(function (p, k) {
+      p.setAttribute("aria-selected", k === i ? "true" : "false");
+      p.tabIndex = k === i ? 0 : -1;
+    });
+    panel.setAttribute("aria-labelledby", pestana.id);
+    // La foto que se veía queda debajo mientras la nueva se abre encima.
+    fotos.forEach(function (f, k) {
+      f.classList.remove("entra");
+      f.classList.toggle("activa", k === (menos ? i : actual));
+      f.setAttribute("aria-hidden", k === i ? "false" : "true");
+    });
+    if (!menos) {
+      var ox = 0, oy = 50;
+      var r = marco.getBoundingClientRect();
+      if (desde && r.width && r.height) {
+        var d = desde.getBoundingClientRect();
+        ox = Math.max(-8, Math.min(108, (d.left + d.width / 2 - r.left) / r.width * 100));
+        oy = Math.max(-8, Math.min(108, (d.top + d.height / 2 - r.top) / r.height * 100));
+      }
+      nueva.style.setProperty("--ox", ox.toFixed(1) + "%");
+      nueva.style.setProperty("--oy", oy.toFixed(1) + "%");
+      void nueva.offsetWidth;
+      nueva.classList.add("entra");
+    }
+    actual = i;
+    nombre.textContent = pestana.getAttribute("data-nombre");
+    texto.textContent = pestana.getAttribute("data-texto");
+    botonTexto.textContent = "Cotizar para " + pestana.getAttribute("data-frase");
+    boton.setAttribute("data-ocasion", pestana.getAttribute("data-nombre"));
+    if (!menos) {
+      pie.classList.remove("cambia");
+      void pie.offsetWidth;
+      pie.classList.add("cambia");
+    }
+  }
+
+  fotos.forEach(function (f, k) {
+    f.addEventListener("animationend", function (e) {
+      if (e.animationName !== "vitrina-abre" || k !== actual) return;
+      fotos.forEach(function (g, j) { g.classList.toggle("activa", j === k); });
+      f.classList.remove("entra");
+    });
+  });
+
+  pestanas.forEach(function (p, k) {
+    p.addEventListener("click", function () { clearTimeout(intento); elegir(k, p); });
+    // Con el mouse basta con detenerse un instante sobre la ocasión.
+    p.addEventListener("pointerenter", function (e) {
+      if (e.pointerType !== "mouse") return;
+      clearTimeout(intento);
+      intento = setTimeout(function () { elegir(k, p); }, 110);
+    });
+    p.addEventListener("pointerleave", function () { clearTimeout(intento); });
+  });
+
+  lista.addEventListener("keydown", function (e) {
+    var k = pestanas.indexOf(document.activeElement);
+    if (k < 0) return;
+    var destino = { ArrowDown: k + 1, ArrowRight: k + 1, ArrowUp: k - 1, ArrowLeft: k - 1, Home: 0, End: pestanas.length - 1 }[e.key];
+    if (destino === undefined) return;
+    e.preventDefault();
+    destino = (destino + pestanas.length) % pestanas.length;
+    pestanas[destino].focus();
+    elegir(destino, pestanas[destino]);
+  });
+})();
+</script>
+
+<script>
+/* =======================================================================
+   Cómo pedir: la línea de betún une los cuatro pasos. Su punta va siempre a
+   la misma altura de la pantalla, así se dibuja al ritmo del desplazamiento,
+   y cada paso se asienta cuando la línea lo alcanza. La curva se arma con la
+   posición real de cada paso, en escritorio y en celular.
+   ======================================================================= */
+(function () {
+  var receta = document.querySelector(".receta");
+  if (!receta) return;
+  var svg = receta.querySelector(".receta-linea");
+  var trazos = [].slice.call(svg.querySelectorAll("path"));
+  var guia = svg.querySelector(".linea-betun");
+  var manga = receta.querySelector(".manga");
+  var pasos = [].slice.call(receta.querySelectorAll(".paso"));
+  var gotas = pasos.map(function (p) { return p.querySelector(".paso-gota"); });
+  var final = receta.querySelector(".receta-fin .btn");
+  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var PUNTA = 0.6;                  // altura de la pantalla donde va la punta
+  var largo = 0, marcas = [], tabla = [], enCola = false, escuchando = false, pendiente = 0;
+
+  function r1(n) { return Math.round(n * 10) / 10; }
+
+  function construir() {
+    var caja = receta.getBoundingClientRect();
+    if (!caja.width || !caja.height) return;
+    var puntos = gotas.map(function (g) {
+      var r = g.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - caja.left, y: r.top + r.height / 2 - caja.top };
+    });
+    var angosta = caja.width < 700;
+    var b = final.getBoundingClientRect();
+    var todos = [{ x: angosta ? puntos[0].x : caja.width / 2, y: 0 }].concat(puntos);
+    // Termina entrando al botón: por arriba en escritorio, por la izquierda en celular.
+    todos.push(angosta
+      ? { x: b.left - caja.left - 8, y: b.top + b.height / 2 - caja.top, lateral: true }
+      : { x: b.left + b.width / 2 - caja.left, y: b.top - caja.top - 12 });
+
+    var d = "M" + r1(todos[0].x) + " " + r1(todos[0].y), cortes = [];
+    for (var i = 1; i < todos.length; i++) {
+      var a = todos[i - 1], z = todos[i], dy = z.y - a.y;
+      var c1x = a.x, c1y = a.y + dy * 0.5, c2x = z.x, c2y = z.y - dy * 0.5;
+      if (angosta && !z.lateral) {       // en celular la línea ondula un poco
+        var lado = i % 2 ? 1 : -1;
+        c1x += lado * 18;
+        c2x -= lado * 18;
+      }
+      if (z.lateral) { c2x = z.x - 40; c2y = z.y; }
+      d += " C" + r1(c1x) + " " + r1(c1y) + " " + r1(c2x) + " " + r1(c2y) + " " + r1(z.x) + " " + r1(z.y);
+      cortes.push(d);
+    }
+    svg.setAttribute("viewBox", "0 0 " + r1(caja.width) + " " + r1(caja.height));
+    trazos.forEach(function (t) { t.setAttribute("d", d); });
+    largo = guia.getTotalLength();
+
+    // Largo de la línea hasta cada gota, para saber cuándo llega a cada paso.
+    var medidor = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    svg.appendChild(medidor);
+    marcas = puntos.map(function (p, k) { medidor.setAttribute("d", cortes[k]); return medidor.getTotalLength(); });
+    svg.removeChild(medidor);
+
+    // Tabla altura -> largo: la curva siempre baja, así que se puede buscar por altura.
+    tabla = [];
+    for (var n = 0; n <= 240; n++) {
+      var l = largo * n / 240;
+      tabla.push([guia.getPointAtLength(l).y, l]);
+    }
+    pintar();
+  }
+
+  function largoEn(y) {
+    var n = tabla.length - 1;
+    if (y <= tabla[0][0]) return 0;
+    if (y >= tabla[n][0]) return largo;
+    var bajo = 0, alto = n;
+    while (alto - bajo > 1) {
+      var medio = (bajo + alto) >> 1;
+      if (tabla[medio][0] < y) bajo = medio; else alto = medio;
+    }
+    var p = tabla[bajo], q = tabla[alto];
+    return p[1] + (q[1] - p[1]) * ((y - p[0]) / ((q[0] - p[0]) || 1));
+  }
+
+  function pintar() {
+    enCola = false;
+    if (!largo) return;
+    var l = menos ? largo : largoEn(window.innerHeight * PUNTA - receta.getBoundingClientRect().top);
+    var fraccion = l / largo;
+    var corte = (1 - fraccion).toFixed(4);
+    trazos.forEach(function (t) { t.style.strokeDashoffset = corte; });
+    pasos.forEach(function (p, k) { p.classList.toggle("llego", l >= marcas[k] - 2); });
+    var dibujando = !menos && fraccion > 0.002 && fraccion < 0.998;
+    manga.classList.toggle("activa", dibujando);
+    if (dibujando) {
+      var punta = guia.getPointAtLength(l), atras = guia.getPointAtLength(Math.max(0, l - 8));
+      var giro = Math.atan2(punta.y - atras.y, punta.x - atras.x) * 180 / Math.PI - 90;
+      manga.style.transform = "translate(" + r1(punta.x) + "px," + r1(punta.y) + "px) rotate(" + r1(giro) + "deg)";
+    }
+  }
+
+  function alDesplazar() {
+    if (enCola) return;
+    enCola = true;
+    window.requestAnimationFrame(pintar);
+  }
+  function reconstruir() {
+    window.cancelAnimationFrame(pendiente);
+    pendiente = window.requestAnimationFrame(construir);
+  }
+
+  construir();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reconstruir);
+  if ("ResizeObserver" in window) new ResizeObserver(reconstruir).observe(receta);
+  else window.addEventListener("resize", reconstruir);
+  if (menos) return;
+  if (!("IntersectionObserver" in window)) {
+    window.addEventListener("scroll", alDesplazar, { passive: true });
+    return;
+  }
+  // Solo escucha el desplazamiento mientras la sección está cerca de la pantalla.
+  new IntersectionObserver(function (entradas) {
+    var dentro = entradas[0].isIntersecting;
+    if (dentro && !escuchando) window.addEventListener("scroll", alDesplazar, { passive: true });
+    if (!dentro && escuchando) window.removeEventListener("scroll", alDesplazar);
+    escuchando = dentro;
+    pintar();
+  }, { rootMargin: "20% 0px" }).observe(receta);
+})();
+</script>
+
+<script>
+/* =======================================================================
+   Contacto: el armador compone el mensaje de WhatsApp con lo que el
+   visitante elige y lo muestra como llegaría al chat. Tocar de nuevo una
+   opción elegida la quita. Los botones "Cotizar para…" de Ocasiones llegan
+   aquí con la ocasión ya marcada.
+   ======================================================================= */
+(function () {
+  var form = document.getElementById("armador");
+  var vista = document.getElementById("mensaje-vista");
+  if (!form || !vista) return;
+  var burbuja = vista.parentNode;
+  var fecha = document.getElementById("fecha-pedido");
+  var horaVista = document.getElementById("hora-vista");
+  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var LOCAL = ["es-SV", "es"];
+  var ultimo = null;
+
+  function dos(n) { return (n < 10 ? "0" : "") + n; }
+  var hoy = new Date();
+  fecha.min = hoy.getFullYear() + "-" + dos(hoy.getMonth() + 1) + "-" + dos(hoy.getDate());
+
+  function elegido(nombre) { return form.querySelector('input[name="' + nombre + '"]:checked'); }
+  function fechaLarga(valor) {
+    var p = valor.split("-");
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    if (isNaN(d.getTime())) return "";
+    var texto = d.toLocaleDateString(LOCAL, { weekday: "long", day: "numeric", month: "long" }).replace(",", "");
+    return d.getFullYear() !== hoy.getFullYear() ? texto + " de " + d.getFullYear() : texto;
+  }
+
+  // Cada parte es [texto] o [texto, campo]; las que tienen campo van en negrita.
+  function partes() {
+    var lista = [["¡Hola BakeMe! Quiero cotizar un pastel personalizado"]];
+    var ocasion = elegido("ocasion");
+    if (ocasion) lista.push([" para "], [ocasion.getAttribute("data-frase"), "ocasion"]);
+    var dia = fecha.value && fechaLarga(fecha.value);
+    if (dia) lista.push([ocasion ? " el " : " para el "], [dia, "fecha"]);
+    lista.push(["."]);
+    var tamano = elegido("tamano"), sabor = elegido("sabor");
+    if (tamano) lista.push(["\nTamaño: "], [tamano.value, "tamano"]);
+    if (sabor) lista.push(["\nSabor: "], [sabor.value, "sabor"]);
+    return lista;
+  }
+
+  function actualizar(animar) {
+    var mensaje = "";
+    vista.textContent = "";
+    partes().forEach(function (p) {
+      if (p[1]) {
+        mensaje += "*" + p[0] + "*";           // negrita en WhatsApp
+        var b = document.createElement("b");
+        b.textContent = p[0];
+        if (animar && p[1] === ultimo) b.className = "resalta";
+        vista.appendChild(b);
+        return;
+      }
+      mensaje += p[0];
+      p[0].split("\n").forEach(function (linea, k) {
+        if (k) vista.appendChild(document.createElement("br"));
+        if (linea) vista.appendChild(document.createTextNode(linea));
+      });
+    });
+    if (CONTACTO.whatsapp) boton.href = enlaceWhatsApp(mensaje);
+    if (animar && !menos) {
+      burbuja.classList.remove("nueva");
+      void burbuja.offsetWidth;
+      burbuja.classList.add("nueva");
+    }
+  }
+
+  function marcar(radio) {
+    form.querySelectorAll('input[name="' + radio.name + '"]').forEach(function (o) { o.removeAttribute("data-antes"); });
+    if (radio.checked) radio.setAttribute("data-antes", "si");
+  }
+  form.addEventListener("click", function (e) {
+    var r = e.target;
+    if (r.type !== "radio") return;
+    if (r.getAttribute("data-antes") === "si") {
+      r.checked = false;
+      r.removeAttribute("data-antes");
+      ultimo = null;
+      actualizar(true);
+    } else {
+      marcar(r);
+    }
+  });
+  form.addEventListener("change", function (e) {
+    if (e.target.type === "radio") marcar(e.target);
+    ultimo = e.target.name;
+    actualizar(true);
+  });
+  form.addEventListener("submit", function (e) { e.preventDefault(); });
+
+  // Desde Ocasiones: marca la celebración antes de bajar a Contacto.
+  document.addEventListener("click", function (e) {
+    var enlace = e.target.closest ? e.target.closest("a[data-ocasion]") : null;
+    if (!enlace) return;
+    var radio = form.querySelector('input[name="ocasion"][value="' + enlace.getAttribute("data-ocasion") + '"]');
+    if (!radio) return;
+    radio.checked = true;
+    marcar(radio);
+    ultimo = "ocasion";
+    actualizar(true);
+  });
+
+  function reloj() {
+    horaVista.textContent = new Date().toLocaleTimeString(LOCAL, { hour: "numeric", minute: "2-digit" });
+  }
+  reloj();
+  setInterval(reloj, 30000);
+  actualizar(false);
 })();
 </script>
 
