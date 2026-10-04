@@ -1,16 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<script>document.documentElement.className+=" con-js";</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* Antes de pintar: marca que hay JavaScript y si el equipo o la conexión
+   piden ir ligero. "ligero": celular de gama baja. "red-lenta": datos lentos
+   o ahorro de datos. Con eso la página apaga los efectos caros y el pastel 3D
+   espera a que el visitante lo pida. */
+(function () {
+  var n = navigator, c = n.connection || n.mozConnection || n.webkitConnection || {};
+  var tactil = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+  // Safari en iPhone y iPad recorta el número de núcleos que informa: no sirve
+  // para saber si el equipo es modesto, así que ahí no se usa.
+  var apple = /iP(hone|ad|od)/.test(n.platform || "") || (n.platform === "MacIntel" && n.maxTouchPoints > 1);
+  var clases = " con-js";
+  if ((n.deviceMemory && n.deviceMemory <= 2) || (tactil && !apple && n.hardwareConcurrency && n.hardwareConcurrency <= 4)) clases += " ligero";
+  if (c.saveData || /(^|-)2g$|^3g$/.test(c.effectiveType || "")) clases += " red-lenta";
+  document.documentElement.className += clases;
+
+  // Las fuentes se aplican todas juntas cuando ya llegaron: un solo reacomodo
+  // del texto en vez de uno por cada archivo. Si la hoja de Google todavía no
+  // se registró, se vuelve a intentar en un momento.
+  var FUENTES = ["500 1em \"Playfair Display\"", "600 1em \"Playfair Display\"", "italic 500 1em \"Playfair Display\"", "400 1em Lato", "700 1em Lato"];
+  window.cargarFuentes = function (intento) {
+    var raiz = document.documentElement;
+    intento = intento || 0;
+    if (!document.fonts || !document.fonts.load || !window.Promise) { raiz.className += " fuentes"; return; }
+    Promise.all(FUENTES.map(function (f) { return document.fonts.load(f); })).then(function (caras) {
+      var todas = caras.every(function (c) { return c && c.length; });
+      if (todas || intento >= 30) raiz.className += " fuentes";
+      else setTimeout(function () { window.cargarFuentes(intento + 1); }, 100);
+    }, function () {});
+  };
+})();
+</script>
 <title>BakeMe Pastelería · Pasteles personalizados</title>
-<link rel="icon" href="logo.jpeg">
+<link rel="icon" href="fotos/icono-64.png" type="image/png">
+<link rel="apple-touch-icon" href="fotos/icono-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<!-- Las fuentes no frenan el primer pintado: mientras llegan se usa Georgia o
+     Arial ajustadas al tamaño de Playfair y Lato, así el texto casi no se mueve. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Lato:wght@400;700&display=swap" onload="this.onload=null;this.rel='stylesheet';window.cargarFuentes&&cargarFuentes()">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Lato:wght@400;700&display=swap"><style>html:root{--letra-titulo:"Playfair Display",Georgia,serif;--letra-texto:"Lato",system-ui,sans-serif}</style></noscript>
 <style>
+  @font-face{font-family:"Playfair Respaldo";src:local("Georgia");font-weight:400 500;size-adjust:101.9%;ascent-override:106%;descent-override:24.5%;line-gap-override:0%}
+  @font-face{font-family:"Playfair Respaldo";src:local("Georgia Bold"),local("Georgia-Bold");font-weight:600 900;size-adjust:88.3%;ascent-override:122.3%;descent-override:28.3%;line-gap-override:0%}
+  @font-face{font-family:"Playfair Respaldo";src:local("Georgia Italic"),local("Georgia-Italic");font-style:italic;font-weight:400 900;size-adjust:96.2%;ascent-override:112.3%;descent-override:26%;line-gap-override:0%}
+  @font-face{font-family:"Lato Respaldo";src:local("Arial"),local("ArialMT");font-weight:400 500;size-adjust:95.3%;ascent-override:103.9%;descent-override:22%;line-gap-override:0%}
+  @font-face{font-family:"Lato Respaldo";src:local("Arial Bold"),local("Arial-BoldMT");font-weight:600 900;size-adjust:91.3%;ascent-override:108.4%;descent-override:23%;line-gap-override:0%}
+
   /* Paleta oficial de BakeMe (documento del proyecto) */
   :root{
     --crema:#F7E8D9;         /* Crema cálido */
@@ -24,11 +66,16 @@
     --rubor:#F5DCD3;         /* texto claro sobre vino */
     --texto:#6B4F4A;
     --radio:24px;
+    /* Mientras llegan las fuentes se usan Georgia y Arial ajustadas; cuando ya
+       llegaron todas, la clase "fuentes" las cambia de una sola vez. */
+    --letra-titulo:"Playfair Respaldo",Georgia,serif;
+    --letra-texto:"Lato Respaldo",system-ui,sans-serif;
   }
+  .fuentes{--letra-titulo:"Playfair Display","Playfair Respaldo",Georgia,serif;--letra-texto:"Lato","Lato Respaldo",system-ui,sans-serif}
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:"Lato",system-ui,sans-serif;background:var(--blanco);color:var(--texto);line-height:1.7}
-  h1,h2,h3{font-family:"Playfair Display",Georgia,serif;color:var(--vino);line-height:1.15;font-weight:600}
+  body{font-family:var(--letra-texto);background:var(--blanco);color:var(--texto);line-height:1.7}
+  h1,h2,h3{font-family:var(--letra-titulo);color:var(--vino);line-height:1.15;font-weight:600}
   a{color:inherit;text-decoration:none}
   img{max-width:100%;display:block}
   .contenedor{width:min(1120px,92%);margin:auto}
@@ -38,9 +85,11 @@
   .saltar{position:fixed;left:16px;top:12px;z-index:100;padding:.7rem 1.1rem;border-radius:999px;background:var(--vino);color:var(--blanco);font-weight:700;transform:translateY(-160%);transition:transform .2s var(--curva)}
   .saltar:focus{transform:none}
   main:focus{outline:none}
-  header{position:sticky;top:0;z-index:20;background:rgba(252,230,214,.94);-webkit-backdrop-filter:blur(12px) saturate(1.15);backdrop-filter:blur(12px) saturate(1.15);border-bottom:1px solid rgba(201,106,102,.16)}
+  /* Sin desenfoque de fondo: con el encabezado casi opaco no se notaba y en
+     celulares de gama baja hacía pesado cada cuadro del desplazamiento. */
+  header{position:sticky;top:0;z-index:20;background:rgba(252,230,214,.97);border-bottom:1px solid rgba(201,106,102,.16)}
   .barra{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1.2rem;height:76px;position:relative}
-  .logo-nav{justify-self:start;width:140px;height:64px;background:var(--logo-fondo) url("logo.jpeg") center/222px no-repeat;flex-shrink:0}
+  .logo-nav{justify-self:start;width:140px;height:64px;background:var(--logo-fondo) url("fotos/logo-600.jpg") center/222px no-repeat;background-image:image-set(url("fotos/logo-600.webp") type("image/webp"),url("fotos/logo-600.jpg") type("image/jpeg"));flex-shrink:0}
   .btn.btn-cabecera{justify-self:end;min-height:44px;padding:.65rem 1.25rem;font-size:.9rem}
 
   /* Menú de escritorio: píldora que se desliza entre secciones */
@@ -87,7 +136,7 @@
   /* ---------- Portada: vitrina de pastelería ---------- */
   .hero{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(60% 55% at 78% 44%,rgba(234,199,184,.6),rgba(234,199,184,0) 70%),radial-gradient(45% 40% at 6% 10%,rgba(223,166,157,.26),rgba(223,166,157,0) 70%),linear-gradient(180deg,var(--logo-fondo),var(--beige))}
   /* Grano de papel: le quita lo plano al fondo */
-  .hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.08;mix-blend-mode:multiply;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .56 0 0 0 0 .29 0 0 0 0 .28 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")}
+  .hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.08;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .56 0 0 0 0 .29 0 0 0 0 .28 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")}
   /* Borde festoneado, el mismo betún que separa las bandas de abajo */
   .hero::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:18px;z-index:2;pointer-events:none;background:radial-gradient(circle at 9px 18px,var(--blanco) 9px,rgba(0,0,0,0) 9.5px) repeat-x;background-size:18px 18px}
   .hero>.contenedor{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;grid-template-rows:1fr auto auto auto auto auto 1fr;column-gap:3.5rem;align-items:center;padding:4rem 0 5.5rem}
@@ -100,7 +149,7 @@
 
   .etiqueta{display:inline-block;color:var(--vino);font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:1rem}
   .etiqueta::before{content:"";display:inline-block;width:28px;height:2px;background:var(--salmon);vertical-align:middle;margin-right:.7rem}
-  .insignia{display:inline-flex;align-items:center;gap:.6rem;justify-self:start;margin-bottom:1.5rem;padding:.4rem 1rem .4rem .4rem;border-radius:999px;background:rgba(255,249,243,.66);border:1px solid rgba(201,106,102,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 24px -18px rgba(142,74,72,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--vino);font-weight:700;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+  .insignia{display:inline-flex;align-items:center;gap:.6rem;justify-self:start;margin-bottom:1.5rem;padding:.4rem 1rem .4rem .4rem;border-radius:999px;background:rgba(255,249,243,.82);border:1px solid rgba(201,106,102,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 24px -18px rgba(142,74,72,.7);color:var(--vino);font-weight:700;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
   .insignia svg{width:26px;height:26px;padding:5px;border-radius:50%;background:var(--vino);color:var(--durazno);flex-shrink:0}
   .hero h1{font-size:clamp(2.6rem,5.6vw,4.4rem);line-height:1.04;letter-spacing:-.012em;margin-bottom:1.4rem;text-wrap:balance}
   .hero h1 em{color:var(--rosa)}
@@ -124,27 +173,57 @@
   /* El pastel se luce en un arco de vitrina con doble filete */
   .hero-escenario{position:relative;width:100%;max-width:500px;justify-self:center}
   .hero-escenario::before{content:"";position:absolute;inset:-13px;border-radius:50% 50% 42px 42px/45% 45% 42px 42px;border:1px solid rgba(201,106,102,.34);pointer-events:none}
-  .hero-arte{position:relative;aspect-ratio:9/10;border-radius:50% 50% 30px 30px/45% 45% 30px 30px;background:radial-gradient(62% 14% at 50% 91%,rgba(223,166,157,.42),rgba(223,166,157,0) 72%),radial-gradient(90% 70% at 50% 28%,var(--blanco),var(--crema) 55%,var(--durazno));display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,249,243,.9),inset 0 -70px 90px -50px rgba(223,166,157,.5),0 44px 80px -40px rgba(142,74,72,.6)}
-  .hero-arte>svg{width:74%;transition:opacity .55s cubic-bezier(.23,1,.32,1),transform .55s cubic-bezier(.23,1,.32,1)}
-  .hero-arte.con-3d>svg{opacity:0;transform:scale(.94);pointer-events:none}
+  .hero-arte{position:relative;aspect-ratio:9/10;border-radius:50% 50% 30px 30px/45% 45% 30px 30px;background:radial-gradient(62% 14% at 50% 91%,rgba(223,166,157,.42),rgba(223,166,157,0) 72%),radial-gradient(90% 70% at 50% 28%,var(--blanco),var(--crema) 55%,var(--durazno));display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,249,243,.9),inset 0 -70px 90px -50px rgba(223,166,157,.5),0 44px 80px -40px rgba(142,74,72,.6);touch-action:pan-y pinch-zoom;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  /* Mientras llega la foto, una miniatura borrosa del mismo pastel (menos de 1 KB) */
+  .con-js .hero-arte:not(.foto-lista){background:url("data:image/webp;base64,UklGRowCAABXRUJQVlA4WAoAAAAQAAAAHQAAIAAAQUxQSE4BAAABkKPtv2k7v99aa1/Ftm2UNutbpUxrTiEZgCdwnzuAoLwTiJ3KtrnX+v+CraiPiAnAP5MEf8ev9GyIfkDvrC8AshGgfcPGbZ3L29Bs++KtLz5IOjBpNFgrYL8kWYq6f96BdTJ/0L6YSUp6O7+llsde5fo12eUBrahOtK47YanA7MtmuErkwHOqaIojwCrBTVaKZZIW0lUgMPWrWZkpjUAoc1i56KSSKljc0gIWOQx9l6um6epiuKLWtSaroVy3MhIAMeFYbqqb0r2OAsdJpgZ0FXC/oFNJ9e3Tof4gHIdfsyYkXRlOF3BEuRr9oiMIAV360lQXguOsl4rR6liMejmLDg6zeiRZnseYUkox5rlJ6pkFB8ABm7ofq+bj7k2Aw6+OQL9lO46fPnPz1q2bZ04f37GsP0CHUu9RyCwjCr1HZfoQPAGAPgRPNEqS+F8CVlA4IBgBAACwBgCdASoeACEAPt1YpkyopKOiMBqqqRAbiWUAv74gDeJa5wSaoAPbNPxsT2NGCWrNNRC8xGbXW3Ow4QA7QAD++90v8N5rSJnJTREw/8fqvHawJvtfhEawRiyH8XV7VN8DyiniM+pDjXlxPo6Vv4RmFJktm1mzRMVU/q9oYgD/5Ufell9Gmi0CMPhQQVpmU9A5wObt1KNn3wf5ozsWRlTn0SV4GsSXvf24uLjGuX14P8g665jFkGFAeX+OjQadjyDNBrC5Bv3OPF4gvHBNIkvRalMxpYwgDYOTVLMDsxeOnwCAMfcKUoqF/qD2ZnQmYZfPwZBv3xKPRNGC2dOgTdhF4SiyN35bsLqgDzp8Wvq/1Eqo3pcmgAAA") center/100% 100% no-repeat,radial-gradient(62% 14% at 50% 91%,rgba(223,166,157,.42),rgba(223,166,157,0) 72%),radial-gradient(90% 70% at 50% 28%,var(--blanco),var(--crema) 55%,var(--durazno))}
   /* Sombra de contacto: asienta la base del pastel en el arco */
-  .hero-arte.con-3d::after{content:"";position:absolute;z-index:0;left:50%;top:84%;width:40%;height:6%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(142,74,72,.3),rgba(142,74,72,0) 70%);pointer-events:none}
-  /* Sello de la casa: gira despacio en la esquina del arco */
-  .sello{position:absolute;z-index:3;top:3%;right:-5%;width:clamp(86px,21%,110px);aspect-ratio:1;border-radius:50%;background:var(--blanco);box-shadow:0 16px 30px -18px rgba(142,74,72,.85),inset 0 0 0 1px rgba(201,106,102,.26);pointer-events:none}
-  .sello svg{display:block;width:100%;height:100%}
-  .sello text{font:700 7.6px "Lato",system-ui,sans-serif;fill:var(--vino)}
-  .sello .giro{transform-box:view-box;transform-origin:50% 50%;animation:gira 40s linear infinite}
-  @keyframes gira{to{transform:rotate(360deg)}}
-  /* El lienzo desborda el círculo para que la lluvia de azúcar vuele libre */
-  .lienzo-3d{position:absolute;inset:-18%;width:136%;height:136%;z-index:1;display:block;cursor:grab;touch-action:none;outline:none}
+  .hero-arte::after{content:"";position:absolute;z-index:0;left:50%;top:84%;width:40%;height:6%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(142,74,72,.3),rgba(142,74,72,0) 70%);pointer-events:none}
+  /* La foto y el lienzo 3D ocupan lo mismo y desbordan el arco para que la
+     lluvia de azúcar vuele libre. Los gestos los recibe el arco, no el lienzo:
+     deslizar hacia arriba o abajo siempre mueve la página. */
+  .pastel-foto,.lienzo-3d{position:absolute;left:-18%;top:-18%;width:136%;height:136%;z-index:1;display:block;max-width:none;pointer-events:none}
+  .pastel-foto{object-fit:contain;-webkit-user-drag:none;transition:opacity .6s ease,visibility 0s}
+  .lienzo-3d{opacity:0;outline:none;transition:opacity .6s ease}
+  /* El 3D aparece encima de la foto y la foto se va cuando ya está cubierta */
+  .hero-arte.con-3d .lienzo-3d{opacity:1}
+  .hero-arte.con-3d .pastel-foto{opacity:0;visibility:hidden;transition:opacity 0s .6s,visibility 0s .6s}
+  .hero-arte.con-3d{cursor:grab}
+  .hero-arte.con-3d:active{cursor:grabbing}
   .lienzo-3d:focus-visible{outline:2px solid var(--rosa);outline-offset:6px;border-radius:50%}
-  .lienzo-3d:active{cursor:grabbing}
+  /* Sello de la casa: el anillo de texto gira despacio en la esquina del arco */
+  .sello{position:absolute;z-index:3;top:3%;right:-5%;width:clamp(86px,21%,110px);aspect-ratio:1;border-radius:50%;background:var(--blanco);box-shadow:0 16px 30px -18px rgba(142,74,72,.85),inset 0 0 0 1px rgba(201,106,102,.26);pointer-events:none}
+  .sello svg{position:absolute;left:0;top:0;display:block;width:100%;height:100%}
+  .sello text{font:700 7.6px var(--letra-texto);fill:var(--vino)}
+  .sello-anillo{animation:gira 40s linear infinite}
+  @keyframes gira{to{transform:rotate(360deg)}}
+  /* Botón para ver el 3D cuando no arranca solo (celular de gama baja, datos lentos) */
+  .ver-3d{position:absolute;z-index:3;left:50%;bottom:5%;display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:.5rem 1.15rem;border-radius:999px;border:1px solid rgba(201,106,102,.32);background:rgba(255,249,243,.95);color:var(--vino);font:700 .84rem/1.2 var(--letra-texto);letter-spacing:.02em;white-space:nowrap;cursor:pointer;transform:translateX(-50%);box-shadow:0 10px 24px -16px rgba(142,74,72,.8);transition:transform .16s var(--curva),background-color .2s ease}
+  .ver-3d[hidden]{display:none}
+  .ver-3d svg{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .ver-3d:active{transform:translateX(-50%) scale(.96)}
+  .ver-3d:focus-visible{outline:2px solid var(--rosa);outline-offset:3px}
+  .hero-arte.cargando-3d .ver-3d{cursor:progress}
+  .hero-arte.cargando-3d .ver-3d svg{animation:gira 1.1s linear infinite}
   .pista-3d{position:absolute;z-index:3;bottom:6%;left:50%;transform:translate(-50%,8px);opacity:0;pointer-events:none;background:rgba(255,249,243,.92);color:var(--vino);border:1px solid rgba(201,106,102,.25);border-radius:999px;padding:.45rem 1.1rem;font-size:.82rem;font-weight:700;letter-spacing:.04em;box-shadow:0 10px 24px -16px rgba(142,74,72,.8);transition:opacity .45s cubic-bezier(.23,1,.32,1),transform .45s cubic-bezier(.23,1,.32,1)}
   .pista-3d.dentro{opacity:1;transform:translate(-50%,0)}
   .pista-3d.fuera{opacity:0;transform:translate(-50%,-6px);transition-duration:.2s}
 
   /* ---------- Secciones ---------- */
   section{padding:5.5rem 0}
+  /* Las secciones lejanas no se dibujan hasta que se acercan: la página carga y
+     responde mucho antes en celulares lentos. El alto reservado es el que mide
+     cada sección; al verla, el navegador recuerda el real. */
+  main>section{content-visibility:auto;contain-intrinsic-size:auto 900px}
+  .nosotros{contain-intrinsic-size:auto 600px}.catalogo{contain-intrinsic-size:auto 1070px}.personaliza{contain-intrinsic-size:auto 1220px}.ocasiones-sec{contain-intrinsic-size:auto 715px}
+  .pasos-sec{contain-intrinsic-size:auto 1095px}.seguimiento{contain-intrinsic-size:auto 1175px}.contacto{contain-intrinsic-size:auto 1300px}
+  @media (max-width:900px){
+    .nosotros{contain-intrinsic-size:auto 830px}.catalogo{contain-intrinsic-size:auto 980px}.personaliza{contain-intrinsic-size:auto 1650px}.ocasiones-sec{contain-intrinsic-size:auto 855px}
+    .pasos-sec{contain-intrinsic-size:auto 1150px}.seguimiento{contain-intrinsic-size:auto 1805px}.contacto{contain-intrinsic-size:auto 2010px}
+  }
+  @media (max-width:560px){
+    .nosotros{contain-intrinsic-size:auto 870px}.catalogo{contain-intrinsic-size:auto 1000px}.personaliza{contain-intrinsic-size:auto 2550px}.ocasiones-sec{contain-intrinsic-size:auto 870px}
+    .pasos-sec{contain-intrinsic-size:auto 1235px}.seguimiento{contain-intrinsic-size:auto 1865px}.contacto{contain-intrinsic-size:auto 2250px}
+  }
   .titulo-sec{text-align:center;max-width:620px;margin:0 auto 3.5rem}
   .titulo-sec .etiqueta::after{content:"";display:inline-block;width:28px;height:2px;background:var(--salmon);vertical-align:middle;margin-left:.7rem}
   .titulo-sec h2{font-size:clamp(2rem,4vw,2.8rem);margin-bottom:.8rem;text-wrap:balance}
@@ -167,7 +246,7 @@
   .comanda{position:relative;width:min(290px,100%);margin:0 0 .4rem;filter:drop-shadow(0 26px 26px rgba(142,74,72,.2)) drop-shadow(0 3px 3px rgba(142,74,72,.08))}
   .comanda::before{content:"";position:absolute;z-index:1;left:50%;top:-14px;width:96px;height:28px;margin-left:-48px;transform:rotate(3deg);background:repeating-linear-gradient(90deg,rgba(223,166,157,.62) 0 7px,rgba(234,199,184,.62) 7px 14px);border-left:2px dotted rgba(255,249,243,.7);border-right:2px dotted rgba(255,249,243,.7)}
   .comanda-papel{position:relative;padding:2.2rem 1.7rem 2.6rem;background:linear-gradient(180deg,#FFFDF9,#FFF4EB);transform:rotate(-2.5deg);-webkit-mask:radial-gradient(circle 7px at 50% 100%,rgba(0,0,0,0) 6.5px,#000 7px) bottom/15px 16px repeat-x,linear-gradient(#000 0 0) top/100% calc(100% - 15.5px) no-repeat;mask:radial-gradient(circle 7px at 50% 100%,rgba(0,0,0,0) 6.5px,#000 7px) bottom/15px 16px repeat-x,linear-gradient(#000 0 0) top/100% calc(100% - 15.5px) no-repeat;transition:transform .5s var(--curva)}
-  .comanda-titulo{margin-bottom:1.1rem;padding-bottom:.9rem;border-bottom:1.5px dashed rgba(201,106,102,.42);font:italic 500 1.4rem/1.2 "Playfair Display",Georgia,serif;color:var(--vino);text-align:center}
+  .comanda-titulo{margin-bottom:1.1rem;padding-bottom:.9rem;border-bottom:1.5px dashed rgba(201,106,102,.42);font:italic 500 1.4rem/1.2 var(--letra-titulo);color:var(--vino);text-align:center}
   .comanda-lista{list-style:none;display:grid;gap:.62rem}
   .comanda-lista li{display:flex;align-items:center;gap:.75rem;font-weight:700;font-size:.98rem;color:var(--vino)}
   .casilla{display:grid;place-items:center;width:22px;height:22px;flex-shrink:0;border-radius:7px;border:1.5px solid var(--salmon);background:rgba(245,220,211,.4)}
@@ -178,10 +257,13 @@
   .comanda-nota{margin-top:1.2rem;padding-top:.9rem;border-top:1.5px dashed rgba(201,106,102,.42);font-size:.82rem;line-height:1.45;text-align:center}
 
   /* ---------- Catálogo: carrusel coverflow 3D ---------- */
-  @property --luz{syntax:"<color>";inherits:false;initial-value:rgba(223,166,157,.55)}
   .catalogo{position:relative;overflow:hidden;background:var(--vino);color:var(--rubor);padding-bottom:4.5rem}
   .catalogo::after{content:"";position:absolute;top:0;left:0;right:0;height:18px;z-index:3;pointer-events:none;background:radial-gradient(circle at 9px 0,var(--blanco) 9px,rgba(0,0,0,0) 9.5px) repeat-x;background-size:18px 18px}
-  .catalogo-luz{--luz:rgba(223,166,157,.55);position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 58% 52% at 50% 64%,var(--luz),rgba(142,74,72,0) 72%),radial-gradient(ellipse 90% 60% at 50% 118%,rgba(40,14,13,.55),rgba(40,14,13,0) 70%);transition:--luz 1s ease}
+  /* Luz de vitrina del color del pastel al frente: dos capas que se funden con
+     opacidad, que la tarjeta gráfica hace sola, en vez de repintar el fondo. */
+  .catalogo-luz{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 90% 60% at 50% 118%,rgba(40,14,13,.55),rgba(40,14,13,0) 70%)}
+  .catalogo-luz i{--luz:rgba(223,166,157,.55);position:absolute;inset:0;opacity:0;background:radial-gradient(ellipse 58% 52% at 50% 64%,var(--luz),rgba(142,74,72,0) 72%);transition:opacity 1s ease}
+  .catalogo-luz i.encendida{opacity:1}
   .catalogo>.contenedor{position:relative;z-index:1}
   .catalogo .titulo-sec{margin-bottom:2.4rem}
   .catalogo .titulo-sec h2{color:var(--blanco);text-wrap:balance}
@@ -202,7 +284,7 @@
   .cf-arriba{align-self:stretch;display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem}
   /* Sello de precio, como la etiqueta de una vitrina de pastelería */
   .cf-precio{display:grid;place-items:center;align-content:center;width:70px;height:70px;flex-shrink:0;border-radius:50%;background:var(--blanco);color:var(--vino);transform:rotate(-8deg);box-shadow:inset 0 0 0 3px var(--blanco),inset 0 0 0 4.5px rgba(201,106,102,.45),0 14px 26px -12px rgba(40,14,13,.85)}
-  .cf-precio b{font:600 1.32rem/1 "Playfair Display",Georgia,serif;letter-spacing:-.01em}
+  .cf-precio b{font:600 1.32rem/1 var(--letra-titulo);letter-spacing:-.01em}
   .cf-precio small{margin-bottom:.12rem;font-size:.56rem;font-weight:700;line-height:1;letter-spacing:.1em;text-transform:uppercase;color:var(--rosa)}
   .cf-etiqueta{background:rgba(255,249,243,.92);color:var(--vino);font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:.38rem .8rem;border-radius:999px;box-shadow:0 8px 18px -12px rgba(40,14,13,.8)}
   .cf-cuerpo{display:flex;flex-direction:column;align-items:center}
@@ -216,7 +298,7 @@
   .cf-cta:focus-visible{outline:2px solid var(--durazno);outline-offset:3px}
 
   .cf-controles{display:none;align-items:center;justify-content:center;gap:1rem;margin-top:1.6rem}
-  .cf-flecha{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,249,243,.28);background:rgba(255,249,243,.12);color:var(--blanco);cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 10px 26px -14px rgba(40,14,13,.9);transition:transform .16s var(--cf-curva),background-color .2s ease,border-color .2s ease}
+  .cf-flecha{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,249,243,.28);background:rgba(255,249,243,.16);color:var(--blanco);cursor:pointer;box-shadow:0 10px 26px -14px rgba(40,14,13,.9);transition:transform .16s var(--cf-curva),background-color .2s ease,border-color .2s ease}
   .cf-flecha svg{width:20px;height:20px}
   .cf-flecha:active{transform:scale(.94)}
   .cf-flecha:focus-visible{outline:2px solid var(--durazno);outline-offset:3px}
@@ -293,9 +375,9 @@
   .carta-grupo h3{margin-bottom:.7rem;padding-bottom:.55rem;border-bottom:1px solid rgba(255,249,243,.2);font-size:1.35rem;color:var(--blanco)}
   .carta-grupo ul{list-style:none;display:grid;gap:.2rem}
   .carta-item{display:grid;grid-template-columns:auto minmax(1.5rem,1fr) auto;align-items:baseline;column-gap:.6rem;margin:0 -.7rem;padding:.55rem .7rem;border-radius:12px;color:var(--rubor);transition:background-color .2s ease}
-  .carta-nombre{font:500 1.06rem/1.3 "Playfair Display",Georgia,serif;color:var(--blanco)}
+  .carta-nombre{font:500 1.06rem/1.3 var(--letra-titulo);color:var(--blanco)}
   .carta-puntos{border-bottom:1.5px dotted rgba(245,220,211,.5);transform:translateY(-.3em)}
-  .carta-precio{font:600 1.12rem/1 "Playfair Display",Georgia,serif;color:var(--durazno)}
+  .carta-precio{font:600 1.12rem/1 var(--letra-titulo);color:var(--durazno)}
   .carta-detalle{grid-column:1/-1;margin-top:.15rem;font-size:.82rem;line-height:1.45;opacity:.82}
   .carta-nota{margin-top:1.6rem;font-size:.84rem;text-align:center;color:var(--rubor)}
   @supports (interpolate-size:allow-keywords){
@@ -332,7 +414,7 @@
   .tamanos-precio li:last-child{border-bottom:0}
   .tamanos-precio span{font-weight:700;color:var(--blanco)}
   .tamanos-precio small{font-size:.78rem;color:var(--rubor)}
-  .tamanos-precio b{min-width:2.6em;text-align:right;font:600 1.18rem/1 "Playfair Display",Georgia,serif;color:var(--durazno)}
+  .tamanos-precio b{min-width:2.6em;text-align:right;font:600 1.18rem/1 var(--letra-titulo);color:var(--durazno)}
 
   /* Ocasiones: vitrina en arco. La lista elige la celebración y su foto se abre
      en círculo desde el lado de donde vino el gesto (ideas de "Lumina
@@ -342,7 +424,7 @@
   .ocasiones-cabeza{grid-area:cabeza;margin-bottom:1.8rem}
   .ocasiones-cabeza h2{font-size:clamp(2rem,4vw,2.8rem);text-wrap:balance}
   .ocasiones-lista{grid-area:lista;display:flex;flex-direction:column;align-items:flex-start}
-  .ocasion{position:relative;padding:.16rem 3.4rem .16rem 0;border:0;background:none;font:500 clamp(1.5rem,2.5vw,2.2rem)/1.2 "Playfair Display",Georgia,serif;color:var(--vino);text-align:left;cursor:pointer;opacity:.7;transition:opacity .3s ease}
+  .ocasion{position:relative;padding:.16rem 3.4rem .16rem 0;border:0;background:none;font:500 clamp(1.5rem,2.5vw,2.2rem)/1.2 var(--letra-titulo);color:var(--vino);text-align:left;cursor:pointer;opacity:.7;transition:opacity .3s ease}
   .ocasion span{display:block;transition:transform .5s var(--curva)}
   .ocasion::before{content:"";position:absolute;left:0;top:50%;width:2.3rem;height:2px;margin-top:-1px;border-radius:2px;background:var(--rosa);transform:scaleX(0);transform-origin:left center;transition:transform .45s var(--curva)}
   .ocasion[aria-selected="true"]{opacity:1;font-style:italic}
@@ -358,11 +440,14 @@
   .vitrina-foto.entra{opacity:1;z-index:2;animation:vitrina-abre .9s var(--curva) both}
   @keyframes vitrina-abre{from{clip-path:circle(0% at var(--ox,0%) var(--oy,50%));transform:scale(1.1)}to{clip-path:circle(160% at var(--ox,0%) var(--oy,50%));transform:none}}
   .vitrina-pie{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;flex-direction:column;align-items:center;padding:5.5rem 1.2rem 1.4rem;text-align:center;color:var(--blanco);background:linear-gradient(180deg,rgba(94,43,42,0),rgba(94,43,42,.5) 38%,rgba(84,38,37,.9))}
-  .vitrina-nombre{font:500 1.75rem/1.1 "Playfair Display",Georgia,serif}
+  .vitrina-nombre{font:500 1.75rem/1.1 var(--letra-titulo)}
   .vitrina-texto{margin:.3rem 0 1rem;font-size:.92rem;line-height:1.4;color:var(--rubor)}
   .vitrina-pie.cambia .vitrina-nombre,.vitrina-pie.cambia .vitrina-texto{animation:pie-cambia .5s var(--curva) both}
   .vitrina-pie.cambia .vitrina-texto{animation-delay:.06s}
   @keyframes pie-cambia{from{opacity:0;transform:translateY(8px)}}
+  /* Mientras llega la foto de la ocasión elegida (datos lentos), un brillo pasa por la vitrina */
+  .vitrina-marco.cargando::after{content:"";position:absolute;top:0;bottom:0;left:-100%;right:-100%;z-index:2;pointer-events:none;background:linear-gradient(100deg,rgba(255,249,243,0) 42%,rgba(255,249,243,.38) 50%,rgba(255,249,243,0) 58%);animation:vitrina-carga 1.2s linear infinite}
+  @keyframes vitrina-carga{from{transform:translateX(-25%)}to{transform:translateX(25%)}}
 
   /* Cómo pedir: una línea de betún se traza con el desplazamiento y va pasando
      por cada paso, con la manga pastelera en la punta (ideas de "How It Works"
@@ -377,7 +462,7 @@
   .linea-sombra{stroke:rgba(40,14,13,.4);stroke-width:13;transform:translateY(4px)}
   .linea-betun{stroke:url(#betun-tono);stroke-width:12}
   .linea-brillo{stroke:rgba(255,249,243,.6);stroke-width:3;transform:translate(-2px,-3px)}
-  .manga{position:absolute;left:0;top:0;z-index:3;width:30px;height:50px;margin:-47px 0 0 -15px;transform-origin:15px 47px;pointer-events:none;opacity:0;transition:opacity .25s ease;filter:drop-shadow(0 8px 8px rgba(20,6,6,.35))}
+  .manga{position:absolute;left:0;top:0;z-index:3;width:30px;height:50px;margin:-47px 0 0 -15px;transform-origin:15px 47px;will-change:transform;pointer-events:none;opacity:0;transition:opacity .25s ease;filter:drop-shadow(0 8px 8px rgba(20,6,6,.35))}
   .manga.activa{opacity:1}
   .pasos{position:relative;list-style:none;display:flex;flex-direction:column}
   .paso{position:relative;width:41%}
@@ -385,7 +470,7 @@
   .paso:nth-child(even){align-self:flex-end}
   .paso+.paso{margin-top:-2.4rem}
   .paso-tarjeta{position:relative;padding:1.7rem 1.8rem 1.8rem;border-radius:22px;background:var(--blanco);color:var(--texto);box-shadow:0 34px 50px -32px rgba(20,6,6,.85);transform:rotate(var(--giro,0deg))}
-  .paso-num{position:absolute;top:.4rem;right:1.3rem;font:italic 500 3.6rem/1 "Playfair Display",Georgia,serif;color:var(--durazno)}
+  .paso-num{position:absolute;top:.4rem;right:1.3rem;font:italic 500 3.6rem/1 var(--letra-titulo);color:var(--durazno)}
   .paso-dibujo{display:block;width:44px;height:44px;margin-bottom:.9rem;fill:none;stroke:var(--rosa);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .paso-tarjeta h3{font-size:1.35rem;margin-bottom:.35rem}
   .paso-tarjeta p{font-size:.95rem;line-height:1.6}
@@ -408,7 +493,8 @@
   .rastreo{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3rem 4.5rem;max-width:980px;margin:0 auto}
   .rastreo-dial{--tam:min(360px,80vw);position:relative;width:var(--tam);aspect-ratio:1}
   .dial-anillo{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-  .dial-orbita{fill:none;stroke:rgba(201,106,102,.34);stroke-width:1.2;stroke-dasharray:2 7;transform-box:view-box;transform-origin:50% 50%;animation:gira 80s linear infinite}
+  .dial-orbita{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;animation:gira 80s linear infinite}
+  .dial-orbita circle{fill:none;stroke:rgba(201,106,102,.34);stroke-width:1.2;stroke-dasharray:2 7}
   .dial-pista{fill:none;stroke:rgba(234,199,184,.6);stroke-width:9}
   .dial-avance{fill:none;stroke:url(#dial-tono);stroke-width:9;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:0;transform-box:view-box;transform-origin:50% 50%;transform:rotate(-90deg);transition:stroke-dashoffset 1.1s var(--curva)}
   .dial-nodo{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;display:grid;place-items:center;border-radius:50%;background:var(--blanco);border:2px solid var(--durazno);color:var(--salmon);transform:rotate(var(--a)) translateX(calc(var(--tam) * .3933)) rotate(calc(var(--a) * -1));transition:background-color .45s ease,border-color .45s ease,color .45s ease,box-shadow .45s ease}
@@ -424,7 +510,7 @@
   .dial-escena.activa{opacity:1;transform:none;filter:none}
   .dial-escena svg{width:100%;height:100%;stroke:var(--vino);stroke-width:1.2}
   .dial-escena .acento{stroke:var(--rosa)}
-  .dial-nombre{font-family:"Playfair Display",Georgia,serif;font-size:1.28rem;font-weight:600;line-height:1.1;color:var(--vino)}
+  .dial-nombre{font-family:var(--letra-titulo);font-size:1.28rem;font-weight:600;line-height:1.1;color:var(--vino)}
   .dial-paso{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--rosa)}
   /* Chispas de azúcar al llegar a "Entregado" */
   .dial-chispas{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
@@ -442,7 +528,7 @@
   .rastreo-etapa:active{transform:scale(.985)}
   .etapa-marca{position:relative;z-index:1;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:2px solid var(--durazno);background:var(--blanco);color:transparent;transition:background-color .35s ease,border-color .35s ease,color .35s ease}
   .etapa-marca svg{width:16px;height:16px;stroke-width:3}
-  .etapa-texto b{display:block;font-family:"Playfair Display",Georgia,serif;font-size:1.1rem;font-weight:600;color:var(--vino)}
+  .etapa-texto b{display:block;font-family:var(--letra-titulo);font-size:1.1rem;font-weight:600;color:var(--vino)}
   .etapa-texto small{display:block;font-size:.86rem;line-height:1.45}
   .etapa-estado{padding:.32rem .7rem;border-radius:999px;background:rgba(234,199,184,.45);color:var(--vino);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;transition:background-color .35s ease,color .35s ease}
   .etapa-barra{grid-column:2/-1;display:none;height:4px;border-radius:4px;background:rgba(234,199,184,.55);overflow:hidden}
@@ -490,7 +576,7 @@
   .chip input:checked+span::before{width:14px;margin-right:.4rem}
   .chip input:focus-visible+span{outline:2px solid var(--rosa);outline-offset:2px}
   .chip input:active+span{transform:scale(.96)}
-  .campo input[type="date"]{width:100%;max-width:290px;min-height:46px;padding:.55rem .95rem;border:1px solid rgba(201,106,102,.32);border-radius:14px;background:var(--blanco);font:700 .95rem/1.2 "Lato",system-ui,sans-serif;color:var(--vino);color-scheme:light;accent-color:var(--rosa)}
+  .campo input[type="date"]{width:100%;max-width:290px;min-height:46px;padding:.55rem .95rem;border:1px solid rgba(201,106,102,.32);border-radius:14px;background:var(--blanco);font:700 .95rem/1.2 var(--letra-texto);color:var(--vino);color-scheme:light;accent-color:var(--rosa)}
   .campo input[type="date"]:focus-visible{outline:2px solid var(--rosa);outline-offset:2px}
   .chip span i{margin-left:.3rem;font-style:normal;font-weight:700;color:var(--rosa);transition:color .2s ease}
   .chip input:checked+span i{color:var(--durazno)}
@@ -502,7 +588,7 @@
   .tamano-op>span{flex:1;display:grid;justify-items:center;align-content:center;gap:.1rem;min-height:84px;padding:.55rem .35rem;border-radius:16px;border:1px solid rgba(201,106,102,.32);background:var(--blanco);text-align:center;color:var(--vino);pointer-events:none;transition:background-color .2s ease,border-color .2s ease,color .2s ease,transform .16s var(--curva)}
   .tamano-op b{font-size:.86rem;line-height:1.2}
   .tamano-op small{font-size:.7rem;line-height:1.25;color:var(--texto)}
-  .tamano-op em{margin-top:.15rem;font:600 1.12rem/1 "Playfair Display",Georgia,serif;font-style:normal;color:var(--rosa)}
+  .tamano-op em{margin-top:.15rem;font:600 1.12rem/1 var(--letra-titulo);font-style:normal;color:var(--rosa)}
   .tamano-op input:checked+span{background:var(--vino);border-color:var(--vino);color:var(--blanco)}
   .tamano-op input:checked+span small{color:var(--rubor)}
   .tamano-op input:checked+span em{color:var(--durazno)}
@@ -549,7 +635,7 @@
   .chat-total{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:0 1.1rem .95rem;padding:.85rem 1rem;border-radius:16px;background:var(--blanco);box-shadow:inset 0 0 0 1px rgba(201,106,102,.18)}
   .chat-total span{display:block;font-size:.86rem;font-weight:700;color:var(--vino)}
   .chat-total small{display:block;font-size:.76rem;line-height:1.35}
-  .chat-total b{flex-shrink:0;font:600 1.6rem/1 "Playfair Display",Georgia,serif;color:var(--vino);white-space:nowrap}
+  .chat-total b{flex-shrink:0;font:600 1.6rem/1 var(--letra-titulo);color:var(--vino);white-space:nowrap}
   .chat-total b.cambia{animation:total-cambia .45s var(--curva)}
   @keyframes total-cambia{from{opacity:.4;transform:translateY(5px)}}
 
@@ -561,7 +647,7 @@
   .dato-icono .plano{width:100%;height:100%;stroke-width:1}
   .datos b{display:block;color:var(--vino);font-size:.95rem}
   .datos li>div>span{display:block;font-size:.92rem;line-height:1.5}
-  .dato-accion{display:inline-flex;align-items:center;gap:.35rem;min-height:36px;margin-top:.2rem;padding:0;border:0;background:none;font:700 .85rem/1.2 "Lato",system-ui,sans-serif;color:var(--rosa);cursor:pointer}
+  .dato-accion{display:inline-flex;align-items:center;gap:.35rem;min-height:36px;margin-top:.2rem;padding:0;border:0;background:none;font:700 .85rem/1.2 var(--letra-texto);color:var(--rosa);cursor:pointer}
   .dato-accion svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s var(--curva)}
   .dato-acciones{display:flex;flex-wrap:wrap;gap:0 1.1rem}
   .estado{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:.5rem;margin-top:.55rem}
@@ -576,7 +662,7 @@
   .sin-dato{font-style:italic;color:var(--salmon)}
 
   footer{background:var(--logo-fondo);text-align:center;padding:2.5rem 0;font-size:.9rem;border-top:1px solid rgba(201,106,102,.15)}
-  .logo-pie{width:190px;height:88px;margin:0 auto .6rem;background:var(--logo-fondo) url("logo.jpeg") center/300px no-repeat}
+  .logo-pie{width:190px;height:88px;margin:0 auto .6rem;background:var(--logo-fondo) url("fotos/logo-600.jpg") center/300px no-repeat;background-image:image-set(url("fotos/logo-600.webp") type("image/webp"),url("fotos/logo-600.jpg") type("image/jpeg"))}
 
 
   /* ---------- Movimiento y detalle ---------- */
@@ -608,7 +694,7 @@
   header.desplazado .barra{height:64px}
   .logo-nav{transition:transform .3s var(--curva);transform-origin:left center}
   header.desplazado .logo-nav{transform:scale(.88)}
-  .progreso{position:absolute;left:0;bottom:-1px;z-index:2;height:2px;width:0;border-radius:0 2px 2px 0;background:linear-gradient(90deg,var(--salmon),var(--rosa));transition:width .12s linear}
+  .progreso{position:absolute;left:0;bottom:-1px;z-index:2;height:2px;width:100%;background:linear-gradient(90deg,var(--salmon),var(--rosa));transform:scaleX(0);transform-origin:0 50%}
 
   /* Revelado al hacer scroll */
   .con-js .rev{opacity:0;transform:translateY(28px);transition:opacity .75s var(--curva),transform .75s var(--curva)}
@@ -620,18 +706,18 @@
   .btn.pendiente::after{display:none}
 
   /* Botones de pedido con aura de betún: un borde degradado que recorre la
-     paleta y un halo difuminado debajo (adaptado de "Rainbow Borders Button",
-     21st.dev). El cuerpo va en ::after para que el halo quede detrás. */
-  .aura{--cuerpo:linear-gradient(180deg,#9D5553,#7E3E3C);--tinta:var(--blanco);--degradado-aura:linear-gradient(115deg,#FFF3EA,#C96A66,#EAC7B8,#8E4A48,#DFA69D,#FFF3EA,#C96A66,#EAC7B8,#8E4A48,#DFA69D);--halo:linear-gradient(115deg,#C96A66,#EAC7B8,#DFA69D,#F7E8D9,#C96A66,#DFA69D,#EAC7B8,#C96A66);position:relative;isolation:isolate;overflow:visible;background:none;color:var(--tinta);box-shadow:0 14px 26px -16px rgba(142,74,72,.85)}
-  .aura::before,.aura::after{content:"";position:absolute;border-radius:inherit;pointer-events:none}
-  .aura::before{inset:-3px;z-index:-2;background:var(--halo);background-size:400% 100%;filter:blur(14px);opacity:.9;animation:aura 10s linear infinite;transition:opacity .3s ease,transform .35s var(--curva)}
-  .aura::after{inset:0;z-index:-1;border:2px solid transparent;background:var(--cuerpo) padding-box,var(--degradado-aura) border-box;background-size:100% 100%,400% 100%;animation:aura-borde 10s linear infinite}
-  @keyframes aura{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-  @keyframes aura-borde{0%,100%{background-position:0 0,0% 50%}50%{background-position:0 0,100% 50%}}
+     paleta y un halo suave alrededor (adaptado de "Rainbow Borders Button",
+     21st.dev). El borde es una franja ancha que se desliza detrás del cuerpo
+     del botón; como solo se traslada, la mueve la tarjeta gráfica sin repintar.
+     El cuerpo va en ::after y la franja en ::before, recortada por el botón. */
+  .aura{--cuerpo:linear-gradient(180deg,#9D5553,#7E3E3C);--tinta:var(--blanco);--degradado-aura:linear-gradient(115deg,#FFF3EA,#C96A66,#EAC7B8,#8E4A48,#DFA69D,#FFF3EA,#C96A66,#EAC7B8,#8E4A48,#DFA69D);--brillo:rgba(223,166,157,.72);position:relative;isolation:isolate;overflow:hidden;background:none;color:var(--tinta);box-shadow:0 14px 26px -16px rgba(142,74,72,.85),0 0 14px 1px var(--brillo)}
+  .aura::before,.aura::after{content:"";position:absolute;pointer-events:none}
+  .aura::before{top:0;bottom:0;left:0;width:400%;z-index:-2;background:var(--degradado-aura);animation:aura 5s linear infinite alternate}
+  .aura::after{inset:2px;z-index:-1;border-radius:inherit;background:var(--cuerpo)}
+  @keyframes aura{to{transform:translateX(-75%)}}
   .aura.clara{--cuerpo:linear-gradient(180deg,#FFFFFF,#FBEFDF);--tinta:var(--vino)}
   .aura.pendiente{--cuerpo:var(--durazno);--tinta:var(--vino);box-shadow:none}
-  .aura.pendiente::before{display:none}
-  .aura.pendiente::after{animation:none}
+  .aura.pendiente::before{animation:none;background:var(--durazno)}
 
   /* Tarjetas de personalizacion: el remolino (canvas .betun) queda bajo el velo vino */
   .icono{transition:transform .35s var(--curva),background .3s,color .3s}
@@ -677,7 +763,7 @@
     .enlace-suave:hover{background-size:100% 1.5px}
     .btn.pendiente:hover{transform:none;box-shadow:none}
     .btn:not(.aura):hover::after{transform:translateX(130%)}
-    .aura:hover::before{opacity:1;transform:scale(1.08)}
+    .aura:hover{box-shadow:0 16px 30px -14px rgba(142,74,72,.95),0 0 22px 3px var(--brillo)}
     .rastreo-etapa:hover{border-color:rgba(201,106,102,.42)}
     .rastreo-repetir:hover{transform:rotate(-30deg)}
     .menu-boton:hover{background:var(--blanco)}
@@ -732,7 +818,7 @@
     .ocasiones-cabeza{margin-bottom:2.4rem}
     .ocasiones-vitrina{max-width:340px;margin-bottom:2.4rem}
     .ocasiones-lista{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:.5rem;max-width:540px}
-    .ocasion{min-height:44px;padding:.5rem 1.05rem;border:1px solid rgba(201,106,102,.32);border-radius:999px;background:rgba(255,249,243,.8);font:700 .92rem/1.2 "Lato",system-ui,sans-serif;opacity:1;transition:background-color .25s ease,border-color .25s ease,color .25s ease}
+    .ocasion{min-height:44px;padding:.5rem 1.05rem;border:1px solid rgba(201,106,102,.32);border-radius:999px;background:rgba(255,249,243,.8);font:700 .92rem/1.2 var(--letra-texto);opacity:1;transition:background-color .25s ease,border-color .25s ease,color .25s ease}
     .ocasion::before{display:none}
     .ocasion[aria-selected="true"]{background:var(--vino);border-color:var(--vino);color:var(--blanco);font-style:normal}
     .ocasion[aria-selected="true"] span{transform:none}
@@ -742,6 +828,14 @@
     .chat{position:static}
     .tamanos-radio{grid-template-columns:repeat(3,minmax(0,1fr))}
     .datos{grid-template-columns:minmax(0,1fr)}
+  }
+  /* Celulares de pantalla baja: título y pastel un poco más compactos, para que
+     el pastel entre completo en la primera vista y asome lo que sigue. */
+  @media (max-width:900px) and (max-height:760px){
+    .hero>.contenedor{padding-top:1.4rem}
+    .hero .insignia{margin-bottom:.9rem}
+    .hero h1{font-size:2.3rem;margin-bottom:1.1rem}
+    .hero-escenario{max-width:290px}
   }
   @media (max-width:760px){
     /* Cómo pedir: la línea corre por la izquierda y los pasos a su derecha */
@@ -771,9 +865,28 @@
   }
   @media (prefers-reduced-motion:reduce){
     .con-js .cf-tarjeta,.con-js .cf-marco::after,.con-js .cf-contenido,.con-js .cf-tarjeta::before{transition-property:opacity!important;transition-duration:.25s!important;transition-delay:0s!important}
-    .catalogo-luz{transition:none}
+    .catalogo-luz i{transition:none}
     .pestanas{transition:none}
   }
+
+  /* ---------- Rendimiento: ningún trabajo de más ---------- */
+  /* Fuera de pantalla, las animaciones que se repiten se detienen (lo marca el script) */
+  .quieto,.quieto::before,.quieto::after,.quieto *,.quieto *::before,.quieto *::after{animation-play-state:paused!important}
+  /* En pantallas táctiles nada cambia de color ni de sombra en bucle, porque eso
+     repinta en cada cuadro: el aura de los botones, el resplandor de "Cómo
+     pedir", el pulso de "Abierto ahora" y la onda del mapa quedan quietos. Lo
+     que solo gira o se desliza sigue, porque eso lo hace la tarjeta gráfica. */
+  @media (hover:none),(pointer:coarse){
+    .aura::before,.pasos-sec::before,.estado.abierto::before,.pin-onda{animation:none}
+    .estado.abierto::before{box-shadow:0 0 0 3px rgba(201,106,102,.2)}
+  }
+  /* Celulares de gama baja: además, luces quietas, sin destellos y la foto de
+     cada ocasión entra con un fundido simple. */
+  .ligero .aura::before,.ligero .pasos-sec::before,.ligero .estado.abierto::before,.ligero .pin-onda,.ligero .bokeh{animation:none}
+  .ligero .estado.abierto::before{box-shadow:0 0 0 3px rgba(201,106,102,.2)}
+  .ligero .destello{display:none}
+  .ligero .vitrina-foto.entra{animation:vitrina-funde .45s ease both}
+  @keyframes vitrina-funde{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
@@ -849,25 +962,22 @@
       </ul>
       <div class="hero-escenario">
         <div class="hero-arte" id="escena-pastel">
-          <!-- Ilustración: pastel de dos pisos con corona (guiño al logo) -->
-          <svg viewBox="0 0 200 200" role="img" aria-label="Ilustración de un pastel de dos pisos con una corona encima">
-            <ellipse cx="100" cy="176" rx="78" ry="8" fill="#EAC7B8"/>
-            <path d="M84 62 l-4-20 9 7 11-12 11 12 9-7 -4 20z" fill="#C96A66"/>
-            <circle cx="80" cy="40" r="2.6" fill="#DFA69D"/><circle cx="120" cy="40" r="2.6" fill="#DFA69D"/><circle cx="100" cy="35" r="2.6" fill="#DFA69D"/>
-            <rect x="72" y="66" width="56" height="46" rx="4" fill="#F7E8D9"/>
-            <path d="M72 66 h56 v12 q-7 11 -14 0 q-7 11 -14 0 q-7 11 -14 0 q-7 11 -14 0z" fill="#DFA69D"/>
-            <circle cx="86" cy="95" r="2.4" fill="#DFA69D"/><circle cx="100" cy="102" r="2.4" fill="#C96A66"/><circle cx="114" cy="93" r="2.4" fill="#DFA69D"/>
-            <rect x="42" y="112" width="116" height="62" rx="4" fill="#F7E8D9"/>
-            <path d="M42 112 h116 v14 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0 q-7.25 12 -14.5 0z" fill="#C96A66"/>
-            <circle cx="60" cy="150" r="2.8" fill="#DFA69D"/><circle cx="82" cy="158" r="2.8" fill="#DFA69D"/><circle cx="104" cy="148" r="2.8" fill="#DFA69D"/><circle cx="126" cy="158" r="2.8" fill="#DFA69D"/><circle cx="146" cy="149" r="2.8" fill="#DFA69D"/>
-            <path d="M22 176 h156" stroke="#C96A66" stroke-width="3" stroke-linecap="round"/>
-          </svg>
+          <!-- Foto de este mismo pastel. El 3D la reemplaza cuando ya dibujó; si no carga, queda la foto. -->
+          <picture>
+            <source media="(max-width:760px)" type="image/webp" srcset="fotos/pastel-movil-460.webp 460w, fotos/pastel-movil-690.webp 690w, fotos/pastel-movil-920.webp 920w" sizes="(max-width:369px) 125vw, 462px">
+            <source type="image/webp" srcset="fotos/pastel-680.webp 680w, fotos/pastel-1020.webp 1020w, fotos/pastel-1360.webp 1360w" sizes="(max-width:900px) 462px, (max-width:1180px) 56vw, 680px">
+            <img class="pastel-foto" src="fotos/pastel-1020.png" alt="Pastel de bodas de tres pisos con rosas, perlas y una corona dorada" width="680" height="756" fetchpriority="high" decoding="async" draggable="false" onload="this.parentNode.parentNode.classList.add(&quot;foto-lista&quot;)">
+          </picture>
+          <button class="ver-3d" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg><span>Ver en 3D</span></button>
           <span class="pista-3d" aria-hidden="true">Toca el pastel</span>
         </div>
         <div class="sello" aria-hidden="true">
-          <svg viewBox="0 0 120 120">
+          <!-- El anillo de texto va en su propio SVG: gira entero en la tarjeta gráfica, sin repintar -->
+          <svg class="sello-anillo" viewBox="0 0 120 120">
             <defs><path id="sello-circulo" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/></defs>
-            <g class="giro"><text><textPath href="#sello-circulo" textLength="280" lengthAdjust="spacing">PASTELES PERSONALIZADOS · BAKEME PASTELERÍA ·</textPath></text></g>
+            <text><textPath href="#sello-circulo" textLength="280" lengthAdjust="spacing">PASTELES PERSONALIZADOS · BAKEME PASTELERÍA ·</textPath></text>
+          </svg>
+          <svg viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="31" fill="none" stroke="#DFA69D" stroke-width=".8"/>
             <path d="M45 69 43 53l9 7 8-13 8 13 9-7-2 16z" fill="#C96A66"/>
             <rect x="45" y="71" width="30" height="4" rx="1.6" fill="#C96A66"/>
@@ -906,7 +1016,7 @@
 
   <!-- Catálogo -->
   <section class="catalogo" id="catalogo" aria-labelledby="titulo-catalogo">
-    <div class="catalogo-luz" aria-hidden="true"></div>
+    <div class="catalogo-luz" aria-hidden="true"><i class="encendida"></i><i></i></div>
     <div class="contenedor">
       <div class="titulo-sec rev">
         <span class="etiqueta">Catálogo</span>
@@ -917,7 +1027,7 @@
         <div class="cf-pista">
           <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="1 de 8" data-pos="0" data-nombre="Primer Baile" data-receta="Grande|Red velvet|Queso crema|Crema de mantequilla|Redondo|2" data-personas="30" data-luz="rgba(234,199,184,.5)">
             <div class="cf-marco">
-              <img src="fotos/b_baile-330.jpg" srcset="fotos/b_baile-330.jpg 330w, fotos/b_baile-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel color crema de dos pisos con rosetones de crema y rosas blancas encima" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <picture><source type="image/webp" srcset="fotos/b_baile-330.webp 330w, fotos/b_baile-660.webp 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px"><img src="fotos/b_baile-330.jpg" srcset="fotos/b_baile-330.jpg 330w, fotos/b_baile-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel color crema de dos pisos con rosetones de crema y rosas blancas encima" width="330" height="500" loading="lazy" decoding="async" draggable="false"></picture>
               <div class="cf-contenido">
                 <div class="cf-arriba">
                   <span class="cf-precio"><b data-precio-de="Grande|Red velvet|Queso crema|Crema de mantequilla|Redondo|2">$64</b></span>
@@ -933,7 +1043,7 @@
           </article>
           <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="2 de 8" data-pos="1" data-nombre="Vals de Rosas" data-receta="Mediano|Vainilla|Frutos rojos|Crema de mantequilla|Redondo|2" data-personas="20" data-luz="rgba(223,166,157,.55)" aria-hidden="true">
             <div class="cf-marco">
-              <img src="fotos/q_vals-330.jpg" srcset="fotos/q_vals-330.jpg 330w, fotos/q_vals-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel blanco de dos pisos con rosas de azúcar color durazno y mariposas" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <picture><source type="image/webp" srcset="fotos/q_vals-330.webp 330w, fotos/q_vals-660.webp 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px"><img src="fotos/q_vals-330.jpg" srcset="fotos/q_vals-330.jpg 330w, fotos/q_vals-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel blanco de dos pisos con rosas de azúcar color durazno y mariposas" width="330" height="500" loading="lazy" decoding="async" draggable="false"></picture>
               <div class="cf-contenido">
                 <div class="cf-arriba">
                   <span class="cf-precio"><b data-precio-de="Mediano|Vainilla|Frutos rojos|Crema de mantequilla|Redondo|2">$42</b></span>
@@ -949,7 +1059,7 @@
           </article>
           <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="3 de 8" data-pos="2" data-nombre="Unicornio de Azúcar" data-receta="Pequeño|Vainilla|Dulce de leche|Crema de mantequilla|Redondo|1" data-personas="10" data-luz="rgba(201,106,102,.5)" aria-hidden="true">
             <div class="cf-marco">
-              <img src="fotos/i_unicornio-330.jpg" srcset="fotos/i_unicornio-330.jpg 330w, fotos/i_unicornio-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel blanco de unicornio con cuerno dorado y crines de crema en tonos pastel" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <picture><source type="image/webp" srcset="fotos/i_unicornio-330.webp 330w, fotos/i_unicornio-660.webp 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px"><img src="fotos/i_unicornio-330.jpg" srcset="fotos/i_unicornio-330.jpg 330w, fotos/i_unicornio-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel blanco de unicornio con cuerno dorado y crines de crema en tonos pastel" width="330" height="500" loading="lazy" decoding="async" draggable="false"></picture>
               <div class="cf-contenido">
                 <div class="cf-arriba">
                   <span class="cf-precio"><b data-precio-de="Pequeño|Vainilla|Dulce de leche|Crema de mantequilla|Redondo|1">$26</b></span>
@@ -965,7 +1075,7 @@
           </article>
           <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="4 de 8" data-pos="3" data-nombre="Lazo de Bienvenida" data-receta="Pequeño|Fresa|Queso crema|Fondant|Redondo|1" data-personas="10" data-luz="rgba(223,166,157,.5)" aria-hidden="true">
             <div class="cf-marco">
-              <img src="fotos/bb_lazo-330.jpg" srcset="fotos/bb_lazo-330.jpg 330w, fotos/bb_lazo-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel cubierto de fondant con un gran lazo rosa de azúcar y perlas" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <picture><source type="image/webp" srcset="fotos/bb_lazo-330.webp 330w, fotos/bb_lazo-660.webp 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px"><img src="fotos/bb_lazo-330.jpg" srcset="fotos/bb_lazo-330.jpg 330w, fotos/bb_lazo-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel cubierto de fondant con un gran lazo rosa de azúcar y perlas" width="330" height="500" loading="lazy" decoding="async" draggable="false"></picture>
               <div class="cf-contenido">
                 <div class="cf-arriba">
                   <span class="cf-precio"><b data-precio-de="Pequeño|Fresa|Queso crema|Fondant|Redondo|1">$34</b></span>
@@ -981,7 +1091,7 @@
           </article>
           <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="5 de 8" data-pos="3" data-nombre="Promoción" data-receta="Mediano|Chocolate|Chocolate|Crema de mantequilla|Rectangular|1" data-personas="20" data-luz="rgba(201,106,102,.55)" aria-hidden="true">
             <div class="cf-marco">
-              <img src="fotos/g_promocion-330.jpg" srcset="fotos/g_promocion-330.jpg 330w, fotos/g_promocion-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel rectangular de chocolate con fresas bañadas en chocolate" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <picture><source type="image/webp" srcset="fotos/g_promocion-330.webp 330w, fotos/g_promocion-660.webp 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px"><img src="fotos/g_promocion-330.jpg" srcset="fotos/g_promocion-330.jpg 330w, fotos/g_promocion-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel rectangular de chocolate con fresas bañadas en chocolate" width="330" height="500" loading="lazy" decoding="async" draggable="false"></picture>
               <div class="cf-contenido">
                 <div class="cf-arriba">
                   <span class="cf-precio"><b data-precio-de="Mediano|Chocolate|Chocolate|Crema de mantequilla|Rectangular|1">$37</b></span>
@@ -997,7 +1107,7 @@
           </article>
           <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="6 de 8" data-pos="-3" data-nombre="Tres Leches" data-receta="Pequeño|Tres leches|Crema pastelera|Chantilly|Redondo|1" data-personas="10" data-luz="rgba(247,232,217,.45)" aria-hidden="true">
             <div class="cf-marco">
-              <img src="fotos/c_tresleches-330.jpg" srcset="fotos/c_tresleches-330.jpg 330w, fotos/c_tresleches-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel de tres leches con crema y frutos rojos mientras lo bañan con leche" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <picture><source type="image/webp" srcset="fotos/c_tresleches-330.webp 330w, fotos/c_tresleches-660.webp 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px"><img src="fotos/c_tresleches-330.jpg" srcset="fotos/c_tresleches-330.jpg 330w, fotos/c_tresleches-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel de tres leches con crema y frutos rojos mientras lo bañan con leche" width="330" height="500" loading="lazy" decoding="async" draggable="false"></picture>
               <div class="cf-contenido">
                 <div class="cf-arriba">
                   <span class="cf-precio"><b data-precio-de="Pequeño|Tres leches|Crema pastelera|Chantilly|Redondo|1">$26</b></span>
@@ -1013,7 +1123,7 @@
           </article>
           <article class="cf-tarjeta" role="group" aria-roledescription="diapositiva" aria-label="7 de 8" data-pos="-2" data-nombre="Princesa de Medianoche" data-receta="Extra grande|Fresa|Frutos rojos|Fondant|Redondo|4" data-personas="45" data-luz="rgba(234,199,184,.5)" aria-hidden="true">
             <div class="cf-marco">
-              <img src="fotos/q_princesa-330.jpg" srcset="fotos/q_princesa-330.jpg 330w, fotos/q_princesa-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel de cuatro pisos en rosa y azul con flores de azúcar" width="330" height="500" loading="lazy" decoding="async" draggable="false">
+              <picture><source type="image/webp" srcset="fotos/q_princesa-330.webp 330w, fotos/q_princesa-660.webp 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px"><img src="fotos/q_princesa-330.jpg" srcset="fotos/q_princesa-330.jpg 330w, fotos/q_princesa-660.jpg 660w" sizes="(max-width:560px) 256px, (max-width:900px) 300px, 330px" alt="Pastel de cuatro pisos en rosa y azul con flores de azúcar" width="330" height="500" loading="lazy" decoding="async" draggable="false"></picture>
               <div class="cf-contenido">
                 <div class="cf-arriba">
                   <span class="cf-precio"><b data-precio-de="Extra grande|Fresa|Frutos rojos|Fondant|Redondo|4">$97</b></span>
@@ -1230,13 +1340,13 @@
       <div class="ocasiones-vitrina rev" id="oc-panel" role="tabpanel" aria-labelledby="oc-0">
         <div class="vitrina-marco">
           <img class="vitrina-foto activa" src="https://images.unsplash.com/photo-1694043325785-d841a964257f?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1694043325785-d841a964257f?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1694043325785-d841a964257f?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel rosa de varios pisos con chispas de colores y velas" width="430" height="538" loading="lazy" decoding="async">
-          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel de bodas de tres pisos con acabado semidesnudo y rosas rosadas" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
-          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco de tres pisos con betún rosa, bengalas y el número 15" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
-          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel color durazno con zapatitos de bebé de azúcar y un nombre escrito en dorado" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
-          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco con una paloma de adorno sobre un mantel de encaje" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
-          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel color arena con birrete de graduación, diploma y una rosa blanca" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
-          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco decorado con rosas de betún rosadas y hojas verdes" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
-          <img class="vitrina-foto" src="https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=430&h=538&q=72" srcset="https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Evento de empresa con un pastel grande sobre la mesa y personas alrededor" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" data-src="https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=430&h=538&q=72" data-srcset="https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1519654793190-2e8a4806f1f2?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel de bodas de tres pisos con acabado semidesnudo y rosas rosadas" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" data-src="https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=430&h=538&q=72" data-srcset="https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1787095555864-c378561167c6?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco de tres pisos con betún rosa, bengalas y el número 15" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" data-src="https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=430&h=538&q=72" data-srcset="https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1683016629891-ebf59609cd97?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel color durazno con zapatitos de bebé de azúcar y un nombre escrito en dorado" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" data-src="https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=430&h=538&q=72" data-srcset="https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1728355862890-e5ee49900364?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco con una paloma de adorno sobre un mantel de encaje" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" data-src="https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=430&h=538&q=72" data-srcset="https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1758682016284-78f5266d5743?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel color arena con birrete de graduación, diploma y una rosa blanca" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" data-src="https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=430&h=538&q=72" data-srcset="https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1788240357882-cd75f945a19d?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Pastel blanco decorado con rosas de betún rosadas y hojas verdes" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
+          <img class="vitrina-foto" data-src="https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=430&h=538&q=72" data-srcset="https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=430&h=538&q=72 430w, https://images.unsplash.com/photo-1768508663476-66c16cd52c7d?auto=format&fit=crop&w=860&h=1075&q=62 860w" sizes="(max-width:900px) 340px, 430px" alt="Evento de empresa con un pastel grande sobre la mesa y personas alrededor" width="430" height="538" loading="lazy" decoding="async" aria-hidden="true">
           <div class="vitrina-pie">
             <b class="vitrina-nombre">Cumpleaños</b>
             <span class="vitrina-texto">Del tema favorito de quien cumple.</span>
@@ -1322,9 +1432,9 @@
       </div>
       <div class="rastreo rev">
         <div class="rastreo-dial">
+          <svg class="dial-orbita" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="142"/></svg>
           <svg class="dial-anillo" viewBox="0 0 300 300" aria-hidden="true">
             <defs><linearGradient id="dial-tono" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DFA69D"/><stop offset="1" stop-color="#C96A66"/></linearGradient></defs>
-            <circle class="dial-orbita" cx="150" cy="150" r="142"/>
             <circle class="dial-pista" cx="150" cy="150" r="118"/>
             <circle class="dial-avance" cx="150" cy="150" r="118" pathLength="100"/>
           </svg>
@@ -1793,23 +1903,90 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
     revelables.forEach(function (el) { ojo.observe(el); });
   }
 
-  // Encabezado compacto y barra de lectura.
+  // Encabezado compacto y barra de lectura. La barra se escala en vez de
+  // cambiar de ancho: así no hace recalcular el diseño en cada cuadro.
   var cabecera = document.querySelector("header");
   var barra = document.getElementById("progreso");
-  var enCola = false;
+  var enCola = false, compacto = null;
   function alDesplazar() {
     enCola = false;
     var y = window.pageYOffset || document.documentElement.scrollTop;
-    cabecera.classList.toggle("desplazado", y > 24);
+    if ((y > 24) !== compacto) {
+      compacto = y > 24;
+      cabecera.classList.toggle("desplazado", compacto);
+    }
     var recorrido = document.documentElement.scrollHeight - window.innerHeight;
-    barra.style.width = (recorrido > 0 ? Math.min(y / recorrido, 1) * 100 : 0) + "%";
+    barra.style.transform = "scaleX(" + (recorrido > 0 ? Math.min(y / recorrido, 1) : 0).toFixed(4) + ")";
   }
-  window.addEventListener("scroll", function () {
+  function pedirCuadro() {
     if (enCola) return;
     enCola = true;
     window.requestAnimationFrame(alDesplazar);
-  }, { passive: true });
-  alDesplazar();
+  }
+  window.addEventListener("scroll", pedirCuadro, { passive: true });
+  pedirCuadro();
+
+  // Las animaciones que se repiten se detienen mientras su sección no se ve.
+  if (hayOjo) {
+    var vigia = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) { e.target.classList.toggle("quieto", !e.isIntersecting); });
+    }, { rootMargin: "80px 0px" });
+    document.querySelectorAll(".hero, main > section").forEach(function (sec) { vigia.observe(sec); });
+  }
+
+  // Ya cargada la página, en los ratos libres se prepara el diseño de cada
+  // sección lejana, de a una y en orden, para que al bajar solo falte pintarla.
+  function enReposo(f) {
+    if (window.requestIdleCallback) window.requestIdleCallback(f, { timeout: 4000 });
+    else setTimeout(f, 300);
+  }
+  function precalentar() {
+    var pendientes = [].slice.call(document.querySelectorAll("main > section"));
+    (function siguiente() {
+      var sec = pendientes.shift();
+      if (!sec) return;
+      enReposo(function () {
+        var ultimo = sec.lastElementChild;
+        if (ultimo) ultimo.getBoundingClientRect();
+        siguiente();
+      });
+    })();
+  }
+  if (document.readyState === "complete") setTimeout(precalentar, 2500);
+  else window.addEventListener("load", function () { setTimeout(precalentar, 2500); });
+
+  // Las secciones lejanas aún no tienen su alto real (content-visibility), así
+  // que un salto desde el menú puede quedar corrido. Cuando el desplazamiento
+  // termina se revisa la llegada y, si hace falta, se corrige. Si el visitante
+  // toca o gira la rueda en medio, se le deja en paz.
+  var salto = 0;
+  function soltarSalto() { salto++; }
+  window.addEventListener("wheel", soltarSalto, { passive: true });
+  window.addEventListener("touchstart", soltarSalto, { passive: true });
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    var id = a && a.getAttribute("href").slice(1);
+    var destino = id && document.getElementById(id);
+    if (!destino) return;
+    var mio = ++salto, inicio = performance.now(), ultimaY = -1, quietos = 0, correcciones = 0;
+    function revisar() {
+      if (mio !== salto || performance.now() - inicio > 6000) return;
+      var y = window.pageYOffset || document.documentElement.scrollTop;
+      quietos = Math.abs(y - ultimaY) < 1 ? quietos + 1 : 0;
+      ultimaY = y;
+      if (quietos < 8) { window.requestAnimationFrame(revisar); return; }
+      var margen = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      var desvio = destino.getBoundingClientRect().top - margen;
+      var alFondo = y + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      if (Math.abs(desvio) > 6 && !alFondo && correcciones < 2) {
+        correcciones++;
+        quietos = 0;
+        window.scrollTo({ top: y + desvio, behavior: menos ? "auto" : "smooth" });
+        window.requestAnimationFrame(revisar);
+      }
+    }
+    window.requestAnimationFrame(revisar);
+  });
 
 })();
 </script>
@@ -1818,19 +1995,21 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
 /* =======================================================================
    Personalización: detrás de cada tarjeta corre un remolino de betún, el
    shader Warp de @paper-design/shaders portado a WebGL sin dependencias y
-   con la paleta de BakeMe. Un solo contexto WebGL pinta las seis tarjetas
-   en una franja y cada una copia su tramo a su propio canvas. Se anima
-   solo mientras la sección se ve, se acelera al pasar el cursor y con
-   movimiento reducido queda quieto. Sin WebGL se ve el degradado del CSS.
+   con la paleta de BakeMe. Un solo contexto WebGL pinta las tarjetas en una
+   franja y cada una copia su tramo a su propio canvas.
+   Para no pesar: arranca cuando la sección se acerca, compila el shader sin
+   detener la página, anima solo las tarjetas que se ven, a 30 cuadros por
+   segundo, y se acelera al pasar el cursor. Con movimiento reducido queda
+   quieto. Sin WebGL o en celulares de gama baja se ve el degradado del CSS.
    ======================================================================= */
 (function () {
   var rejilla = document.querySelector(".opciones");
-  if (!rejilla) return;
+  if (!rejilla || !("IntersectionObserver" in window)) return;
   var tarjetas = Array.prototype.slice.call(rejilla.querySelectorAll(".opcion"));
   if (!tarjetas.length) return;
 
-  var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var RESOLUCION = 0.7;   // bajo el velo no hace falta la resolución completa
+  var quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var RESOLUCION = window.matchMedia("(pointer: coarse)").matches ? 0.5 : 0.7;   // bajo el velo no hace falta más
   var VELOCIDAD = 0.8;
 
   function rgb(hex) {
@@ -1888,57 +2067,103 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
     "}"
   ].join("\n");
 
-  var lienzo = document.createElement("canvas");
-  var gl = null;
-  try {
-    gl = lienzo.getContext("webgl", { alpha: false, antialias: false, depth: false, stencil: false,
-      preserveDrawingBuffer: true, powerPreference: "low-power" });
-  } catch (e) { gl = null; }
-  if (!gl) return;
+  var lienzo, gl, programa, u = {}, capas = [], perdido = false;
 
-  function compilar(tipo, fuente) {
-    var s = gl.createShader(tipo);
-    gl.shaderSource(s, fuente);
-    gl.compileShader(s);
-    return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+  // Arranca cuando la sección está a una pantalla de distancia.
+  var antesala = new IntersectionObserver(function (e) {
+    if (!e[0].isIntersecting) return;
+    antesala.disconnect();
+    iniciar();
+  }, { rootMargin: "100% 0px" });
+  antesala.observe(rejilla);
+
+  function iniciar() {
+    // En celulares de gama baja (o con tarjeta gráfica débil) se queda el degradado
+    // del CSS: otro contexto WebGL les costaría memoria y un tirón al llegar aquí.
+    if (document.documentElement.classList.contains("ligero")) return;
+    lienzo = document.createElement("canvas");
+    try {
+      gl = lienzo.getContext("webgl", { alpha: false, antialias: false, depth: false, stencil: false,
+        preserveDrawingBuffer: true, powerPreference: "low-power" });
+    } catch (e) { gl = null; }
+    if (!gl) return;
+    function shader(tipo, fuente) {
+      var s = gl.createShader(tipo);
+      gl.shaderSource(s, fuente);
+      gl.compileShader(s);
+      return s;
+    }
+    programa = gl.createProgram();
+    gl.attachShader(programa, shader(gl.VERTEX_SHADER, VERTICES));
+    gl.attachShader(programa, shader(gl.FRAGMENT_SHADER, FRAGMENTOS));
+    gl.bindAttribLocation(programa, 0, "a");
+    gl.linkProgram(programa);
+    // Con KHR_parallel_shader_compile el navegador compila aparte: se pregunta
+    // si ya terminó sin quedarse esperando, y la página sigue fluida.
+    var paralelo = gl.getExtension("KHR_parallel_shader_compile");
+    (function esperar() {
+      if (paralelo && !gl.getProgramParameter(programa, paralelo.COMPLETION_STATUS_KHR)) {
+        setTimeout(esperar, 50);
+        return;
+      }
+      if (gl.getProgramParameter(programa, gl.LINK_STATUS)) preparar();
+    })();
   }
-  var vs = compilar(gl.VERTEX_SHADER, VERTICES);
-  var fs = compilar(gl.FRAGMENT_SHADER, FRAGMENTOS);
-  if (!vs || !fs) return;
-  var programa = gl.createProgram();
-  gl.attachShader(programa, vs);
-  gl.attachShader(programa, fs);
-  gl.bindAttribLocation(programa, 0, "a");
-  gl.linkProgram(programa);
-  if (!gl.getProgramParameter(programa, gl.LINK_STATUS)) return;
-  gl.useProgram(programa);
 
-  // Un triángulo que cubre todo el viewport de cada tarjeta.
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(0);
-  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  function preparar() {
+    gl.useProgram(programa);
+    // Un triángulo que cubre todo el viewport de cada tarjeta.
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    ["res", "desfase", "tiempo", "c0", "c1", "c2", "c3", "proporcion", "suavidad", "distorsion",
+     "remolino", "vueltas", "forma", "escala", "semilla"].forEach(function (n) {
+      u[n] = gl.getUniformLocation(programa, "u_" + n);
+    });
 
-  var u = {};
-  ["res", "desfase", "tiempo", "c0", "c1", "c2", "c3", "proporcion", "suavidad", "distorsion",
-   "remolino", "vueltas", "forma", "escala", "semilla"].forEach(function (n) {
-    u[n] = gl.getUniformLocation(programa, "u_" + n);
-  });
+    capas = tarjetas.map(function (el, i) {
+      var c = document.createElement("canvas");
+      c.className = "betun";
+      c.setAttribute("aria-hidden", "true");
+      el.insertBefore(c, el.firstChild);
+      var capa = { el: el, canvas: c, ctx: c.getContext("2d"), ajuste: AJUSTES[i % AJUSTES.length],
+        semilla: i * 3.7, tiempo: i * 7.3, ritmo: 1, meta: 1, x: 0, w: 1, h: 1, visible: false };
+      // Al pasar el mouse el betún se revuelve más rápido; vuelve a su ritmo al salir.
+      el.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") capa.meta = 2.6; });
+      el.addEventListener("pointerleave", function () { capa.meta = 1; });
+      return capa;
+    });
 
-  var capas = tarjetas.map(function (el, i) {
-    var c = document.createElement("canvas");
-    c.className = "betun";
-    c.setAttribute("aria-hidden", "true");
-    el.insertBefore(c, el.firstChild);
-    var capa = { el: el, canvas: c, ctx: c.getContext("2d"), ajuste: AJUSTES[i % AJUSTES.length],
-      semilla: i * 3.7, tiempo: i * 7.3, ritmo: 1, meta: 1, x: 0, w: 1, h: 1 };
-    // Al pasar el mouse el betún se revuelve más rápido; vuelve a su ritmo al salir.
-    el.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") capa.meta = 2.6; });
-    el.addEventListener("pointerleave", function () { capa.meta = 1; });
-    return capa;
-  });
+    medir();
+    pintar(0, true);
 
-  // Cada tarjeta ocupa un tramo de la franja, a media resolución.
+    if (window.ResizeObserver) {
+      var talla = new ResizeObserver(reajustar);
+      capas.forEach(function (c) { talla.observe(c.el); });
+    } else {
+      window.addEventListener("resize", reajustar);
+    }
+    // Si el navegador suelta el contexto WebGL, el remolino se apaga y queda el degradado.
+    lienzo.addEventListener("webglcontextlost", function (e) {
+      e.preventDefault();
+      perdido = true;
+      revisar();
+      capas.forEach(function (c) { c.canvas.classList.remove("lista"); });
+    });
+    if (quieto) return;
+    // Solo se animan las tarjetas que se ven.
+    var ojo = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        capas.forEach(function (c) { if (c.el === e.target) c.visible = e.isIntersecting; });
+      });
+      revisar();
+    }, { rootMargin: "40px 0px" });
+    capas.forEach(function (c) { ojo.observe(c.el); });
+    document.addEventListener("visibilitychange", revisar);
+  }
+
+  // Cada tarjeta ocupa un tramo de la franja, a resolución reducida.
   function medir() {
     var x = 0, alto = 1;
     capas.forEach(function (c) {
@@ -1954,9 +2179,10 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
     lienzo.height = alto;
   }
 
-  function pintar(dt) {
+  function pintar(dt, todas) {
     var alto = lienzo.height;
-    capas.forEach(function (c) {
+    var hechas = capas.filter(function (c) { return todas || c.visible; });
+    hechas.forEach(function (c) {
       var a = c.ajuste;
       c.ritmo += (c.meta - c.ritmo) * Math.min(1, dt * 2.5);
       c.tiempo += dt * c.ritmo * VELOCIDAD;
@@ -1979,7 +2205,7 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
       gl.uniform1f(u.semilla, c.semilla);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     });
-    capas.forEach(function (c) {
+    hechas.forEach(function (c) {
       c.ctx.drawImage(lienzo, c.x, 0, c.w, c.h, 0, 0, c.w, c.h);
       if (!c.lista) {
         c.lista = true;
@@ -1988,16 +2214,17 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
     });
   }
 
-  var visible = false, perdido = false, pedido = 0, antes = 0;
+  var pedido = 0, antes = 0;
   function cuadro(ahora) {
     pedido = requestAnimationFrame(cuadro);
     if (ahora - antes < 32) return;   // unos 30 cuadros por segundo bastan para un remolino lento
     var dt = antes ? Math.min((ahora - antes) / 1000, 0.1) : 0;
     antes = ahora;
-    pintar(dt);
+    pintar(dt, false);
   }
   function revisar() {
-    var mover = visible && !document.hidden && !menos && !perdido;
+    var alguna = capas.some(function (c) { return c.visible; });
+    var mover = alguna && !document.hidden && !quieto && !perdido;
     if (mover && !pedido) {
       antes = 0;
       pedido = requestAnimationFrame(cuadro);
@@ -2013,37 +2240,9 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
     enCola = requestAnimationFrame(function () {
       enCola = 0;
       medir();
-      pintar(0);
+      pintar(0, true);
     });
   }
-
-  medir();
-  pintar(0);
-
-  if ("ResizeObserver" in window) {
-    var talla = new ResizeObserver(reajustar);
-    capas.forEach(function (c) { talla.observe(c.el); });
-  } else {
-    window.addEventListener("resize", reajustar);
-  }
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (e) {
-      visible = e[0].isIntersecting;
-      revisar();
-    }, { rootMargin: "120px 0px" }).observe(rejilla);
-  } else {
-    visible = true;
-    revisar();
-  }
-  document.addEventListener("visibilitychange", revisar);
-
-  // Si el navegador suelta el contexto WebGL, el remolino se apaga y queda el degradado.
-  lienzo.addEventListener("webglcontextlost", function (e) {
-    e.preventDefault();
-    perdido = true;
-    revisar();
-    capas.forEach(function (c) { c.canvas.classList.remove("lista"); });
-  });
 })();
 </script>
 
@@ -2155,6 +2354,23 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
   var automatico = !menos && total > 1;
   var enPantalla = false, encima = false, enfocado = false, huboArrastre = false;
 
+  // La luz de la vitrina toma el color del pastel al frente: la capa nueva se
+  // enciende mientras la otra se apaga.
+  var capasLuz = luz ? luz.querySelectorAll("i") : [], luzActual = 0, colorLuz = "";
+  function cambiarLuz(color) {
+    if (!capasLuz.length || !color || color === colorLuz) return;
+    if (!colorLuz) {
+      capasLuz[luzActual].style.setProperty("--luz", color);
+    } else {
+      var siguiente = 1 - luzActual;
+      capasLuz[siguiente].style.setProperty("--luz", color);
+      capasLuz[siguiente].classList.add("encendida");
+      capasLuz[luzActual].classList.remove("encendida");
+      luzActual = siguiente;
+    }
+    colorLuz = color;
+  }
+
   // Distancia con signo al centro; con 3 o más de separación la tarjeta se esconde.
   function posicion(i) {
     var d = (i - actual + total) % total;
@@ -2172,16 +2388,20 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
       var cta = t.querySelector(".cf-cta");
       if (cta) cta.tabIndex = d === 0 ? 0 : -1;
     });
+    var reiniciar = false;
     puntos.forEach(function (p, i) {
       if (i === actual) p.setAttribute("aria-current", "true");
       else p.removeAttribute("aria-current");
-      p.classList.remove("corriendo");
+      if (p.classList.contains("corriendo")) {
+        p.classList.remove("corriendo");
+        if (i === actual) reiniciar = true;
+      }
     });
     if (automatico) {
-      void puntos[actual].offsetWidth;   // reinicia la barra de progreso
+      if (reiniciar) void puntos[actual].offsetWidth;   // reinicia la barra de progreso
       puntos[actual].classList.add("corriendo");
     }
-    if (luz) luz.style.setProperty("--luz", tarjetas[actual].getAttribute("data-luz"));
+    cambiarLuz(tarjetas[actual].getAttribute("data-luz"));
     if (anunciar && anuncio) {
       anuncio.textContent = "Pastel " + (actual + 1) + " de " + total + ": " +
         tarjetas[actual].getAttribute("data-nombre");
@@ -2480,6 +2700,9 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
    Ocasiones: pestañas accesibles. Al elegir una, su foto se abre en círculo
    desde el lado donde está la pestaña; el pie cambia nombre, texto y el
    botón, que deja la ocasión marcada en el armador de Contacto.
+   Las fotos de las demás ocasiones no se descargan con la página: se piden
+   de una en una cuando la sección se acerca. Con datos lentos se piden solo
+   al apuntar o tocar la ocasión, y la foto se abre cuando ya llegó.
    ======================================================================= */
 (function () {
   var lista = document.querySelector(".ocasiones-lista");
@@ -2494,25 +2717,56 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
   var boton = pie.querySelector(".vitrina-cta");
   var botonTexto = boton.querySelector("span");
   var menos = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var redLenta = document.documentElement.classList.contains("red-lenta");
   var celular = window.matchMedia("(max-width: 900px)");
-  var actual = 0, intento = 0;
+  var actual = 0, visible = 0, intento = 0, turno = 0;
 
   function orientar() { lista.setAttribute("aria-orientation", celular.matches ? "horizontal" : "vertical"); }
   orientar();
   if (celular.addEventListener) celular.addEventListener("change", orientar);
 
-  function elegir(i, desde) {
-    if (i === actual) return;
+  function pedirFoto(f) {
+    var src = f.getAttribute("data-src");
+    if (!src) return;
+    f.loading = "eager";
+    f.srcset = f.getAttribute("data-srcset") || "";
+    f.src = src;
+    f.removeAttribute("data-src");
+    f.removeAttribute("data-srcset");
+  }
+  // Llama a listo cuando la foto ya se puede mostrar (o si tarda demasiado).
+  function cuandoLista(f, listo) {
+    pedirFoto(f);
+    if (f.complete && f.naturalWidth) { listo(); return; }
+    var hecho = false;
+    function fin() { if (!hecho) { hecho = true; listo(); } }
+    if (f.decode) f.decode().then(fin, fin);
+    else { f.addEventListener("load", fin); f.addEventListener("error", fin); }
+    setTimeout(fin, 5000);
+  }
+  function enReposo(f) {
+    if (window.requestIdleCallback) window.requestIdleCallback(f, { timeout: 1500 });
+    else setTimeout(f, 200);
+  }
+  if (!redLenta && "IntersectionObserver" in window) {
+    var cerca = new IntersectionObserver(function (e) {
+      if (!e[0].isIntersecting) return;
+      cerca.disconnect();
+      var cola = fotos.filter(function (f) { return f.hasAttribute("data-src"); });
+      (function siguiente() {
+        var f = cola.shift();
+        if (f) enReposo(function () { cuandoLista(f, siguiente); });
+      })();
+    }, { rootMargin: "50% 0px" });
+    cerca.observe(panel);
+  }
+
+  function mostrar(i, desde) {
     var pestana = pestanas[i], nueva = fotos[i];
-    pestanas.forEach(function (p, k) {
-      p.setAttribute("aria-selected", k === i ? "true" : "false");
-      p.tabIndex = k === i ? 0 : -1;
-    });
-    panel.setAttribute("aria-labelledby", pestana.id);
     // La foto que se veía queda debajo mientras la nueva se abre encima.
     fotos.forEach(function (f, k) {
       f.classList.remove("entra");
-      f.classList.toggle("activa", k === (menos ? i : actual));
+      f.classList.toggle("activa", k === (menos ? i : visible));
       f.setAttribute("aria-hidden", k === i ? "false" : "true");
     });
     if (!menos) {
@@ -2528,7 +2782,7 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
       void nueva.offsetWidth;
       nueva.classList.add("entra");
     }
-    actual = i;
+    visible = i;
     nombre.textContent = pestana.getAttribute("data-nombre");
     texto.textContent = pestana.getAttribute("data-texto");
     botonTexto.textContent = "Cotizar para " + pestana.getAttribute("data-frase");
@@ -2540,9 +2794,31 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
     }
   }
 
+  function elegir(i, desde) {
+    if (i === actual) return;
+    actual = i;
+    pestanas.forEach(function (p, k) {
+      p.setAttribute("aria-selected", k === i ? "true" : "false");
+      p.tabIndex = k === i ? 0 : -1;
+    });
+    panel.setAttribute("aria-labelledby", pestanas[i].id);
+    var mio = ++turno;
+    var nueva = fotos[i];
+    if (nueva.hasAttribute("data-src") || !nueva.complete) {
+      marco.classList.add("cargando");
+      panel.setAttribute("aria-busy", "true");
+    }
+    cuandoLista(nueva, function () {
+      if (mio !== turno) return;
+      marco.classList.remove("cargando");
+      panel.removeAttribute("aria-busy");
+      mostrar(i, desde);
+    });
+  }
+
   fotos.forEach(function (f, k) {
     f.addEventListener("animationend", function (e) {
-      if (e.animationName !== "vitrina-abre" || k !== actual) return;
+      if (!/^vitrina-(abre|funde)$/.test(e.animationName) || k !== visible) return;
       fotos.forEach(function (g, j) { g.classList.toggle("activa", j === k); });
       f.classList.remove("entra");
     });
@@ -2550,9 +2826,13 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
 
   pestanas.forEach(function (p, k) {
     p.addEventListener("click", function () { clearTimeout(intento); elegir(k, p); });
+    // Apuntar o tocar ya pide la foto, así llega antes de soltar.
+    p.addEventListener("pointerdown", function () { pedirFoto(fotos[k]); });
+    p.addEventListener("focus", function () { pedirFoto(fotos[k]); });
     // Con el mouse basta con detenerse un instante sobre la ocasión.
     p.addEventListener("pointerenter", function (e) {
       if (e.pointerType !== "mouse") return;
+      pedirFoto(fotos[k]);
       clearTimeout(intento);
       intento = setTimeout(function () { elegir(k, p); }, 110);
     });
@@ -2610,7 +2890,8 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
       ? { x: b.left - caja.left - 8, y: b.top + b.height / 2 - caja.top, lateral: true }
       : { x: b.left + b.width / 2 - caja.left, y: b.top - caja.top - 12 });
 
-    var d = "M" + r1(todos[0].x) + " " + r1(todos[0].y), cortes = [];
+    var x0 = r1(todos[0].x), y0 = r1(todos[0].y);
+    var d = "M" + x0 + " " + y0, tramos = [];
     for (var i = 1; i < todos.length; i++) {
       var a = todos[i - 1], z = todos[i], dy = z.y - a.y;
       var c1x = a.x, c1y = a.y + dy * 0.5, c2x = z.x, c2y = z.y - dy * 0.5;
@@ -2620,25 +2901,35 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
         c2x -= lado * 18;
       }
       if (z.lateral) { c2x = z.x - 40; c2y = z.y; }
-      d += " C" + r1(c1x) + " " + r1(c1y) + " " + r1(c2x) + " " + r1(c2y) + " " + r1(z.x) + " " + r1(z.y);
-      cortes.push(d);
+      var tramo = [r1(c1x), r1(c1y), r1(c2x), r1(c2y), r1(z.x), r1(z.y)];
+      d += " C" + tramo.join(" ");
+      tramos.push(tramo);
     }
     svg.setAttribute("viewBox", "0 0 " + r1(caja.width) + " " + r1(caja.height));
     trazos.forEach(function (t) { t.setAttribute("d", d); });
     largo = guia.getTotalLength();
 
-    // Largo de la línea hasta cada gota, para saber cuándo llega a cada paso.
-    var medidor = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    svg.appendChild(medidor);
-    marcas = puntos.map(function (p, k) { medidor.setAttribute("d", cortes[k]); return medidor.getTotalLength(); });
-    svg.removeChild(medidor);
-
-    // Tabla altura -> largo: la curva siempre baja, así que se puede buscar por altura.
-    tabla = [];
-    for (var n = 0; n <= 240; n++) {
-      var l = largo * n / 240;
-      tabla.push([guia.getPointAtLength(l).y, l]);
-    }
+    // La curva se recorre con su fórmula (rápido, sin preguntarle al SVG punto
+    // por punto): de ahí sale el largo hasta cada gota, para saber cuándo llega
+    // a cada paso, y la tabla altura -> largo. La curva siempre baja, así que se
+    // puede buscar por altura. Todo se ajusta al largo exacto que mide el SVG.
+    var px = x0, py = y0, acumulado = 0, muestras = [[y0, 0]], finTramos = [];
+    tramos.forEach(function (t) {
+      var ax = px, ay = py;
+      for (var n = 1; n <= 48; n++) {
+        var s = n / 48, u = 1 - s;
+        var bx = u * u * u * ax + 3 * u * u * s * t[0] + 3 * u * s * s * t[2] + s * s * s * t[4];
+        var by = u * u * u * ay + 3 * u * u * s * t[1] + 3 * u * s * s * t[3] + s * s * s * t[5];
+        acumulado += Math.sqrt((bx - px) * (bx - px) + (by - py) * (by - py));
+        px = bx;
+        py = by;
+        muestras.push([Math.max(by, muestras[muestras.length - 1][0]), acumulado]);
+      }
+      finTramos.push(acumulado);
+    });
+    var escala = acumulado ? largo / acumulado : 1;
+    marcas = puntos.map(function (p, k) { return finTramos[k] * escala; });
+    tabla = muestras.map(function (m) { return [m[0], m[1] * escala]; });
     pintar();
   }
 
@@ -2677,28 +2968,56 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
     enCola = true;
     window.requestAnimationFrame(pintar);
   }
-  function reconstruir() {
-    window.cancelAnimationFrame(pendiente);
-    pendiente = window.requestAnimationFrame(construir);
+  // La curva no se arma al cargar la página: se arma en un rato libre cuando ya
+  // cargó, o antes si la sección se acerca, y se rearma si cambia de tamaño.
+  var cerca = false, sucio = true, cargada = false, enEspera = false;
+  function armar() {
+    enEspera = false;
+    if (!sucio) return;
+    sucio = false;
+    construir();
   }
+  function armarEnReposo() {
+    if (enEspera) return;
+    enEspera = true;
+    if (window.requestIdleCallback) window.requestIdleCallback(armar, { timeout: 3000 });
+    else setTimeout(armar, 300);
+  }
+  function reconstruir() {
+    sucio = true;
+    if (cerca) {
+      window.cancelAnimationFrame(pendiente);
+      pendiente = window.requestAnimationFrame(armar);
+    } else if (cargada) {
+      armarEnReposo();
+    }
+  }
+  function alCargar() {
+    cargada = true;
+    setTimeout(function () { if (sucio) armarEnReposo(); }, 1500);
+  }
+  if (document.readyState === "complete") alCargar();
+  else window.addEventListener("load", alCargar);
 
-  construir();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(reconstruir);
   if ("ResizeObserver" in window) new ResizeObserver(reconstruir).observe(receta);
   else window.addEventListener("resize", reconstruir);
-  if (menos) return;
   if (!("IntersectionObserver" in window)) {
-    window.addEventListener("scroll", alDesplazar, { passive: true });
+    cerca = true;
+    armar();
+    if (!menos) window.addEventListener("scroll", alDesplazar, { passive: true });
     return;
   }
   // Solo escucha el desplazamiento mientras la sección está cerca de la pantalla.
   new IntersectionObserver(function (entradas) {
-    var dentro = entradas[0].isIntersecting;
-    if (dentro && !escuchando) window.addEventListener("scroll", alDesplazar, { passive: true });
-    if (!dentro && escuchando) window.removeEventListener("scroll", alDesplazar);
-    escuchando = dentro;
+    cerca = entradas[0].isIntersecting;
+    if (cerca && sucio) armar();
+    if (menos) return;
+    if (cerca && !escuchando) window.addEventListener("scroll", alDesplazar, { passive: true });
+    if (!cerca && escuchando) window.removeEventListener("scroll", alDesplazar);
+    escuchando = cerca;
     pintar();
-  }, { rootMargin: "20% 0px" }).observe(receta);
+  }, { rootMargin: "50% 0px" }).observe(receta);
 })();
 </script>
 
@@ -2860,8 +3179,72 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
 })();
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-<script src="escena.js" defer></script>
+<script>
+/* =======================================================================
+   Pastel 3D de la portada. La foto del pastel se ve desde el principio; el
+   3D (unos 130 KB) se descarga cuando la página ya cargó y está en reposo,
+   y solo si la portada se ve. En celulares de gama baja, con datos lentos o
+   con movimiento reducido no se descarga solo: aparece el botón "Ver en 3D".
+   Tocar el pastel también lo pide.
+   ======================================================================= */
+(function () {
+  var host = document.getElementById("escena-pastel");
+  if (!host || !window.WebGLRenderingContext) return;
+  var raiz = document.documentElement;
+  var boton = host.querySelector(".ver-3d");
+  var aMano = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    raiz.classList.contains("ligero") || raiz.classList.contains("red-lenta");
+  var pedido = false, conBoton = false;
+
+  function arrancar(porElVisitante) {
+    conBoton = conBoton || porElVisitante;
+    if (window.BakeMe3D) { window.BakeMe3D.iniciar(host, { aMano: conBoton }); return; }
+    if (pedido) return;
+    pedido = true;
+    var s = document.createElement("script");
+    s.src = "escena.js?v=4";
+    s.onload = function () { if (window.BakeMe3D) window.BakeMe3D.iniciar(host, { aMano: conBoton }); };
+    s.onerror = function () { pedido = false; if (boton) boton.hidden = true; };
+    document.body.appendChild(s);
+  }
+
+  host.addEventListener("click", function (e) {
+    if (host.getAttribute("data-3d")) return;
+    if (boton && e.target.closest && e.target.closest(".ver-3d")) {
+      var texto = boton.querySelector("span");
+      if (texto) texto.textContent = "Preparando el 3D…";
+    }
+    arrancar(true);
+  });
+
+  if (aMano) {
+    if (boton) boton.hidden = false;
+    return;
+  }
+
+  // Solo, cuando la página terminó de cargar y está en reposo, y únicamente si
+  // la portada se ve: si el visitante ya bajó, espera a que vuelva.
+  var hecho = false;
+  function cuandoSeVea() {
+    if (hecho) return;
+    hecho = true;
+    if (!("IntersectionObserver" in window)) { arrancar(false); return; }
+    var ojo = new IntersectionObserver(function (e) {
+      if (!e[0].isIntersecting) return;
+      ojo.disconnect();
+      arrancar(false);
+    }, { rootMargin: "100px 0px" });
+    ojo.observe(host);
+  }
+  function enReposo() {
+    if (window.requestIdleCallback) window.requestIdleCallback(cuandoSeVea, { timeout: 2000 });
+    else setTimeout(cuandoSeVea, 300);
+  }
+  if (document.readyState === "complete") enReposo();
+  else window.addEventListener("load", enReposo);
+  setTimeout(enReposo, 8000);   // por si alguna foto lenta retrasa la carga
+})();
+</script>
 
 </body>
 </html>

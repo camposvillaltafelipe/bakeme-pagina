@@ -2,3 +2,18 @@
 [build]
   command = "mkdir -p _site && cp index.html escena.js logo.jpeg _site/ && cp -r fotos _site/"
   publish = "_site"
+
+# Caché en el navegador del visitante, para que al volver no descargue de nuevo.
+# La página (index.html) se revisa en cada visita, así los cambios llegan al
+# instante. Las fotos se guardan una semana: si cambias una, mejor súbela con
+# otro nombre. escena.js se pide como "escena.js?v=N" desde index.html: si lo
+# cambias, sube ese número para que todos reciban la versión nueva.
+[[headers]]
+  for = "/fotos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/escena.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
