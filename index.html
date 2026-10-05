@@ -276,10 +276,12 @@
   .cf-pista{display:flex;gap:1.2rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:.5rem 0 1.2rem}
   .cf-tarjeta{position:relative;flex:0 0 var(--cf-w);height:var(--cf-h);scroll-snap-align:center}
   .cf-tarjeta::before{content:"";position:absolute;inset:0;border-radius:22px;pointer-events:none;box-shadow:0 44px 80px -30px rgba(40,14,13,.85),0 0 56px rgba(234,199,184,.3);opacity:0;transition:opacity .8s var(--cf-curva)}
-  .cf-marco{position:relative;width:100%;height:100%;border-radius:22px;overflow:hidden;isolation:isolate;background:var(--crema);box-shadow:0 26px 48px -26px rgba(40,14,13,.8);outline:1px solid rgba(255,249,243,.16);outline-offset:-1px}
-  .cf-marco img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-user-drag:none;user-select:none}
-  .cf-marco::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(142,74,72,0) 42%,rgba(142,74,72,.55) 54%,rgba(142,74,72,.88) 66%,rgba(142,74,72,.97) 100%)}
-  .cf-marco::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:var(--vino);opacity:0;transition:opacity .75s var(--cf-curva)}
+  /* El marco no recorta: cada capa redondea sus propias esquinas. Así lo que se
+     anima adentro (el velo, el texto) no obliga a recortar con máscara en cada cuadro. */
+  .cf-marco{position:relative;width:100%;height:100%;border-radius:22px;isolation:isolate;background:var(--crema);box-shadow:0 26px 48px -26px rgba(40,14,13,.8);outline:1px solid rgba(255,249,243,.16);outline-offset:-1px}
+  .cf-marco img{position:absolute;inset:0;width:100%;height:100%;border-radius:22px;object-fit:cover;-webkit-user-drag:none;user-select:none}
+  .cf-marco::before{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,rgba(142,74,72,0) 42%,rgba(142,74,72,.55) 54%,rgba(142,74,72,.88) 66%,rgba(142,74,72,.97) 100%)}
+  .cf-marco::after{content:"";position:absolute;inset:0;z-index:3;border-radius:inherit;pointer-events:none;background:var(--vino);opacity:0;transition:opacity .75s var(--cf-curva)}
   .cf-contenido{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:1.1rem 1.1rem 1.4rem;text-align:center}
   .cf-arriba{align-self:stretch;display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem}
   /* Sello de precio, como la etiqueta de una vitrina de pastelería */
@@ -324,7 +326,7 @@
   .con-js .cf-controles{display:flex}
   .con-js .cf-pista{position:relative;display:block;overflow:visible;height:calc(var(--cf-h) + 24px);padding:0;perspective:1400px;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .45s var(--cf-curva)}
   .con-js .coverflow.arrastrando .cf-pista{transition:none;cursor:grabbing}
-  .con-js .cf-tarjeta{position:absolute;left:50%;top:12px;width:var(--cf-w);margin-left:calc(var(--cf-w) / -2);backface-visibility:hidden;transition:transform .8s var(--cf-curva),opacity .6s var(--cf-curva)}
+  .con-js .cf-tarjeta{position:absolute;left:50%;top:12px;width:var(--cf-w);margin-left:calc(var(--cf-w) / -2);backface-visibility:hidden;transition:transform .8s var(--cf-curva),opacity .6s var(--cf-curva),visibility 0s}
   .con-js .cf-tarjeta[data-pos="0"]{transform:translateX(0) scale(1) rotateY(0deg);z-index:30}
   .con-js .cf-tarjeta[data-pos="1"]{transform:translateX(var(--cf-x1)) scale(.84) rotateY(-24deg);z-index:20;cursor:pointer}
   .con-js .cf-tarjeta[data-pos="-1"]{transform:translateX(calc(var(--cf-x1) * -1)) scale(.84) rotateY(24deg);z-index:20;cursor:pointer}
@@ -332,6 +334,8 @@
   .con-js .cf-tarjeta[data-pos="-2"]{transform:translateX(calc(var(--cf-x2) * -1)) scale(.68) rotateY(38deg);z-index:10;cursor:pointer}
   .con-js .cf-tarjeta[data-pos="3"]{transform:translateX(calc(var(--cf-x2) * 1.35)) scale(.52) rotateY(-46deg);opacity:0;z-index:0;pointer-events:none}
   .con-js .cf-tarjeta[data-pos="-3"]{transform:translateX(calc(var(--cf-x2) * -1.35)) scale(.52) rotateY(46deg);opacity:0;z-index:0;pointer-events:none}
+  /* Las que quedan fuera de vista no se dibujan: se esconden cuando terminan de salir */
+  .con-js .cf-tarjeta[data-pos="3"],.con-js .cf-tarjeta[data-pos="-3"]{visibility:hidden;transition:transform .8s var(--cf-curva),opacity .6s var(--cf-curva),visibility 0s .8s}
   .con-js .cf-tarjeta[data-pos="0"]::before{opacity:1}
   .con-js .cf-tarjeta[data-pos="1"] .cf-marco::after,.con-js .cf-tarjeta[data-pos="-1"] .cf-marco::after{opacity:.36}
   .con-js .cf-tarjeta[data-pos="2"] .cf-marco::after,.con-js .cf-tarjeta[data-pos="-2"] .cf-marco::after,
@@ -360,6 +364,23 @@
     .cf-cuerpo h3 em{font-size:1rem}
     .cf-cuerpo p{font-size:.82rem;margin:.95rem 0 1rem}
   }
+  /* En celular el carrusel trabaja con menos: sombras más cortas (capas más
+     chicas para la tarjeta gráfica) y la luz de vitrina queda fija, sin
+     fundidos de dos capas del tamaño de la sección. La portada va en su propia
+     capa: así lo que se pinta sobre el pastel 3D no arrastra al resto de la
+     página a una capa extra (catálogo incluido). */
+  @media (max-width:900px){
+    .hero{transform:translateZ(0)}
+    .cf-tarjeta::before{box-shadow:0 26px 34px -22px rgba(40,14,13,.85),0 0 30px rgba(234,199,184,.22)}
+    .cf-marco{box-shadow:0 16px 26px -18px rgba(40,14,13,.8)}
+    .catalogo-luz i{display:none}
+    .catalogo-luz i:first-child{display:block;opacity:1;transition:none;background:radial-gradient(ellipse 58% 52% at 50% 64%,rgba(223,166,157,.55),rgba(142,74,72,0) 72%)}
+  }
+  /* En teléfonos las tarjetas a dos lugares del centro quedan fuera de la
+     pantalla: no se dibujan. */
+  @media (max-width:430px){
+    .con-js .cf-tarjeta[data-pos="2"],.con-js .cf-tarjeta[data-pos="-2"]{visibility:hidden;transition:transform .8s var(--cf-curva),opacity .6s var(--cf-curva),visibility 0s .8s}
+  }
 
   /* La carta: todos los pasteles del menú con su precio, como la carta de una pastelería */
   .carta{position:relative;z-index:1;max-width:980px;margin:2.8rem auto 0;border-radius:24px;border:1px solid rgba(255,249,243,.18);background:rgba(255,249,243,.05)}
@@ -371,7 +392,8 @@
   .carta summary:focus-visible{outline:2px solid var(--durazno);outline-offset:3px}
   .carta-cuerpo{padding:.4rem 2.2rem 2rem}
   .carta-grupos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2.2rem 3.6rem}
-  .carta-grupo{padding:0}
+  /* Cada grupo se dibuja cuando entra en pantalla: abrir la carta no arma los 24 pasteles de golpe */
+  .carta-grupo{padding:0;content-visibility:auto;contain-intrinsic-size:auto 300px}
   .carta-grupo h3{margin-bottom:.7rem;padding-bottom:.55rem;border-bottom:1px solid rgba(255,249,243,.2);font-size:1.35rem;color:var(--blanco)}
   .carta-grupo ul{list-style:none;display:grid;gap:.2rem}
   .carta-item{display:grid;grid-template-columns:auto minmax(1.5rem,1fr) auto;align-items:baseline;column-gap:.6rem;margin:0 -.7rem;padding:.55rem .7rem;border-radius:12px;color:var(--rubor);transition:background-color .2s ease}
@@ -392,6 +414,11 @@
   @media (max-width:760px){
     .carta-grupos{grid-template-columns:minmax(0,1fr);gap:1.8rem}
     .carta-cuerpo{padding:.2rem 1.1rem 1.5rem}
+  }
+  /* En celular la carta abre al instante: animar su alto reacomoda la sección
+     entera en cada cuadro. */
+  @media (max-width:900px){
+    .carta::details-content{transition:none}
   }
 
   /* Personalización: tarjetas vino con un remolino de betún animado detrás de un velo.
@@ -727,6 +754,8 @@
   /* Radio propio: si el navegador pasa el canvas a otra capa, el recorte del padre no siempre lo alcanza */
   .betun{position:absolute;inset:0;z-index:-2;width:100%;height:100%;border-radius:inherit;opacity:0;transition:opacity 1.2s ease}
   .betun.lista{opacity:1}
+  /* Remolino fijo (pantallas táctiles): va como fondo de la tarjeta, bajo el velo */
+  .opcion.con-betun{background:var(--betun) center/100% 100% no-repeat,var(--vino)}
   .chips span{transition:background-color .25s,color .25s,transform .25s,box-shadow .25s}
 
   /* Resplandor lento en la banda oscura */
@@ -872,6 +901,9 @@
   /* ---------- Rendimiento: ningún trabajo de más ---------- */
   /* Fuera de pantalla, las animaciones que se repiten se detienen (lo marca el script) */
   .quieto,.quieto::before,.quieto::after,.quieto *,.quieto *::before,.quieto *::after{animation-play-state:paused!important}
+  /* Los adornos que giran o laten sin fin, además, sueltan su capa mientras no se
+     ven: al volver empiezan de nuevo y no se nota. */
+  .quieto .bokeh,.quieto .destello,.quieto .sello-anillo,.quieto .dial-orbita,.quieto .dial-nodo::after,.quieto .pin-onda,.quieto .estado::before,.quieto .aura::before,.quieto.pasos-sec::before{animation:none}
   /* En pantallas táctiles nada cambia de color ni de sombra en bucle, porque eso
      repinta en cada cuadro: el aura de los botones, el resplandor de "Cómo
      pedir", el pulso de "Abierto ahora" y la onda del mapa quedan quietos. Lo
@@ -1999,8 +2031,9 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
    franja y cada una copia su tramo a su propio canvas.
    Para no pesar: arranca cuando la sección se acerca, compila el shader sin
    detener la página, anima solo las tarjetas que se ven, a 30 cuadros por
-   segundo, y se acelera al pasar el cursor. Con movimiento reducido queda
-   quieto. Sin WebGL o en celulares de gama baja se ve el degradado del CSS.
+   segundo, y se acelera al pasar el cursor. En pantallas táctiles y con
+   movimiento reducido se pinta una vez y queda fijo como fondo. Sin WebGL o
+   en celulares de gama baja se ve el degradado del CSS.
    ======================================================================= */
 (function () {
   var rejilla = document.querySelector(".opciones");
@@ -2009,6 +2042,10 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
   if (!tarjetas.length) return;
 
   var quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // En pantallas táctiles el remolino se pinta una vez y queda como fondo de cada
+  // tarjeta: sin lienzos encima ni contexto WebGL abierto, el celular no carga con
+  // doce capas más justo después del catálogo.
+  var fijo = quieto || window.matchMedia("(pointer: coarse)").matches || !window.matchMedia("(hover: hover)").matches;
   var RESOLUCION = window.matchMedia("(pointer: coarse)").matches ? 0.5 : 0.7;   // bajo el velo no hace falta más
   var VELOCIDAD = 0.8;
 
@@ -2137,6 +2174,7 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
 
     medir();
     pintar(0, true);
+    if (fijo) { fijar(); return; }
 
     if (window.ResizeObserver) {
       var talla = new ResizeObserver(reajustar);
@@ -2151,7 +2189,6 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
       revisar();
       capas.forEach(function (c) { c.canvas.classList.remove("lista"); });
     });
-    if (quieto) return;
     // Solo se animan las tarjetas que se ven.
     var ojo = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) {
@@ -2161,6 +2198,25 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
     }, { rootMargin: "40px 0px" });
     capas.forEach(function (c) { ojo.observe(c.el); });
     document.addEventListener("visibilitychange", revisar);
+  }
+
+  // Cada lienzo pasa a ser una imagen de fondo de su tarjeta y se suelta el contexto.
+  function fijar() {
+    var pendientes = capas.length;
+    capas.forEach(function (c) {
+      if (!c.canvas.toBlob || !window.URL || !URL.createObjectURL) return;   // navegador viejo: se queda el lienzo quieto
+      c.canvas.toBlob(function (imagen) {
+        if (imagen) {
+          c.el.style.setProperty("--betun", "url(" + URL.createObjectURL(imagen) + ")");
+          c.el.classList.add("con-betun");
+          if (c.canvas.parentNode) c.canvas.parentNode.removeChild(c.canvas);
+        }
+        if (--pendientes === 0) {
+          var suelta = gl.getExtension("WEBGL_lose_context");
+          if (suelta) suelta.loseContext();
+        }
+      });
+    });
   }
 
   // Cada tarjeta ocupa un tramo de la franja, a resolución reducida.
@@ -2357,8 +2413,10 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
   // La luz de la vitrina toma el color del pastel al frente: la capa nueva se
   // enciende mientras la otra se apaga.
   var capasLuz = luz ? luz.querySelectorAll("i") : [], luzActual = 0, colorLuz = "";
+  // En celular la luz queda fija (lo pone el CSS) y no hace falta tocarla.
+  var luzFija = window.matchMedia("(max-width: 900px)");
   function cambiarLuz(color) {
-    if (!capasLuz.length || !color || color === colorLuz) return;
+    if (luzFija.matches || !capasLuz.length || !color || color === colorLuz) return;
     if (!colorLuz) {
       capasLuz[luzActual].style.setProperty("--luz", color);
     } else {
@@ -2418,7 +2476,16 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
   }
 
   function pausar() {
-    raiz.classList.toggle("pausado", !enPantalla || encima || enfocado || document.hidden);
+    raiz.classList.toggle("pausado", !enPantalla || encima || enfocado || desplazando || document.hidden);
+  }
+
+  // Mientras la página se desplaza el carrusel espera: así el cambio de tarjeta
+  // no compite con el desplazamiento, que en celular es lo primero.
+  var desplazando = false, relojDesplazar = 0;
+  function alDesplazar() {
+    if (!desplazando) { desplazando = true; pausar(); }
+    clearTimeout(relojDesplazar);
+    relojDesplazar = setTimeout(function () { desplazando = false; pausar(); }, 700);
   }
 
   // El avance lo marca la barra del punto activo: si se pausa, el tiempo también.
@@ -2513,6 +2580,8 @@ document.querySelectorAll(".carta-item").forEach(function (a) {
       entradas.forEach(function (e) {
         enPantalla = e.isIntersecting;
         if (enPantalla) entrar();
+        if (enPantalla) window.addEventListener("scroll", alDesplazar, { passive: true });
+        else window.removeEventListener("scroll", alDesplazar);
         pausar();
       });
     }, { threshold: 0.35 }).observe(raiz);
